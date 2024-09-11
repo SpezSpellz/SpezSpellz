@@ -1,0 +1,21 @@
+# Virtual environment
+.venv
+venv
+
+# Database
+db.sqlite3
+
+# pyenv
+.python-version
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs
+*.log
+
+# Linters
+.mypy_cache
+.ruff_cache

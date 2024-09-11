@@ -1,0 +1,31 @@
+body {
+    background-color: #2B2B2B;
+}
+h1, h2 {
+    color: #FFF;
+}
+.sp-title {
+    margin: auto;
+    text-align: center;
+}
+.search-bar {
+    background-color: #3B3B3B;
+    border: none;
+    font-size: 12pt;
+    color: #FFF;
+    padding-left: 32px;
+    border-radius: 6px;
+    margin: auto;
+    margin-top: 10px;
+    background-image: url("/assets/search.svg");
+    background-position: 3px, 3px;
+    background-size: 24px;
+    background-repeat: no-repeat;
+    display: block;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.strip-box {
+    background-color: #3B3B3B;
+    border-radius: 10px;
+}
