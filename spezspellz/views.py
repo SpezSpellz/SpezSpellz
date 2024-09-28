@@ -14,11 +14,13 @@ class HomePage(View):
                 "latest_spells": [
                     {
                         "title": "Spell 1",
-                        "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"
+                        "image_url": "https://encrypted-tbn0.gstatic.com/images?q="
+                        "tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"
                     },
                     {
                         "title": "Spell 2",
-                        "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"
+                        "image_url": "https://encrypted-tbn0.gstatic.com/images?q="
+                        "tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"
                     }
                 ]
             })
