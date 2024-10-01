@@ -33,3 +33,12 @@ class UploadPage(View):
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Handle GET requests for this view."""
         return render(request, "upload.html")
+
+
+class ProfilePage(View):
+    """Handle the upload page."""
+
+    def get(self, request: HttpRequest) -> HttpResponseBase:
+        """Handle GET requests for this view."""
+        user = User.objects.get(username=user_name)
+        return render(request, "profile.html", {"user_info": user})
