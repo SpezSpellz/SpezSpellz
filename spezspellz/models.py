@@ -21,6 +21,9 @@ class Spell(models.Model):
     postDescription = models.CharField(max_length=400)
     category = models.CharField(max_length=20, null=True, blank=True)
     tag = models.CharField(max_length=20, null=True, blank=True)
+    image_url = models.URLField(default="https://encrypted-tbn0.gstatic.com/images?q="
+                                        "tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s",
+                                blank=True)
 
     def __str__(self):
         """Return the spell title"""
