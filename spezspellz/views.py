@@ -1,8 +1,8 @@
 """Contains views for SpezSpellz."""
-from django.http import HttpRequest, HttpResponseBase
+from django.http import HttpRequest, HttpResponseBase, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import Spell
+from .models import Spell, User
 
 
 class HomePage(View):
@@ -21,7 +21,16 @@ class UploadPage(View):
         return render(request, "upload.html")
 
 
-def spell_detail(request, spell_id):
+class ProfilePage(View):
+    """Handle the profile page."""
+
+    def get(self, request: HttpRequest, user_name: str) -> HttpResponseBase:
+        """Handle GET requests for this view."""
+        user = User.objects.get(username=user_name)
+        return render(request, "profile.html", {"user_info": user})
+
+
+def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponse | HttpResponseRedirect:
     try:
         spell = Spell.objects.get(id=spell_id)
     except Spell.DoesNotExist:
