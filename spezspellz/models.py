@@ -14,7 +14,7 @@ class UserInfo(models.Model):
         return self.user.username + " Info"
 
 class Spell(models.Model):
-    userID = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     """If user is deleted his spells are also gone"""
 
     title = models.CharField(max_length=20)
