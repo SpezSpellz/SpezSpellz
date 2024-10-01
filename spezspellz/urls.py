@@ -1,6 +1,6 @@
 """This file contains urls of SpezSpellz."""
 from django.urls import path
-from .views import HomePage, UploadPage
+from .views import HomePage, UploadPage, ProfilePage
 
 
 app_name = "spezspellz"

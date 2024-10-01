@@ -36,7 +36,7 @@ class UploadPage(View):
 
 
 class ProfilePage(View):
-    """Handle the upload page."""
+    """Handle the profile page."""
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Handle GET requests for this view."""
