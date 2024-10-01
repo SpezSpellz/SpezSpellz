@@ -1,0 +1,26 @@
+[
+{
+  "model": "spezspellz.spell",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "title": "Spell 1",
+    "post_desc": "Simple spell",
+    "category": null,
+    "tag": null,
+    "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 2,
+  "fields": {
+    "user": 1,
+    "title": "Spell 2",
+    "post_desc": "Simple spell",
+    "category": null,
+    "tag": null,
+    "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"
+  }
+}
+]
