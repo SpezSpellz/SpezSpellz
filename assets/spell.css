@@ -1,0 +1,31 @@
+h1, h2 {
+    color: #FFFFFF;
+}
+.spell-img {
+    height: 100%;
+    width: 25%;
+    object-fit: contain;
+}
+.spell-title {
+    position: relative;
+    display: flex;
+    margin-top: 2%;
+    margin-bottom: 1%;
+    margin-left: 10%;
+    width: 80%;
+    height: 15%;
+}
+text {
+    padding: 10px;
+}
+.spell {
+    position: relative;
+    width: 90%;
+    height: 65%;
+    display: block;
+    background-color: #3B3B3B;
+    margin-left: 5%;
+    margin-right: 5%;
+    color: #FFFFFF;
+    overflow-wrap: break-word;
+}

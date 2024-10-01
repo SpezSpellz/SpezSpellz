@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block Title %}Spell#{{ spell.id }} - SpezSpellz{% endblock %}
+{% block Content %}
+    <link rel="stylesheet" href="/assets/spell.css">
+    <div class="spell-title">
+        <img src="{{ spell.image_url }}" class="spell-img">
+        <text><h1>{{ spell.title }}</h1><text>
+    </div>
+    <br>
+    <div class="spell">
+        {{ spell.post_desc }}
+    </div>
+{% endblock %}
