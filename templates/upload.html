@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block Title %}Upload - SpezSpellz{% endblock %}
+{% block Content %}
+<link rel="stylesheet" href="/assets/upload.css">
+<body>
+    <dialog id="add_noti_dlg">
+        <h1 class="section notiheader">Add Notification</h1>
+        <div style="display: flex;flex-direction: column;">
+            <div><span>Time: </span><input id="noti_dlg_time" type="time"/></div><br>
+            <div><span>Date: </span><input id="noti_dlg_date" type="date"/></div><br>
+            <div>
+                <span>Repitition: </span>
+                <select style="width: 150px;font-size: 12pt;" name="noti_every" id="noti_dlg_every">
+                    <option value="day">Every Day</option>
+                    <option value="week">Every Week</option>
+                    <option value="month">Every Month</option>
+                    <option value="year">Every Year</option>
+                    <option value="single">Single Event</option>
+                </select>
+            </div><br>
+            <div style="justify-content: space-evenly;">
+                <button id="ok_noti_dlg">Ok</button>
+                <button id="cancel_noti_dlg">Cancel</button>
+            </div>
+        </div>
+    </dialog>
+    <table style="width: 100%;">
+        <tr>
+            <th style="width: 300px" valign="top">
+                <h1 class="section">Settings</h1>
+                <ul style="list-style: none;margin: 0;padding: 0;" class="settings-list">
+                    <li>
+                        <h2 class="section">Thumbnail</h2>
+                        <button><img width="128" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"/></button>
+                    </li>
+                    <li>
+                        <h2 class="section">Category</h2>
+                        <select name="category" id="category">
+                            <option value="spell">Spell</option>
+                            <option value="ritual">Ritual</option>
+                            <option value="food">Food</option>
+                        </select> 
+                    </li>
+                    <li>
+                        <h2 class="section">Tags</h2>
+                        <div style="display: inline-block;" id="tag-list">
+                            <div class="tag" style="background-color: rgba(255, 0, 0, 0.3);border-color: #F00;"><span style="color: #F00;">Sacrafice</span></div>
+                        </div>
+                        <div class="tag" style="background-color: rgba(127, 127, 127, 0.3);border-color: #7f7f7f;"><span style="color: #FFFFFF;">+</span></div>
+                    </li>
+                    <li>
+                        <h2 class="section">Notifications</h2>
+                        <ul style="list-style: none;margin: 0;padding: 0;" id="noti_list">
+                            
+                        </ul>
+                        <button id="add_noti_btn">Add</button>
+                    </li>
+                </ul>
+            </th>
+            <th valign="top">
+                <h1 class="section">Upload</h1>
+                <div class="markdown-input">
+                    
+                </div>
+            </th>
+            <th style="width: 300px" valign="top">
+                <h1 class="section">Attachments</h1>
+            </th>
+        </tr>
+    </table>
+    <script>
+        const noti_list = window.noti_list;
+        window.add_noti_btn.onclick = () => window.add_noti_dlg.showModal();
+        window.ok_noti_dlg.onclick = () => {
+            const li = document.createElement("li");
+            const div = document.createElement("div");
+            div.style.margin = "5px";
+            const span = document.createElement("span");
+            span.style.color = "#FFF";
+            span.innerText = "Test Notification";
+            const remove_btn = document.createElement("button");
+            remove_btn.innerText = "Remove";
+            remove_btn.onclick = () => li.remove();
+            div.append(span);
+            div.append(remove_btn);
+            li.append(div);
+            noti_list.append(li);
+            window.cancel_noti_dlg.click();
+        }
+        window.cancel_noti_dlg.onclick = () => {
+            window.noti_dlg_time.value = "";
+            window.noti_dlg_date.value = "";
+            window.noti_dlg_every.value = "day";
+            window.add_noti_dlg.close();
+        }
+    </script>
+</body>
+{% endblock %}

@@ -1,0 +1,83 @@
+body {
+    background-color: #2B2B2B;
+}
+
+.section {
+    margin: 0;
+    padding: 0;
+    margin-bottom: 10px;
+    color: #FFF;
+}
+
+.markdown-input {
+    border-radius: 12px;
+    background-color: #3B3B3B;
+    margin: auto;
+    width: 100%;
+    height: calc(100vh - 120px);
+}
+
+.div-box {
+    border-radius: 12px;
+    background-color: #3B3B3B;
+    margin: auto;
+    display: inline-block;
+    padding: 10px;
+}
+
+.settings-list > li {
+    margin: 10px;
+}
+
+.tag {
+    font-family: monospace;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 20px;
+    padding-left: 5px;
+    padding-right: 5px;
+    display: inline-block;
+}
+
+#add_noti_dlg {
+    border-radius: 12px;
+    background-color: #2B2B2B;
+    border-style: none;
+    box-shadow: inset;
+    padding: 10px;
+}
+
+#add_noti_dlg > .notiheader {
+    margin: auto;
+    margin-left: 50px;
+    margin-right: 50px;
+    text-align: center;
+}
+
+#add_noti_dlg > div > div {
+    margin: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#add_noti_dlg > div > div > span {
+    font-size: 12pt;
+    margin-right: 10px;
+    color: #FFF;
+}
+
+#add_noti_dlg > div > div > button {
+    font-size: 12pt;
+    font-weight: bold;
+    width: 100px;
+    background-color: #4B4B4B;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    color: #FFF;
+}
+
+#add_noti_dlg > div > div > button:hover {
+    background-color: #5B5B5B;
+}

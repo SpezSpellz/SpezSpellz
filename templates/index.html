@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpezSpellz</title>
-</head>
+{% extends 'base.html' %}
+{% block Title %}Home - SpezSpellz{% endblock %}
+{% block Content %}
 <link rel="stylesheet" href="/assets/index.css">
 <body>
     <h1 class="sp-title">SpezSpellz</h1>
@@ -19,4 +15,4 @@
         {% endfor %}
     </div>
 </body>
-</html>
+{% endblock %}

@@ -11,16 +11,25 @@ class HomePage(View):
         """Handle GET requests for this view."""
         return render(
             request, "index.html", {
-                "latest_spells": [
-                    {
-                        "title": "Spell 1",
-                        "image_url": "https://encrypted-tbn0.gstatic.com/images?q="
-                        "tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"
-                    },
-                    {
-                        "title": "Spell 2",
-                        "image_url": "https://encrypted-tbn0.gstatic.com/images?q="
-                        "tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"
-                    }
-                ]
+                "latest_spells": [{
+                    "title":
+                    "Spell 1",
+                    "image_url":
+                    "https://encrypted-tbn0.gstatic.com/images?q="
+                    "tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"
+                }, {
+                    "title":
+                    "Spell 2",
+                    "image_url":
+                    "https://encrypted-tbn0.gstatic.com/images?q="
+                    "tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"
+                }]
             })
+
+
+class UploadPage(View):
+    """Handle the upload page."""
+
+    def get(self, request: HttpRequest) -> HttpResponseBase:
+        """Handle GET requests for this view."""
+        return render(request, "upload.html")
