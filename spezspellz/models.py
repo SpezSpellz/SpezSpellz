@@ -10,6 +10,8 @@ class Category(models.Model):
 
 
 class UserInfo(models.Model):
+    """Store the user info."""
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     privacy = models.BooleanField(default=False)
     notification = models.BooleanField(default=True)
@@ -22,6 +24,7 @@ class UserInfo(models.Model):
 class Spell(models.Model):
     """The model that stores spells."""
 
+    creator: models.ForeignKey[User] = models.ForeignKey(User, on_delete=models.CASCADE)
     title: models.CharField = models.CharField(max_length=50)
     data: models.CharField = models.CharField(max_length=4096 * 10)
     thumbnail: models.BinaryField = models.BinaryField(

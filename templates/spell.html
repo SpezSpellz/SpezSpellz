@@ -4,7 +4,7 @@
 {% block Content %}
     <link rel="stylesheet" href="/assets/spell.css">
     <div class="spell-title">
-        <img src="{{ spell.image_url }}" class="spell-img">
+        <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img">
         <text><h1>{{ spell.title }}</h1></text>
     </div>
     <br>

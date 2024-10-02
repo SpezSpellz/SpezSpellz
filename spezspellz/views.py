@@ -1,8 +1,8 @@
 """Contains views for SpezSpellz."""
 from typing import Optional
 import json
-from django.http import HttpRequest, HttpResponse, HttpResponseBase, HttpResponseRedirect
-from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse, HttpResponseBase
+from django.shortcuts import render, redirect
 from django.views import View
 from .models import Spell, User, Tag
 
@@ -67,15 +67,25 @@ class TagsPage(View, RPCView):
 class ProfilePage(View):
     """Handle the profile page."""
 
-    def get(self, request: HttpRequest, user_name: str) -> HttpResponseBase:
+    def get(self, request: HttpRequest, user_id: int) -> HttpResponseBase:
         """Handle GET requests for this view."""
-        user = User.objects.get(username=user_name)
+        user = User.objects.get(pk=user_id)
         return render(request, "profile.html", {"user_info": user})
 
 
-def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponse | HttpResponseRedirect:
+def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
+    """Return the spell detail page."""
     try:
         spell = Spell.objects.get(id=spell_id)
     except Spell.DoesNotExist:
         return redirect("spezspellz:home")
     return render(request, "spell.html", {"spell": spell})
+
+
+def thumbnail(request: HttpRequest, spell_id: int):
+    """Return the thumbnail for a spell."""
+    try:
+        spell = Spell.objects.get(id=spell_id)
+    except Spell.DoesNotExist:
+        return HttpResponse("Not Found", status=404)
+    return HttpResponse(spell.thumbnail, content_type="image/jpeg")
