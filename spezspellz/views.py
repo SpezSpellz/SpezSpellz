@@ -1,10 +1,10 @@
 """Contains views for SpezSpellz."""
 from typing import Optional
 import json
-from django.http import HttpRequest, HttpResponse, HttpResponseBase
+from django.http import HttpRequest, HttpResponse, HttpResponseBase, HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
-from .models import Tag
+from .models import Spell, User, Tag
 
 
 class RPCView:
@@ -33,22 +33,7 @@ class HomePage(View):
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Handle GET requests for this view."""
-        return render(
-            request,
-            "index.html", {
-                "latest_spells": [
-                    {
-                        "title": "Spell 1",
-                        "image_url":
-                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"
-                    },
-                    {
-                        "title": "Spell 2",
-                        "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"
-                    }
-                ]
-            }
-        )
+        return render(request, "index.html", {"latest_spells": Spell.objects.all()})
 
 
 class UploadPage(View):
@@ -77,3 +62,20 @@ class TagsPage(View, RPCView):
         if max_len > 100 or max_len < 1:
             return HttpResponse("Parameter `max_len` must be more than 0 but less than 100", status=400)
         return HttpResponse(json.dumps([tag.name for tag in Tag.objects.filter(name__contains=query)[0:max_len]]), status=200)
+
+
+class ProfilePage(View):
+    """Handle the profile page."""
+
+    def get(self, request: HttpRequest, user_name: str) -> HttpResponseBase:
+        """Handle GET requests for this view."""
+        user = User.objects.get(username=user_name)
+        return render(request, "profile.html", {"user_info": user})
+
+
+def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponse | HttpResponseRedirect:
+    try:
+        spell = Spell.objects.get(id=spell_id)
+    except Spell.DoesNotExist:
+        return redirect("spezspellz:home")
+    return render(request, "spell.html", {"spell": spell})

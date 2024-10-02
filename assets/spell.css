@@ -1,0 +1,56 @@
+h1, h2 {
+    color: #FFFFFF;
+}
+
+.spell-img {
+    width: 15%;
+    object-fit: contain;
+}
+
+.spell-title {
+    position: relative;
+    display: flex;
+    margin-top: 2%;
+    margin-bottom: 1%;
+    margin-left: 10%;
+    width: 80%;
+    height: 10%;
+    overflow-wrap: break-word;
+}
+
+text {
+    padding: 10px;
+}
+
+.spell {
+    position: relative;
+    height: 55vh;
+    display: block;
+    background-color: #3B3B3B;
+    margin-left: 5%;
+    margin-right: 5%;
+    color: #FFFFFF;
+    overflow-wrap: break-word;
+    overflow-y: auto;
+    padding: 1%;
+    border-radius: 20px;
+}
+
+.button {
+    margin-left: 5%;
+    margin-top: 1.5%;
+}
+
+.button a {
+    color: #FFFFFF;
+    padding: 1%;
+    background-color: #3B3B3B;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.button a:hover {
+    color: #3B3B3B;
+    background-color: #FFFFFF;
+}

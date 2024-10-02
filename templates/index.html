@@ -8,7 +8,7 @@
     <h2 style="padding-left: 20px;">Latest posts</h2>
     <div class="strip-box">
         {% for spell in latest_spells %}
-        <a href="{% url 'spezspellz:home' %}32"><div class="spell">
+        <a href="{% url 'spezspellz:spell' spell.id %}"><div class="spell">
             <img src="{{ spell.image_url }}" class="spell-img"/>
             <h2 class="spell-title">{{ spell.title }}</h2>
         </div></a>

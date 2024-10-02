@@ -1,4 +1,5 @@
 """This file contains models."""
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -6,6 +7,16 @@ class Category(models.Model):
     """The category."""
 
     name: models.CharField = models.CharField(max_length=50)
+
+
+class UserInfo(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    privacy = models.BooleanField(default=False)
+    notification = models.BooleanField(default=True)
+    user_desc = models.CharField(max_length=400)
+
+    def __str__(self):
+        return self.user.username + " Info"
 
 
 class Spell(models.Model):

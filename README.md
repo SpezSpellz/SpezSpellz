@@ -52,5 +52,22 @@ To start the development server, run the following command:
 
 Access the application at <http://127.0.0.1:8000/>.
 
+### Data in data fixtures
+Currently, have 2 data fixtures called `dummy-spell.json` and `dummy-user.json`.
+Here is what they contain
+
+**Spell**
+
+|  Title  |User |
+|:-------:|:---:|
+| Spell 1 |demo1|
+| Spell 2 |demo1|
+
+**User**
+
+| Username | Password  |
+|:--------:|:---------:|
+|  demo1   | demo_man1 |
+
 ## Project Documents
 The project documents below are all available in the [Wiki](../../wiki/Home).
