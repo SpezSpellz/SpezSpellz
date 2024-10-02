@@ -27,6 +27,6 @@ class HasTagAdmin(admin.ModelAdmin):
 
 admin.site.register(Spell, SpellAdmin)
 admin.site.register(Tag)
-admin.site.register(HasTag)
+admin.site.register(HasTag, HasTagAdmin)
 admin.site.register(Category)
 admin.site.register(UserInfo, UserInfoAdmin)
