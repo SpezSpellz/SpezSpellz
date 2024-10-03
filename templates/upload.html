@@ -7,9 +7,6 @@
         <h1 class="section dlgheader">Add Tags</h1>
         <input id="add_tag_dlg_search" class="search-bar" placeholder="Enter tag name" type="text"/>
         <ul id="tag_search_list" style="list-style: none;margin: 0;padding: 0;">
-            <li><button class="tag-search-entry">Sacrafice</button></li>
-            <li><button class="tag-search-entry">Loan</button></li>
-            <li><button class="tag-search-entry">Chinese</button></li>
         </ul>
         <div style="position: absolute;bottom: 15px;left: 0;right: 0;display:flex;flex-direction: row;justify-content: space-evenly;">
             <button id="close_add_tag_dlg">Close</button>
@@ -119,6 +116,7 @@
     <script type="module">
         import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
         const noti_list = window.noti_list;
+        const selected_tags = new Set();
         window.add_noti_btn.onclick = () => window.add_noti_dlg.showModal();
         window.ok_noti_dlg.onclick = () => {
             const time = new Date(window.noti_dlg_date_time.value);
@@ -197,13 +195,71 @@
         window.add_tag.onclick = () => {
             window.add_tag_dlg.showModal();
         };
+        var update_tags_tm = null;
         window.add_tag_dlg_search.onkeyup = () => {
             const query = window.add_tag_dlg_search.value.toLowerCase();
             for(const entry of window.tag_search_list.children) {
                 const btn = entry.querySelector("button");
                 entry.style.display = (btn.innerText.toLowerCase().indexOf(query) != -1) ? null : "none";
             }
+            if(update_tags_tm)
+                clearTimeout(update_tags_tm);
+            update_tags_tm = setTimeout(() => {
+                update_tags_tm = null;
+                fetch("{% url 'spezspellz:tags' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({
+                        "method": "search",
+                        "query": query
+                    })
+                }).then(res => {
+                    if(res.status != 200)
+                        return;
+                    res.json().then(json => {
+                        window.tag_search_list.innerHTML = '';
+                        for(const tag of json) {
+                            if(selected_tags.has(tag))
+                                continue;
+                            const li = document.createElement("li");
+                            const btn = document.createElement("button");
+                            btn.classList.add("tag-search-entry");
+                            btn.innerText = tag;
+                            btn.onclick = () => {
+                                const div = document.createElement("button");
+                                div.classList.add("tag");
+                                div.style.backgroundColor = "rgba(255, 0, 0, 0.3)";
+                                div.style.borderColor = "#F00";
+                                const span = document.createElement("span");
+                                span.innerText = tag;
+                                span.style.color = "#F00";
+                                div.append(span);
+                                selected_tags.add(tag);
+                                li.remove();
+                                document.getElementById("tag-list").append(div);
+                                div.onclick = () => {
+                                    div.remove();
+                                    selected_tags.delete(tag);
+                                }
+                            }
+                            li.append(btn);
+                            window.tag_search_list.append(li);
+                        }
+                        for(const entry of window.tag_search_list.children) {
+                            const btn = entry.querySelector("button");
+                            entry.style.display = (btn.innerText.toLowerCase().indexOf(query) != -1) ? null : "none";
+                        }
+                    });
+                })
+            }, 250); 
         };
+        window.close_add_tag_dlg.onclick = () => {
+            window.tag_search_list.innerHTML = '';
+            window.add_tag_dlg_search.value = "";
+            window.add_tag_dlg.close();
+        }
     </script>
 </body>
 {% endblock %}
