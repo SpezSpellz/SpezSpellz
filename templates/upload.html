@@ -209,6 +209,13 @@
         window.add_tag.onclick = () => {
             window.add_tag_dlg.showModal();
         };
+        function hashStr(s) {
+            return s.split("").reduce(function(a, b) {
+                a = ((a << 5) - a) + b.charCodeAt(0);
+                return a & a;
+            }, 0);
+        }
+        const tag_colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'];
         var update_tags_tm = null;
         window.add_tag_dlg_search.onkeyup = () => {
             const query = window.add_tag_dlg_search.value.toLowerCase();
@@ -242,13 +249,14 @@
                             btn.classList.add("tag-search-entry");
                             btn.innerText = tag;
                             btn.onclick = () => {
+                                const col = tag_colors[hashStr(tag) % tag_colors.length];
                                 const div = document.createElement("button");
                                 div.classList.add("tag");
-                                div.style.backgroundColor = "rgba(255, 0, 0, 0.3)";
-                                div.style.borderColor = "#F00";
+                                div.style.backgroundColor = col + "4C";
+                                div.style.borderColor = col;
                                 const span = document.createElement("span");
                                 span.innerText = tag;
-                                span.style.color = "#F00";
+                                span.style.color = col;
                                 div.append(span);
                                 selected_tags.add(tag);
                                 li.remove();
