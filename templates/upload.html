@@ -20,11 +20,11 @@
             <div>
                 <span style="font-size: 12pt;">Repetition: </span>
                 <select style="width: 150px;font-size: 12pt;" name="noti_every" id="noti_dlg_every">
-                    <option value="day">Every Day</option>
-                    <option value="week">Every Week</option>
-                    <option value="month">Every Month</option>
-                    <option value="year">Every Year</option>
-                    <option value="single">Single Event</option>
+                    <option value="D">Every Day</option>
+                    <option value="W">Every Week</option>
+                    <option value="M">Every Month</option>
+                    <option value="Y">Every Year</option>
+                    <option value="S">Single Event</option>
                 </select>
             </div><br>
             <span id="noti_dlg_err" style="color: #F00;margin: auto;display: none;">Failed to eat shit.</span>
@@ -40,21 +40,25 @@
                 <h1 class="section">Settings</h1>
                 <ul style="list-style: none;margin: 0;padding: 0;" class="settings-list">
                     <li>
+                        <h2 class="section">Title</h2>
+                        <input type="text" id="spell_title"/>
+                    </li>
+                    <li>
                         <h2 class="section">Thumbnail</h2>
-                        <input type="image" width="128" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"/>
+                        <input type="file" id="thumbnail_file" style="position: fixed; top: -100em" accept="image/png, image/jpeg"/>
+                        <input id="change_thumbnail" type="image" width="128" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"/>
                     </li>
                     <li>
                         <h2 class="section">Category</h2>
                         <select name="category" id="category">
-                            <option value="spell">Spell</option>
-                            <option value="ritual">Ritual</option>
-                            <option value="food">Food</option>
+                            {% for category in categories %}
+                                <option value="{{ category.name }}">{{ category.name }}</option>
+                            {% endfor %}
                         </select> 
                     </li>
                     <li>
                         <h2 class="section">Tags</h2>
                         <div style="display: inline-block;" id="tag-list">
-                            <!-- <div class="tag" style="background-color: rgba(255, 0, 0, 0.3);border-color: #F00;"><span style="color: #F00;">Sacrafice</span></div> -->
                         </div>
                         <button id="add_tag" class="tag tag-add">+</button>
                     </li>
@@ -99,20 +103,30 @@
 [Insert any changes or enhancements when cast at higher levels.]
 </textarea>
                     <input type="image" src="/assets/preview.svg" width="32px" id="preview_md"></input>
-                    <button class="div-box upload-btn">Upload</button>
+                    <button class="div-box upload-btn" id="upload_btn">Upload</button>
                 </div>
             </th>
             <th style="width: 300px" valign="top">
                 <h1 class="section">Attachments</h1>
                 <div id="upload_attachment_box">
-                    <ul style="list-style: none;margin: 0;padding: 0;">
-
+                    <ul id="upload_attachment_list" style="list-style: none;margin: 0;padding: 0;">
+                        
                     </ul>
                     <button id="add_attachment_btn" class="tag tag-add">+</button>
                 </div>
             </th>
         </tr>
     </table>
+    <template id="attachment_template">
+        <div class="div-box" style="background-color: #5F5F5F;display: flex;margin: 10px">
+            <img width="32" src="/assets/file.svg"/>
+            <div style="margin: auto;margin-left: 10px;">
+                <span style="color: #FFF;font-family: monospace;font-size: 11pt;" id="attachment_file_name"></span><br>
+                <span style="color: #AAA;font-family: monospace;font-size: 9pt;" id="attachment_file_size"></span>
+            </div>
+            <input width="24" type="image" src="/assets/add-link.svg"/>
+        </div>
+    </template>
     <script type="module">
         import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
         const noti_list = window.noti_list;
@@ -129,23 +143,23 @@
             const every = window.noti_dlg_every.value;
             const time_str = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
             switch(every) {
-                case "day": {
+                case "D": {
                     text = "\nevery day at " + time_str;
                     break;
                 }
-                case "week": {
+                case "W": {
                     text = "\nevery " + ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"][time.getDay()] + " at " + time_str;
                     break;
                 }
-                case "month": {
+                case "M": {
                     text = "\nevery " + time.getDate() + " of every month at " + time_str;
                     break;
                 }
-                case "year": {
+                case "Y": {
                     text = "every " + time.getDate() + "/" + time.getMonth() + " at " + time_str + " every year.";
                     break;
                 }
-                case "single": {
+                case "S": {
                     text = "\non " + time.toLocaleString('en-US', { year: 'numeric', month: 'long', hour: 'numeric', minute: 'numeric', hour12: true });
                     break;
                 }
@@ -259,6 +273,59 @@
             window.tag_search_list.innerHTML = '';
             window.add_tag_dlg_search.value = "";
             window.add_tag_dlg.close();
+        };
+        window.change_thumbnail.onclick = () => {
+            window.thumbnail_file.click();
+        };
+        window.thumbnail_file.onchange = () => {
+            const [file] = window.thumbnail_file.files
+            if (!file)
+                return;
+            window.change_thumbnail.src = URL.createObjectURL(file);
+        };
+        window.add_attachment_btn.onclick = () => {
+            const file_handler = document.createElement("input");
+            file_handler.type = "file";
+            file_handler.click();
+            file_handler.onchange = () => {
+                const file = file_handler.files.item(0);
+                const attachment = window.attachment_template.content.cloneNode(true);
+                attachment.querySelector("#attachment_file_name").innerText = file.name;
+                attachment.querySelector("#attachment_file_size").innerText = file.size + " bytes";
+                window.upload_attachment_list.append(attachment);
+            }
+        };
+        window.upload_btn.onclick = () => {
+            const [thumbnail] = window.thumbnail_file.files
+            var data = new FormData();
+            if(thumbnail)
+                data.append("thumbnail", thumbnail);
+            data.append("title", window.spell_title.value);
+            data.append("tags", selected_tags.size);
+            var i = 0;
+            for(const tag of selected_tags)
+                data.append("tag" + i++, tag);
+            const file_inputs = window.upload_attachment_list.querySelectorAll("input[type=\"file\"]");
+            data.append("attachs", file_inputs.length);
+            i = 0;
+            for(const file of file_inputs)
+                data.append("attach" + i++, file.files.item(0));
+            const notis = window.noti_list.querySelectorAll("li");
+            data.append("notis", notis.length);
+            for(const noti of notis) {
+                const cur_idx = i++;
+                data.append("notimsg" + cur_idx, noti.getAttribute("msg"));
+                data.append("notidate" + cur_idx, noti.getAttribute("time"));
+                data.append("notiev" + cur_idx, noti.getAttribute("every"));
+            }
+            data.append("category", window.category.value);
+            fetch("{% url 'spezspellz:upload' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: data
+            }).then(() => {});
         }
     </script>
 </body>

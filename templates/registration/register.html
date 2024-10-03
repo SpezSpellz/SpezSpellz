@@ -1,0 +1,13 @@
+{% extends 'registration/base.html' %}
+{% block title %}Register{% endblock %}
+{% block blk_title %}Register{% endblock %}
+{% block btn_text %}Register{% endblock %}
+{% block other_msg %}Already have an account?{% endblock %}
+{% block other_link %}/login{% endblock %}
+{% block other_link_msg %}Login Here{% endblock %}
+{% block fields %}
+<input type="text" placeholder="Username" name="username" maxlength="150" autocapitalize="none" autocomplete="username" autofocus="" required="" aria-describedby="id_username_helptext" id="id_username">
+<input type="password" placeholder="Password" name="password1" autocomplete="new-password" id="id_password1">
+<input type="password" placeholder="Confirm Password" name="password2" autocomplete="new-password" aria-describedby="id_password2_helptext" id="id_password2">
+<input type="radio" name="usable_password" value="true" class="radiolist inline" id="id_usable_password_0" checked hidden>
+{% endblock %}

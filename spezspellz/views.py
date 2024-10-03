@@ -1,10 +1,22 @@
 """Contains views for SpezSpellz."""
 from typing import Optional
 import json
-from django.http import HttpRequest, HttpResponse, HttpResponseBase
+from django.http import HttpRequest, HttpResponse, HttpResponseBase, FileResponse
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import Spell, User, Tag
+from django.urls import reverse_lazy
+from django.contrib.auth.forms import UserCreationForm
+from django.utils.dateparse import parse_datetime
+from django.views.generic import CreateView
+from .models import Spell, User, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment
+
+
+def safe_cast(t, val, default=None):
+    """Attempt to cast or else return default."""
+    try:
+        return t(val)
+    except:
+        return default
 
 
 class RPCView:
@@ -39,9 +51,80 @@ class HomePage(View):
 class UploadPage(View):
     """Handle the upload page."""
 
+    # 25MB attachment limit
+    MAX_ATTACH_SIZE = 25e6
+    # 2MB thumbnail limit
+    MAX_THUMBNAIL_SIZE = 2e6
+
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Handle GET requests for this view."""
-        return render(request, "upload.html")
+        return render(request, "upload.html", {
+            "categories": Category.objects.all()
+        })
+
+    def post(self, request: HttpRequest) -> HttpResponseBase:
+        """Handle POST requests for this view."""
+        category = request.POST.get("category")
+        if category is None:
+            return HttpResponse("Missing parameter `category`.", status=400)
+        thumbnail = request.FILES.get("thumbnail")
+        if thumbnail is not None and thumbnail.size > self.__class__.MAX_THUMBNAIL_SIZE:
+            return HttpResponse("Thumbnail too large.", status=400)
+        tags_len = min(30, safe_cast(int, request.POST.get("tags"), 0))
+        noti_len = min(50, safe_cast(int, request.POST.get("notis"), 0))
+        attach_len = min(50, safe_cast(int, request.POST.get("attachs"), 0))
+        title = request.POST.get("title", "No Title")
+        category = get_or_none(Category, name=category)
+        if category is None:
+            return HttpResponse("Unknown category.", status=404)
+        spell = Spell(
+            creator=request.user,
+            title=title,
+            data=request.POST.get("data", ""),
+            category=category,
+            thumbnail=thumbnail
+        )
+        tags_to_add = []
+        for i in range(tags_len):
+            tag_entry_name = request.POST.get(f"tag{i}")
+            if tag_entry_name is None:
+                continue
+            tag = get_or_none(Tag, name=tag_entry_name)
+            if tag is None:
+                continue
+            has_tag = HasTag(spell=spell, tag=tag, rating=0)
+            tags_to_add.append(has_tag)
+        notis_to_add = []
+        for i in range(noti_len):
+            noti_msg = request.POST.get(f"notimsg{i}")
+            noti_date = request.POST.get(f"notidate{i}")
+            try:
+                noti_date = parse_datetime(noti_date)
+                if noti_date is None:
+                    continue
+            except ValueError:
+                continue
+            noti_every = request.POST.get(f"notiev{i}")
+            if noti_msg is None or noti_every is None or noti_every not in SpellNotification.EveryType.choices:
+                continue
+            noti = SpellNotification(spell=spell, datetime=noti_date, every=noti_every, message=noti_msg)
+            notis_to_add.append(noti)
+        total_attach_size = 0
+        attach_to_add = []
+        for i in range(attach_len):
+            attach = request.FILES.get(f"attach{i}")
+            if attach is None:
+                continue
+            if total_attach_size + attach.size > self.__class__.MAX_ATTACH_SIZE:
+                break
+            total_attach_size += attach.size
+            attachment = Attachment(spell=spell, file=attach)
+            attach_to_add.append(attachment)
+        spell.save()
+        HasTag.objects.bulk_create(tags_to_add)
+        SpellNotification.objects.bulk_create(notis_to_add)
+        Attachment.objects.bulk_create(attach_to_add)
+        return HttpResponse("OK", status=200)
 
 
 class TagsPage(View, RPCView):
@@ -82,10 +165,18 @@ def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
     return render(request, "spell.html", {"spell": spell})
 
 
-def thumbnail(request: HttpRequest, spell_id: int):
+def thumbnail(_: HttpRequest, spell_id: int):
     """Return the thumbnail for a spell."""
     try:
         spell = Spell.objects.get(id=spell_id)
     except Spell.DoesNotExist:
         return HttpResponse("Not Found", status=404)
-    return HttpResponse(spell.thumbnail, content_type="image/jpeg")
+    return FileResponse(spell.thumbnail)
+
+
+class RegisterView(CreateView):
+    """View for registration/signup."""
+
+    form_class = UserCreationForm
+    success_url = reverse_lazy("login")
+    template_name = "registration/register.html"

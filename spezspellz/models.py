@@ -1,6 +1,26 @@
 """This file contains models."""
+from typing import Optional, cast, TypeVar
 from django.contrib.auth.models import User
 from django.db import models
+from config.settings import BASE_DIR
+
+
+ModelClass = TypeVar('ModelClass')
+
+
+def get_or_none(model_class: type[ModelClass], **kwargs) -> Optional[ModelClass]:
+    """Get a model, returns None if not found.
+
+    Args:
+        model_class (class): The model class to get.
+
+    Returns:
+        model_class | None: The obtained model class or None
+    """
+    try:
+        return cast(ModelClass, cast(models.Model, model_class).objects.get(**kwargs))
+    except cast(models.Model, model_class).DoesNotExist:
+        return None
 
 
 class Category(models.Model):
@@ -27,8 +47,8 @@ class Spell(models.Model):
     creator: models.ForeignKey[User] = models.ForeignKey(User, on_delete=models.CASCADE)
     title: models.CharField = models.CharField(max_length=50)
     data: models.CharField = models.CharField(max_length=4096 * 10)
-    thumbnail: models.BinaryField = models.BinaryField(
-        max_length=4096 * 1221,
+    thumbnail: models.FileField = models.FileField(
+        upload_to=BASE_DIR / "content",
         null=True
     )
     category: models.ForeignKey[Category] = models.ForeignKey(
@@ -67,3 +87,29 @@ class HasTag(models.Model):
     )
     rating: models.IntegerField = models.IntegerField()
     # +1 for YES -1 for NO
+
+class SpellNotification(models.Model):
+    """Auto notification for spells."""
+
+    class EveryType(models.TextChoices):
+        """Period to show notification."""
+
+        DAY = "D"
+        WEEK = "W"
+        MONTH = "M"
+        YEAR = "Y"
+        SINGLE = "S"
+
+    spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, on_delete=models.CASCADE)
+    datetime: models.DateTimeField = models.DateTimeField()
+    every: models.CharField = models.CharField(max_length=1, choices=EveryType.choices, default=EveryType.SINGLE)
+    message: models.CharField = models.CharField(max_length=256)
+
+
+class Attachment(models.Model):
+    """The attachment for spells."""
+
+    spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, on_delete=models.CASCADE)
+    file: models.FileField = models.FileField(
+        upload_to=BASE_DIR / "content"
+    )
