@@ -32,7 +32,7 @@ class Spell(models.Model):
         null=True
     )
     category: models.ForeignKey[Category] = models.ForeignKey(
-        Category, null=True,
+        Category, null=True, blank=True,
         on_delete=models.SET_NULL
     )
 
@@ -66,3 +66,4 @@ class HasTag(models.Model):
         on_delete=models.CASCADE
     )
     rating: models.IntegerField = models.IntegerField()
+    # +1 for YES -1 for NO

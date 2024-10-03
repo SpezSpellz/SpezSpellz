@@ -69,5 +69,10 @@ Here is what they contain
 |:--------:|:---------:|
 |  demo1   | demo_man1 |
 
+**Admin user**
+| Username | Password  |
+|:--------:|:---------:|
+| admin    | password  |
+
 ## Project Documents
 The project documents below are all available in the [Wiki](../../wiki/Home).
