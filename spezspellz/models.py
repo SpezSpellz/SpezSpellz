@@ -67,3 +67,14 @@ class HasTag(models.Model):
     )
     rating: models.IntegerField = models.IntegerField()
     # +1 for YES -1 for NO
+
+
+class Bookmark(models.Model):
+    """Collection of spell that a user had saved as bookmark."""
+
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    spell = models.ForeignKey(Spell, null=False, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Bookmark Spell id: {self.spell.id} " \
+               f"for user id: {self.user.id}"
