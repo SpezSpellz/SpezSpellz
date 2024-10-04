@@ -6,10 +6,11 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_datetime
 from django.views.generic import CreateView
 from django.db import transaction
-from .models import Spell, User, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment
+from .models import Spell, User, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, Bookmark
 
 
 def safe_cast(t, val, default=None):
@@ -164,13 +165,16 @@ class TagsPage(View, RPCView):
         return HttpResponse(json.dumps([tag.name for tag in Tag.objects.filter(name__icontains=query)[0:max_len]]), status=200)
 
 
-class ProfilePage(View):
-    """Handle the profile page."""
-
-    def get(self, request: HttpRequest, user_id: int) -> HttpResponseBase:
-        """Handle GET requests for this view."""
-        user = User.objects.get(pk=user_id)
-        return render(request, "profile.html", {"user_info": user})
+@login_required
+def profile_view(request):
+    user = request.user
+    spells = Spell.objects.filter(creator=user)
+    bookmarks = Bookmark.objects.filter(user=user)
+    return render(request, 'profile.html', {
+        'user': user,
+        'spells': spells,
+        'bookmarks': bookmarks
+    })
 
 
 def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
