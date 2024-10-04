@@ -33,9 +33,11 @@ class UserInfo(models.Model):
     """Store the user info."""
 
     user: models.OneToOneField[User] = models.OneToOneField(User, on_delete=models.CASCADE)
-    privacy: models.BooleanField = models.BooleanField(default=False)
-    notification: models.BooleanField = models.BooleanField(default=True)
-    user_desc: models.CharField = models.CharField(max_length=400)
+    timed_notification: models.BooleanField = models.BooleanField(default=True)
+    review_comment_notification: models.BooleanField = models.BooleanField(default=True)
+    spell_review_notification: models.BooleanField = models.BooleanField(default=True)
+    spell_comment_notification: models.BooleanField = models.BooleanField(default=True)
+    user_desc: models.CharField = models.CharField(default="", max_length=400)
 
     def __str__(self):
         """Return user info as string."""

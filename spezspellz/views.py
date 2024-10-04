@@ -9,7 +9,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.utils.dateparse import parse_datetime
 from django.views.generic import CreateView
 from django.db import transaction
-from .models import Spell, User, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment
+from .models import Spell, User, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo
 
 
 def safe_cast(t, val, default=None):
@@ -171,6 +171,36 @@ class ProfilePage(View):
         """Handle GET requests for this view."""
         user = User.objects.get(pk=user_id)
         return render(request, "profile.html", {"user_info": user})
+
+
+class UserSettingsPage(View, RPCView):
+    """Handle the user settings page."""
+
+    def get(self, request: HttpRequest) -> HttpResponseBase:
+        """Handle GET requests for this view."""
+        return render(request, "user_settings.html")
+
+    def rpc_update(
+        self,
+        request: HttpRequest,
+        timed_noti: bool = True,
+        re_coms_noti: bool = True,
+        sp_re_noti: bool = True,
+        sp_coms_noti: bool = True,
+        desc: str = ""
+    ) -> HttpResponse:
+        """Handle settings update."""
+        if not request.user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        with transaction.atomic():
+            user_info = request.user.userinfo if hasattr(request.user, "userinfo") else UserInfo(user=request.user)
+            user_info.timed_notification = bool(timed_noti)
+            user_info.review_comment_notification = bool(re_coms_noti)
+            user_info.spell_review_notification = bool(sp_re_noti)
+            user_info.spell_comment_notification = bool(sp_coms_noti)
+            user_info.user_desc = str(desc)
+            user_info.save()
+        return HttpResponse("OK")
 
 
 def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:

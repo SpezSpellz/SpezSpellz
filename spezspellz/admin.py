@@ -33,11 +33,11 @@ class UserInfoAdmin(admin.ModelAdmin):
     """For configuring user info."""
 
     fieldsets = [
-        ("Settings", {"fields": ["privacy", "notification"]}),
+        ("Settings", {"fields": ["timed_notification", "review_comment_notification", "spell_review_notification", "spell_comment_notification"]}),
         ("Information", {"fields": ["user_desc"]})
     ]
 
-    list_display = ["user", "privacy", "notification"]
+    list_display = ["user", "timed_notification", "review_comment_notification", "spell_review_notification", "spell_comment_notification"]
 
 
 class HasTagAdmin(admin.ModelAdmin):
