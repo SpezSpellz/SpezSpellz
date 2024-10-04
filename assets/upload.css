@@ -184,3 +184,29 @@ body {
 .tag-search-entry:active {
     background-color: #5B5B5B;
 }
+
+.attach-link-btn {
+    background-color: #3B3B3B;
+    border-radius: 6px;
+    padding: 4px;
+    margin: 2px;
+}
+
+.attach-link-btn:hover {
+    background-color: #5B5B5B;
+}
+
+.attach-link-btn:active {
+    background-color: #6B6B6B;
+}
+
+.attach-remove-btn {
+    background-color: #A00000;
+    border-radius: 6px;
+    padding: 4px;
+    margin: 2px;
+}
+
+.attach-remove-btn:hover {
+    background-color: #EF0000;
+}

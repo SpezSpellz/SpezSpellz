@@ -46,7 +46,7 @@
                     <li>
                         <h2 class="section">Thumbnail</h2>
                         <input type="file" id="thumbnail_file" style="position: fixed; top: -100em" accept="image/png, image/jpeg"/>
-                        <input id="change_thumbnail" type="image" width="128" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrQaiqVBiGcaVKeGnRMx0Z7WSm5reolSrZPg&s"/>
+                        <input id="change_thumbnail" type="image" width="128" src="/assets/default_thumbnail.jpg"/>
                     </li>
                     <li>
                         <h2 class="section">Category</h2>
@@ -119,12 +119,15 @@
     </table>
     <template id="attachment_template">
         <div class="div-box" style="background-color: #5F5F5F;display: flex;margin: 10px">
-            <img width="32" src="/assets/file.svg"/>
+            <img style="flex-basis: 32px; flex-grow: 0; flex-shrink: 0;" width="32" src="/assets/file.svg"/>
             <div style="margin: auto;margin-left: 10px;">
                 <span style="color: #FFF;font-family: monospace;font-size: 11pt;" id="attachment_file_name"></span><br>
                 <span style="color: #AAA;font-family: monospace;font-size: 9pt;" id="attachment_file_size"></span>
             </div>
-            <input width="24" type="image" src="/assets/add-link.svg"/>
+            <div class="div-box" style="margin: 0;margin-left: 10px;background-color: #4b4b4b;padding: 3px;display: flex;flex-direction: column;border-radius: 5px;">
+                <input class="attach-link-btn" style="flex-basis: 12px; flex-grow: 0; flex-shrink: 0;" width="12" type="image" src="/assets/add-link.svg"/>
+                <input class="attach-remove-btn" style="flex-basis: 12px; flex-grow: 0; flex-shrink: 0;" width="12" type="image" src="/assets/delete.svg"/>
+            </div>
         </div>
     </template>
     <script type="module">
@@ -291,16 +294,44 @@
                 return;
             window.change_thumbnail.src = URL.createObjectURL(file);
         };
+        function fallbackCopyTextToClipboard(text) {
+            var text_area = document.createElement("textarea");
+            text_area.value = text;
+            text_area.style.top = "0";
+            text_area.style.left = "0";
+            text_area.style.position = "fixed";
+            document.body.appendChild(text_area);
+            text_area.focus();
+            text_area.select();
+            try {
+                document.execCommand('copy');
+            } catch (_) { }
+            document.body.removeChild(text_area);
+        }
+        function copyTextToClipboard(text) {
+            if (!navigator.clipboard) {
+                fallbackCopyTextToClipboard(text);
+                return;
+            }
+            navigator.clipboard.writeText(text).then(() => {});
+        }
         window.add_attachment_btn.onclick = () => {
             const file_handler = document.createElement("input");
             file_handler.type = "file";
             file_handler.click();
             file_handler.onchange = () => {
                 const file = file_handler.files.item(0);
-                const attachment = window.attachment_template.content.cloneNode(true);
+                const attachment = window.attachment_template.content.cloneNode(true).firstElementChild;
+                const file_url = URL.createObjectURL(file);
+                file_handler.setAttribute("file_url", file_url);
                 attachment.querySelector("#attachment_file_name").innerText = file.name;
                 attachment.querySelector("#attachment_file_size").innerText = file.size + " bytes";
-                window.upload_attachment_list.append(attachment);
+                let appended;
+                attachment.querySelector(".attach-link-btn").onclick = () => copyTextToClipboard(file_url);
+                attachment.querySelector(".attach-remove-btn").onclick = () => attachment.remove();
+                file_handler.style.display = "none";
+                attachment.append(file_handler);
+                window.upload_attachment_list.appendChild(attachment);
             }
         };
         window.upload_btn.onclick = () => {
@@ -316,8 +347,11 @@
             const file_inputs = window.upload_attachment_list.querySelectorAll("input[type=\"file\"]");
             data.append("attachs", file_inputs.length);
             i = 0;
-            for(const file of file_inputs)
-                data.append("attach" + i++, file.files.item(0));
+            for(const file of file_inputs) {
+                const cur_idx = i++;
+                data.append("attachn" + cur_idx, file.getAttribute("file_url"));
+                data.append("attach" + cur_idx, file.files.item(0));
+            }
             const notis = window.noti_list.querySelectorAll("li");
             data.append("notis", notis.length);
             for(const noti of notis) {
@@ -327,6 +361,7 @@
                 data.append("notiev" + cur_idx, noti.getAttribute("every"));
             }
             data.append("category", window.category.value);
+            data.append("data", window.markdown_input.value);
             fetch("{% url 'spezspellz:upload' %}", {
                 method: "POST",
                 headers: {

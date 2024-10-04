@@ -4,10 +4,11 @@ import json
 from django.http import HttpRequest, HttpResponse, HttpResponseBase, FileResponse
 from django.shortcuts import render, redirect
 from django.views import View
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.dateparse import parse_datetime
 from django.views.generic import CreateView
+from django.db import transaction
 from .models import Spell, User, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment
 
 
@@ -64,6 +65,9 @@ class UploadPage(View):
 
     def post(self, request: HttpRequest) -> HttpResponseBase:
         """Handle POST requests for this view."""
+        data = request.POST.get("data")
+        if data is None:
+            return HttpResponse("Missing parameter `data`.", status=400)
         category_name = request.POST.get("category")
         if category_name is None:
             return HttpResponse("Missing parameter `category`.", status=400)
@@ -110,11 +114,15 @@ class UploadPage(View):
                     continue
             except ValueError:
                 continue
-            noti = SpellNotification(spell=spell, datetime=noti_date, every=noti_every, message=noti_msg)
+            noti = SpellNotification(spell=spell, datetime=noti_date, every=noti_every, message=noti_msg, data=data)
             notis_to_add.append(noti)
         total_attach_size = 0
+        attach_names = []
         attach_to_add = []
         for i in range(attach_len):
+            attach_name = request.POST.get(f"attachn{i}")
+            if attach_name is None:
+                continue
             attach = request.FILES.get(f"attach{i}")
             if attach is None or attach.size is None:
                 continue
@@ -123,17 +131,23 @@ class UploadPage(View):
             total_attach_size += attach.size
             attachment = Attachment(spell=spell, file=attach)
             attach_to_add.append(attachment)
-        spell.save()
-        HasTag.objects.bulk_create(tags_to_add)
-        SpellNotification.objects.bulk_create(notis_to_add)
-        Attachment.objects.bulk_create(attach_to_add)
+            attach_names.append(attach_name)
+        with transaction.atomic():
+            spell.save()
+            HasTag.objects.bulk_create(tags_to_add)
+            SpellNotification.objects.bulk_create(notis_to_add)
+            Attachment.objects.bulk_create(attach_to_add)
+            for i in range(len(attach_to_add)):
+                data = data.replace(attach_names[i], reverse("spezspellz:attachments", args=(attach_to_add[i].pk,)))
+            spell.data = data
+            spell.save()
         return HttpResponse("OK", status=200)
 
 
 class TagsPage(View, RPCView):
     """Shows all tags and query tags."""
 
-    def get(self, request: HttpRequest) -> HttpResponseBase:
+    def get(self, _: HttpRequest) -> HttpResponseBase:
         """Show the tags page."""
         return HttpResponse("Not Implemented", status=404)
 
@@ -168,13 +182,24 @@ def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
     return render(request, "spell.html", {"spell": spell})
 
 
-def thumbnail(_: HttpRequest, spell_id: int):
+def thumbnail_view(_: HttpRequest, spell_id: int):
     """Return the thumbnail for a spell."""
     try:
-        spell = Spell.objects.get(id=spell_id)
+        spell = Spell.objects.get(pk=spell_id)
     except Spell.DoesNotExist:
         return HttpResponse("Not Found", status=404)
+    if not spell.thumbnail:
+        return redirect("/assets/default_thumbnail.jpg")
     return FileResponse(spell.thumbnail)
+
+
+def attachment_view(_: HttpRequest, attachment_id: int):
+    """Return the attachment."""
+    try:
+        attachment = Attachment.objects.get(pk=attachment_id)
+    except Attachment.DoesNotExist:
+        return HttpResponse("Not Found", status=404)
+    return FileResponse(attachment.file)
 
 
 class RegisterView(CreateView):
