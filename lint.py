@@ -22,6 +22,6 @@ class Linter:
 linter = Linter(flake8=("flake8", "--exclude",
                         "spezspellz/migrations,__init__.py",
                         "--max-line-length", "256", "spezspellz"),
-                mypy=("mypy", "spezspellz"),
+                mypy=("mypy", "--ignore-missing-imports", "spezspellz"),
                 ruff=(("ruff", "check", "spezspellz")))
 linter.run()

@@ -32,13 +32,14 @@ class Category(models.Model):
 class UserInfo(models.Model):
     """Store the user info."""
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    privacy = models.BooleanField(default=False)
-    notification = models.BooleanField(default=True)
-    user_desc = models.CharField(max_length=400)
+    user: models.OneToOneField[User] = models.OneToOneField(User, on_delete=models.CASCADE)
+    privacy: models.BooleanField = models.BooleanField(default=False)
+    notification: models.BooleanField = models.BooleanField(default=True)
+    user_desc: models.CharField = models.CharField(max_length=400)
 
     def __str__(self):
-        return self.user.username + " Info"
+        """Return user info as string."""
+        return f"UserInfo(username={self.user.username})"
 
 
 class Spell(models.Model):
@@ -88,6 +89,7 @@ class HasTag(models.Model):
     rating: models.IntegerField = models.IntegerField()
     # +1 for YES -1 for NO
 
+
 class SpellNotification(models.Model):
     """Auto notification for spells."""
 
@@ -118,9 +120,9 @@ class Attachment(models.Model):
 class Bookmark(models.Model):
     """Collection of spell that a user had saved as bookmark."""
 
-    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
-    spell = models.ForeignKey(Spell, null=False, on_delete=models.CASCADE)
+    user: models.ForeignKey[User] = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, null=False, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Bookmark Spell id: {self.spell.id} " \
-               f"for user id: {self.user.id}"
+        """Return bookmark as a string."""
+        return f"Bookmark(spell={self.spell.pk}, user={self.user.pk})"

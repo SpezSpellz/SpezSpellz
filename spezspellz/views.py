@@ -15,7 +15,7 @@ def safe_cast(t, val, default=None):
     """Attempt to cast or else return default."""
     try:
         return t(val)
-    except:
+    except Exception:
         return default
 
 
@@ -64,17 +64,17 @@ class UploadPage(View):
 
     def post(self, request: HttpRequest) -> HttpResponseBase:
         """Handle POST requests for this view."""
-        category = request.POST.get("category")
-        if category is None:
+        category_name = request.POST.get("category")
+        if category_name is None:
             return HttpResponse("Missing parameter `category`.", status=400)
         thumbnail = request.FILES.get("thumbnail")
-        if thumbnail is not None and thumbnail.size > self.__class__.MAX_THUMBNAIL_SIZE:
+        if thumbnail is not None and thumbnail.size is not None and thumbnail.size > self.__class__.MAX_THUMBNAIL_SIZE:
             return HttpResponse("Thumbnail too large.", status=400)
         tags_len = min(30, safe_cast(int, request.POST.get("tags"), 0))
         noti_len = min(50, safe_cast(int, request.POST.get("notis"), 0))
         attach_len = min(50, safe_cast(int, request.POST.get("attachs"), 0))
         title = request.POST.get("title", "No Title")
-        category = get_or_none(Category, name=category)
+        category = get_or_none(Category, name=category_name)
         if category is None:
             return HttpResponse("Unknown category.", status=404)
         spell = Spell(
@@ -97,15 +97,18 @@ class UploadPage(View):
         notis_to_add = []
         for i in range(noti_len):
             noti_msg = request.POST.get(f"notimsg{i}")
-            noti_date = request.POST.get(f"notidate{i}")
+            noti_every = request.POST.get(f"notiev{i}")
+            if noti_msg is None or noti_every is None or noti_every not in SpellNotification.EveryType.choices:
+                continue
+            noti_date_str = request.POST.get(f"notidate{i}")
+            if noti_date_str is None:
+                continue
+            noti_date = None
             try:
-                noti_date = parse_datetime(noti_date)
+                noti_date = parse_datetime(noti_date_str)
                 if noti_date is None:
                     continue
             except ValueError:
-                continue
-            noti_every = request.POST.get(f"notiev{i}")
-            if noti_msg is None or noti_every is None or noti_every not in SpellNotification.EveryType.choices:
                 continue
             noti = SpellNotification(spell=spell, datetime=noti_date, every=noti_every, message=noti_msg)
             notis_to_add.append(noti)
@@ -113,7 +116,7 @@ class UploadPage(View):
         attach_to_add = []
         for i in range(attach_len):
             attach = request.FILES.get(f"attach{i}")
-            if attach is None:
+            if attach is None or attach.size is None:
                 continue
             if total_attach_size + attach.size > self.__class__.MAX_ATTACH_SIZE:
                 break

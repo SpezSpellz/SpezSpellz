@@ -1,18 +1,37 @@
+"""Implement admin stuff."""
 from django.contrib import admin
-
-from .models import *
+from .models import Spell, Tag, HasTag, Category, UserInfo
 
 
 class SpellAdmin(admin.ModelAdmin):
+    """For configuring spell."""
+
     fieldsets = [
-        (None, {"fields": ["creator"]}),
-        ("Spell Information", {"fields": ["title", "data", "category"]})
+        (
+            None,
+            {
+                "fields": ["creator"]
+            }
+        ),
+        (
+            "Spell Information",
+            {
+                "fields":
+                [
+                    "title",
+                    "data",
+                    "category"
+                ]
+            }
+        )
     ]
 
     list_display = ["title", "category", "creator"]
 
 
 class UserInfoAdmin(admin.ModelAdmin):
+    """For configuring user info."""
+
     fieldsets = [
         ("Settings", {"fields": ["privacy", "notification"]}),
         ("Information", {"fields": ["user_desc"]})
@@ -22,6 +41,8 @@ class UserInfoAdmin(admin.ModelAdmin):
 
 
 class HasTagAdmin(admin.ModelAdmin):
+    """For configuring tags."""
+
     list_display = ["spell", "tag", "rating"]
 
 
