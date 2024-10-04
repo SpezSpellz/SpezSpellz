@@ -1,0 +1,233 @@
+[
+{
+  "model": "spezspellz.category",
+  "pk": 1,
+  "fields": {
+    "name": "Spell"
+  }
+},
+{
+  "model": "spezspellz.category",
+  "pk": 2,
+  "fields": {
+    "name": "Ritual"
+  }
+},
+{
+  "model": "spezspellz.category",
+  "pk": 3,
+  "fields": {
+    "name": "Item"
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 1,
+  "fields": {
+    "creator": 1,
+    "title": "Fireball",
+    "data": "# Fireball Spell\r\n\r\n## Overview\r\nThe **Fireball** spell is a powerful offensive magic used by many spellcasters. It harnesses the elemental force of fire to create a devastating explosion, causing damage to all enemies within its radius.\r\n\r\n## Description\r\nWhen cast, Fireball ignites a volatile orb of fire that can be hurled towards a target. Upon impact, it detonates in a fiery explosion, dealing significant damage to all creatures within the blast radius. This spell is particularly effective against groups of enemies.\r\n\r\n## Chant\r\nTo invoke the Fireball spell, the caster recites the following chant:\r\n\r\n```\r\n\"Flammae, in ignem, ad hostes meos!\"\r\n```\r\n\r\n### Translation\r\n\"Flames, into fire, against my foes!\"\r\n\r\n## Components\r\n- **Verbal**: The chant must be spoken aloud.\r\n- **Somatic**: A specific hand gesture is required to shape the fireball.\r\n- **Material**: A small piece of sulfur or a fire-related gem (optional).\r\n\r\n## Range\r\n- **Distance**: 150 feet\r\n- **Radius of Explosion**: 20-foot sphere\r\n\r\n## Damage\r\n- **Base Damage**: 8hp/s for 6 seconds of fire damage\r\n- **Saving Throw**: Dexterity (half damage on a successful save)\r\n\r\n## Duration\r\n- Instantaneous\r\n\r\n## Use in Combat\r\nFireball is best utilized in tactical situations where enemies cluster together. It can turn the tide of battle, but caution is advised to avoid harming allies.\r\n\r\n## Spell Level\r\n- **Level**: 3rd-level Evocation\r\n\r\n## Additional Notes\r\n- Fireball can ignite flammable objects in the area, potentially causing further destruction.\r\n- Some creatures may have resistance or immunity to fire damage, making it less effective in certain encounters.\r\n\r\n## Conclusion\r\nThe Fireball spell is a staple for many spell casters, embodying the destructive power of fire in a compact, versatile form. Its ability to deal massive damage makes it a favorite in both offensive strategies and crowd control.",
+    "thumbnail": "content/fireball.png",
+    "category": 1
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 2,
+  "fields": {
+    "creator": 1,
+    "title": "Icicle lance",
+    "data": "# Icicle Lance Spell\r\n\r\n## Overview\r\nThe **Icicle Lance** spell is a chilling projectile spell that conjures sharp icicles to impale enemies, embodying the elemental power of ice. It is favored by frost mages and those who harness the cold to subdue their foes.\r\n\r\n## Description\r\nWhen cast, Icicle Lance creates a long, spear-like icicle that shoots toward a target at high speed. Upon impact, it deals piercing damage and can potentially slow the target, reducing their movement speed.\r\n\r\n## Chant\r\nTo invoke the Icicle Lance spell, the caster recites the following chant:\r\n\r\n```\r\n\"Glacies, telum, in adversarium!\"\r\n```\r\n\r\n### Translation\r\n\"Ice, spear, against my adversary!\"\r\n\r\n## Components\r\n- **Verbal**: The chant must be spoken aloud.\r\n- **Somatic**: A specific hand gesture is required to form the icicle.\r\n- **Material**: A small shard of ice or a snowflake (optional).\r\n\r\n## Range\r\n- **Distance**: 120 feet\r\n\r\n## Damage\r\n- **Base Damage**: 38 piercing damage\r\n- **Additional Effect**: Target must succeed on a Constitution saving throw or have their speed reduced by 10 feet until the end of their next turn.\r\n\r\n## Duration\r\n- Instantaneous\r\n\r\n## Use in Combat\r\nIcicle Lance is effective for both direct damage and control in battle. It is particularly useful against fast-moving enemies, as it not only inflicts damage but may also hinder their ability to escape or engage.\r\n\r\n## Spell Level\r\n- **Level**: 2nd-level Evocation\r\n\r\n## Additional Notes\r\n- The spell’s icy nature may also freeze flammable surfaces it touches.\r\n- Creatures with resistance or immunity to cold damage may negate some effects of this spell.\r\n\r\n## Conclusion\r\nThe Icicle Lance spell combines precision and elemental force, making it a formidable choice for those who wish to wield the cold against their enemies. Its ability to slow foes adds a tactical layer, allowing spellcasters to control the battlefield effectively.",
+    "thumbnail": "content/a_witch_using_the_icicle_lance_spell.png",
+    "category": 1
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 3,
+  "fields": {
+    "creator": 1,
+    "title": "Health Potion",
+    "data": "# Health Potion\r\n\r\n## Overview\r\nThe **Health Potion** is a vital consumable item used by adventurers and adventurers alike to restore health and vitality during or after combat. It is a staple in many fantasy realms, providing a quick way to recover from injuries.\r\n\r\n## Description\r\nHealth Potions are typically brewed from a combination of medicinal herbs, magical ingredients, and often some form of alchemical base. When consumed, they quickly rejuvenate the drinker, healing wounds and revitalizing energy.\r\n\r\n## Components\r\n- **Ingredients**: Common ingredients include:\r\n  - Healing herbs (e.g., aloe, ginseng)\r\n  - Magical essences (e.g., pixie dust, elemental water)\r\n  - Alchemical reagents (e.g., distilled spirits)\r\n\r\n## Effects\r\n- **Healing**: Restores a specified number of hit points (commonly 2d4 + 2).\r\n- **Duration**: Instantaneous effect upon consumption.\r\n\r\n## Usage\r\nHealth Potions can be used:\r\n- During combat to recover from injuries.\r\n- Between encounters to prepare for upcoming challenges.\r\n\r\n## Rarity\r\n- **Common**: Widely available in potion shops and from alchemists.\r\n- **Greater Health Potions**: More potent versions that restore additional hit points (e.g., 4d4 + 4).\r\n\r\n## Additional Notes\r\n- Health Potions may have side effects if consumed in excess, such as temporary nausea or a reduced healing effect.\r\n- They can be combined with other potions for enhanced effects, but caution is advised to avoid adverse reactions.\r\n\r\n## Conclusion\r\nThe Health Potion is an essential item for any adventurer, providing a quick and effective means to recover health in the heat of battle. Its accessibility and effectiveness make it a cornerstone of survival in challenging quests and adventures.\r\n\r\n## Thanks for reading!\r\n<img width=\"128\" src=\"/attachment/1/\"/>\r\n",
+    "thumbnail": "content/health_potion.png",
+    "category": 3
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 1,
+  "fields": {
+    "name": "Offensive"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 2,
+  "fields": {
+    "name": "Projectile"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 3,
+  "fields": {
+    "name": "Elemental"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 4,
+  "fields": {
+    "name": "Fire Element"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 5,
+  "fields": {
+    "name": "Ice Element"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 6,
+  "fields": {
+    "name": "Electric Element"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 7,
+  "fields": {
+    "name": "Line Attack"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 8,
+  "fields": {
+    "name": "Consumable"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 9,
+  "fields": {
+    "name": "Healing"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 10,
+  "fields": {
+    "name": "Utility"
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 1,
+  "fields": {
+    "spell": 1,
+    "tag": 1,
+    "rating": 0
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 2,
+  "fields": {
+    "spell": 1,
+    "tag": 2,
+    "rating": 0
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 3,
+  "fields": {
+    "spell": 1,
+    "tag": 3,
+    "rating": 0
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 4,
+  "fields": {
+    "spell": 1,
+    "tag": 4,
+    "rating": 0
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 5,
+  "fields": {
+    "spell": 2,
+    "tag": 1,
+    "rating": 0
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 6,
+  "fields": {
+    "spell": 2,
+    "tag": 2,
+    "rating": 0
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 7,
+  "fields": {
+    "spell": 2,
+    "tag": 3,
+    "rating": 0
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 8,
+  "fields": {
+    "spell": 2,
+    "tag": 5,
+    "rating": 0
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 9,
+  "fields": {
+    "spell": 3,
+    "tag": 9,
+    "rating": 0
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 10,
+  "fields": {
+    "spell": 3,
+    "tag": 10,
+    "rating": 0
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 11,
+  "fields": {
+    "spell": 3,
+    "tag": 8,
+    "rating": 0
+  }
+},
+{
+  "model": "spezspellz.attachment",
+  "pk": 1,
+  "fields": {
+    "spell": 3,
+    "file": "content/thankyou.png"
+  }
+}
+]
