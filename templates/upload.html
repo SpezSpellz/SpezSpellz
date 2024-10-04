@@ -3,10 +3,15 @@
 {% block Content %}
 <link rel="stylesheet" href="/assets/upload.css">
 <body>
-    <dialog id="add_tag_dlg" style="height: 400px;width:400px   ">
+    <dialog id="upload_dlg">
+        <h1 class="section dlgheader">Upload</h1>
+        <p id="upload_text" style="color: #FFF;"></p>
+        <button id="upload_dlg_close" style="margin: auto;display: block;">Close</button>
+    </dialog>
+    <dialog id="add_tag_dlg" style="height: 400px;width:400px">
         <h1 class="section dlgheader">Add Tags</h1>
         <input id="add_tag_dlg_search" class="search-bar" placeholder="Enter tag name" type="text"/>
-        <ul id="tag_search_list" style="list-style: none;margin: 0;padding: 0;">
+        <ul id="tag_search_list" style="list-style: none;margin: 0;padding: 0;max-height: 250px;overflow: scroll;">
         </ul>
         <div style="position: absolute;bottom: 15px;left: 0;right: 0;display:flex;flex-direction: row;justify-content: space-evenly;">
             <button id="close_add_tag_dlg">Close</button>
@@ -130,6 +135,7 @@
             </div>
         </div>
     </template>
+    <a href="{% url 'spezspellz:home' %}" style="position: absolute;top: 8px;left: 8px;"><img width="32" src="/assets/home.svg"/></a>
     <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.2/marked.min.js" integrity="sha512-bXyBT2/sYjZg1D7ykDS6eJSE4DFDVPJHvbRAfdfYKr6IusrCz7wAmSm36vz9G8zMob25Rvqu90vft3JI71ygcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="module">
         const noti_list = window.noti_list;
@@ -362,13 +368,29 @@
             }
             data.append("category", window.category.value);
             data.append("data", window.markdown_input.value);
+            window.upload_text.style.color = "#FFF";
+            window.upload_text.innerText = "Uploading...";
+            window.upload_dlg.showModal();
+            window.upload_dlg_close.onclick = () => window.upload_dlg.close();
             fetch("{% url 'spezspellz:upload' %}", {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": "{{ csrf_token }}"
                 },
                 body: data
-            }).then(() => {});
+            }).then(res => {
+                res.text().then(text => {
+                    if(res.status != 200)
+                        window.upload_text.style.color = "#F00";
+                    window.upload_text.innerText = text;
+                }).catch(() => {
+                    window.upload_text.style.color = "#F00";
+                    window.upload_text.innerText = "Failed to upload.";
+                })
+            }).catch(() => {
+                window.upload_text.style.color = "#F00";
+                window.upload_text.innerText = "Failed to upload.";
+            });
         }
     </script>
 </body>
