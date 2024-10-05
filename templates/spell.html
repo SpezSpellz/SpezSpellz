@@ -3,9 +3,17 @@
 {% block Title %}Spell#{{ spell.id }} - SpezSpellz{% endblock %}
 {% block Content %}
     <link rel="stylesheet" href="/assets/spell.css">
+    <div>
+        <a href="{% url 'spezspellz:home' %} " class="home">
+            <img width="32" src="/assets/home.svg"/>
+        </a>
+    </div>
     <div class="spell-title">
         <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img">
-        <text><h1>{{ spell.title }}</h1></text>
+        <text>
+            <h1>{{ spell.title }}</h1>
+            <h3>by: {{ spell.creator.username }}</h3>
+        </text>
     </div>
     <br>
 <textarea id="x_data" style="display: none;">
@@ -22,4 +30,5 @@
     <div class="button">
         <a href="{% url 'spezspellz:home' %}">Home</a>
     </div>
+    <br><br>
 {% endblock %}
