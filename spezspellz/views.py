@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_datetime
 from django.views.generic import CreateView
 from django.db import transaction
+from django.contrib import messages
 from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark
 
 
@@ -171,11 +172,13 @@ def profile_view(request: HttpRequest) -> HttpResponseBase:
     user = request.user
     spells = Spell.objects.filter(creator=user)
     bookmarks = Bookmark.objects.filter(user=user)
-    return render(request, 'profile.html', {
+    context = {
         'user': user,
         'spells': spells,
         'bookmarks': bookmarks
-    })
+    }
+
+    return render(request, 'profile.html', context)
 
 
 class UserSettingsPage(View, RPCView):
@@ -235,6 +238,32 @@ def attachment_view(_: HttpRequest, attachment_id: int):
     except Attachment.DoesNotExist:
         return HttpResponse("Not Found", status=404)
     return FileResponse(attachment.file)
+
+
+@login_required
+def bookmark_view(request: HttpRequest, spell_id: int):
+    """Bookmark the spell for the user."""
+    try:
+        spell = Spell.objects.filter(id=spell_id)
+    except spell.DoesNotExist:
+        messages.add_message(request,
+                             messages.ERROR,
+                             "The spell you were trying to bookmark does not exist.")
+        return redirect("spezspellz:home")
+
+    user = request.user
+    spell = Spell.objects.filter(id=spell_id).first()
+
+    try:
+        old_bookmark = Bookmark.objects.filter(user=user, spell=spell)
+        messages.add_message(request,
+                             messages.INFO,
+                             "You already bookmarked this spell.")
+    except old_bookmark.DoesNotExist:
+        new_bookmark = Bookmark.objects.create(user=user, spell=spell)
+        # TODO: Then change the bookmark icon
+
+    return render(request, "spell.html", {"spell": spell})
 
 
 class RegisterView(CreateView):

@@ -1,6 +1,6 @@
 """Implement admin stuff."""
 from django.contrib import admin
-from .models import Spell, Tag, HasTag, Category, UserInfo
+from .models import Spell, Tag, HasTag, Category, UserInfo, Bookmark
 
 
 class SpellAdmin(admin.ModelAdmin):
@@ -33,7 +33,11 @@ class UserInfoAdmin(admin.ModelAdmin):
     """For configuring user info."""
 
     fieldsets = [
-        ("Settings", {"fields": ["timed_notification", "review_comment_notification", "spell_review_notification", "spell_comment_notification"]}),
+        ("Settings", {"fields": ["timed_notification",
+                                 "review_comment_notification",
+                                 "spell_review_notification",
+                                 "spell_comment_notification"]}),
+
         ("Information", {"fields": ["user_desc"]})
     ]
 
@@ -46,8 +50,15 @@ class HasTagAdmin(admin.ModelAdmin):
     list_display = ["spell", "tag", "rating"]
 
 
+class BookmarkAdmin(admin.ModelAdmin):
+    """For configuring Bookmarks"""
+
+    list_display = ["user", "spell"]
+
+
 admin.site.register(Spell, SpellAdmin)
 admin.site.register(Tag)
 admin.site.register(HasTag, HasTagAdmin)
 admin.site.register(Category)
 admin.site.register(UserInfo, UserInfoAdmin)
+admin.site.register(Bookmark, BookmarkAdmin)

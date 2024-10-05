@@ -18,7 +18,7 @@
   <h2>Your Bookmarks</h2>
   <ul>
     {% for bookmark in bookmarks %}
-      <li>{{ bookmark.spell.title }}</li>
+      <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}"><li>{{ bookmark.spell.title }}</li></a>
     {% empty %}
       <li>You have no bookmarks.</li>
     {% endfor %}
