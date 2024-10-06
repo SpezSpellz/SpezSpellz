@@ -1,4 +1,4 @@
-h1, h2 {
+h1, h2, h3 {
     color: #FFFFFF;
 }
 
@@ -24,7 +24,6 @@ text {
 
 .spell {
     position: relative;
-    height: 55vh;
     display: block;
     background-color: #3B3B3B;
     margin-left: 5%;
@@ -47,10 +46,24 @@ text {
     background-color: #3B3B3B;
     border-radius: 10px;
     text-decoration: none;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: filter 0.3s ease;
 }
 
 .button a:hover {
-    color: #3B3B3B;
-    background-color: #FFFFFF;
+    filter: invert(100%)
+}
+
+
+.home {
+    padding: 5px;
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-color: #2B2B2B;
+    border-radius: 10px;
+    transition: filter 0.3s ease;
+}
+
+.home:hover {
+    filter: invert(100%)
 }
