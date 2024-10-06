@@ -213,11 +213,19 @@ class UserSettingsPage(View, RPCView):
 
 def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
     """Return the spell detail page."""
+    user = request.user
     try:
         spell = Spell.objects.get(id=spell_id)
     except Spell.DoesNotExist:
         return redirect("spezspellz:home")
-    return render(request, "spell.html", {"spell": spell})
+
+    bookmark = Bookmark.objects.filter(user=user.id, spell=spell).first()
+
+    print(bookmark)
+
+    return render(request,
+                  "spell.html",
+                  {"spell": spell, "bookmark": bookmark})
 
 
 def thumbnail_view(_: HttpRequest, spell_id: int):
@@ -254,16 +262,16 @@ def bookmark_view(request: HttpRequest, spell_id: int):
     user = request.user
     spell = Spell.objects.filter(id=spell_id).first()
 
-    try:
-        old_bookmark = Bookmark.objects.filter(user=user, spell=spell)
-        messages.add_message(request,
-                             messages.INFO,
-                             "You already bookmarked this spell.")
-    except old_bookmark.DoesNotExist:
-        new_bookmark = Bookmark.objects.create(user=user, spell=spell)
-        # TODO: Then change the bookmark icon
+    bookmark = Bookmark.objects.filter(user=user, spell=spell)
 
-    return render(request, "spell.html", {"spell": spell})
+    if bookmark.exists():
+        bookmark.delete()
+    else:
+        bookmark = Bookmark.objects.create(user=user, spell=spell)
+
+    return render(request,
+                  "spell.html",
+                  {"spell": spell, "bookmark": bookmark})
 
 
 class RegisterView(CreateView):

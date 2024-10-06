@@ -9,7 +9,11 @@
         <text><h1>{{ spell.title }}</h1></text>
     </div>
     <div class="button">
+        {% if bookmark %}
+        <a href="{% url 'spezspellz:bookmark' spell.pk %}"><i class="fas fa-bookmark"></i></a>
+        {% else %}
         <a href="{% url 'spezspellz:bookmark' spell.pk %}"><i class="far fa-bookmark"></i></a>
+        {% endif %}
     </div>
     <br>
 <textarea id="x_data" style="display: none;">
