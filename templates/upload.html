@@ -382,7 +382,10 @@
                 res.text().then(text => {
                     if(res.status != 200)
                         window.upload_text.style.color = "#F00";
-                    window.upload_text.innerText = text;
+                    if(res.status == 200 && text == "OK") 
+                        window.upload_text.innerText = "Successfully uploaded";
+                    else
+                        window.upload_text.innerText = text;
                 }).catch(() => {
                     window.upload_text.style.color = "#F00";
                     window.upload_text.innerText = "Failed to upload.";

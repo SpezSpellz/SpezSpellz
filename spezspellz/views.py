@@ -1,6 +1,9 @@
 """Contains views for SpezSpellz."""
 from typing import Optional
 import json
+from django.conf import settings
+from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse, HttpResponseBase, FileResponse
 from django.shortcuts import render, redirect
 from django.views import View
@@ -60,12 +63,16 @@ class UploadPage(View):
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Handle GET requests for this view."""
+        if not request.user.is_authenticated:
+            return redirect_to_login(request.get_full_path(), settings.LOGIN_URL, REDIRECT_FIELD_NAME)
         return render(request, "upload.html", {
             "categories": Category.objects.all()
         })
 
     def post(self, request: HttpRequest) -> HttpResponseBase:
         """Handle POST requests for this view."""
+        if not request.user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
         data = request.POST.get("data")
         if data is None:
             return HttpResponse("Missing parameter `data`.", status=400)
