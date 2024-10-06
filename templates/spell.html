@@ -4,7 +4,7 @@
 {% block Content %}
     <link rel="stylesheet" href="/assets/spell.css">
     <div>
-        <a href="{% url 'spezspellz:home' %} " class="home">
+        <a href="{% url 'spezspellz:home' %} " class="btn-like">
             <img width="32" src="/assets/home.svg"/>
         </a>
     </div>
@@ -27,8 +27,5 @@
     <script type="module">
         window.detail.innerHTML = DOMPurify.sanitize(marked.parse(window.x_data.value));
     </script>
-    <div class="button">
-        <a href="{% url 'spezspellz:home' %}">Home</a>
-    </div>
     <br><br>
 {% endblock %}
