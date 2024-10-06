@@ -165,6 +165,24 @@ body {
     padding-top: 5px;
     padding-bottom: 5px;
 }
+#spell_title {
+    border-radius: 8px;
+    background-color: #3B3B3B;
+    border: none;
+    font-size: 12pt;
+    color: #FFF;
+    padding-left: 32px;
+    margin: auto;
+    margin-top: 10px;
+    background-image: url("/assets/text_field.svg");
+    background-position: 3px, 3px;
+    background-size: 24px;
+    background-repeat: no-repeat;
+    display: block;
+    outline: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
 .tag-search-entry {
     border-style: none;
     color: #FFF;
