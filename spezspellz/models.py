@@ -28,6 +28,9 @@ class Category(models.Model):
 
     name: models.CharField = models.CharField(max_length=50)
 
+    def __str__(self):
+        return str(self.name)
+
 
 class UserInfo(models.Model):
     """Store the user info."""
@@ -73,6 +76,9 @@ class Tag(models.Model):
     """The tag."""
 
     name: models.CharField = models.CharField(max_length=50)
+
+    def __str__(self):
+        return str(self.name)
 
 
 class HasTag(models.Model):

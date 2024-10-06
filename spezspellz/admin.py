@@ -56,9 +56,15 @@ class BookmarkAdmin(admin.ModelAdmin):
     list_display = ["user", "spell"]
 
 
+class CategoryAdmin(admin.ModelAdmin):
+    """For configuring list of category"""
+
+    list_display = ["name"]
+
+
 admin.site.register(Spell, SpellAdmin)
 admin.site.register(Tag)
 admin.site.register(HasTag, HasTagAdmin)
-admin.site.register(Category)
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(UserInfo, UserInfoAdmin)
 admin.site.register(Bookmark, BookmarkAdmin)
