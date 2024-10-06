@@ -29,6 +29,7 @@ class Category(models.Model):
     name: models.CharField = models.CharField(max_length=50)
 
     def __str__(self):
+        """Return the category name."""
         return str(self.name)
 
 
@@ -78,6 +79,7 @@ class Tag(models.Model):
     name: models.CharField = models.CharField(max_length=50)
 
     def __str__(self):
+        """Return the tag name."""
         return str(self.name)
 
 

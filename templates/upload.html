@@ -46,7 +46,7 @@
                 <ul style="list-style: none;margin: 0;padding: 0;" class="settings-list">
                     <li>
                         <h2 class="section">Title</h2>
-                        <input type="text" id="spell_title"/>
+                        <input type="text" placeholder="Enter title here" id="spell_title"/>
                     </li>
                     <li>
                         <h2 class="section">Thumbnail</h2>
@@ -135,7 +135,7 @@
             </div>
         </div>
     </template>
-    <a href="{% url 'spezspellz:home' %}" style="position: absolute;top: 8px;left: 8px;"><img width="32" src="/assets/home.svg"/></a>
+    <a href="{% url 'spezspellz:home' %}" class="btn-like" style="position: absolute;top: 8px;left: 8px;"><img width="32" src="/assets/home.svg"/></a>
     <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.2/marked.min.js" integrity="sha512-bXyBT2/sYjZg1D7ykDS6eJSE4DFDVPJHvbRAfdfYKr6IusrCz7wAmSm36vz9G8zMob25Rvqu90vft3JI71ygcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="module">
         const noti_list = window.noti_list;
@@ -382,7 +382,10 @@
                 res.text().then(text => {
                     if(res.status != 200)
                         window.upload_text.style.color = "#F00";
-                    window.upload_text.innerText = text;
+                    if(res.status == 200 && text == "OK") 
+                        window.upload_text.innerText = "Successfully uploaded";
+                    else
+                        window.upload_text.innerText = text;
                 }).catch(() => {
                     window.upload_text.style.color = "#F00";
                     window.upload_text.innerText = "Failed to upload.";

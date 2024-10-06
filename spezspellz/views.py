@@ -1,6 +1,9 @@
 """Contains views for SpezSpellz."""
 from typing import Optional
 import json
+from django.conf import settings
+from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse, HttpResponseBase, FileResponse
 from django.shortcuts import render, redirect
 from django.views import View
@@ -61,12 +64,16 @@ class UploadPage(View):
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Handle GET requests for this view."""
+        if not request.user.is_authenticated:
+            return redirect_to_login(request.get_full_path(), settings.LOGIN_URL, REDIRECT_FIELD_NAME)
         return render(request, "upload.html", {
             "categories": Category.objects.all()
         })
 
     def post(self, request: HttpRequest) -> HttpResponseBase:
         """Handle POST requests for this view."""
+        if not request.user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
         data = request.POST.get("data")
         if data is None:
             return HttpResponse("Missing parameter `data`.", status=400)
@@ -140,7 +147,7 @@ class UploadPage(View):
             SpellNotification.objects.bulk_create(notis_to_add)
             Attachment.objects.bulk_create(attach_to_add)
             for i in range(len(attach_to_add)):
-                data = data.replace(attach_names[i], reverse("spezspellz:attachments", args=(attach_to_add[i].pk,)))
+                data = data.replace(attach_names[i], reverse("spezspellz:attachments", attachment_id=attach_to_add[i].pk))
             spell.data = data
             spell.save()
         return HttpResponse("OK", status=200)
@@ -213,37 +220,34 @@ class UserSettingsPage(View, RPCView):
 
 def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
     """Return the spell detail page."""
-    user = request.user
-    try:
-        spell = Spell.objects.get(id=spell_id)
-    except Spell.DoesNotExist:
+    spell = get_or_none(Spell, pk=spell_id)
+    if spell is None:
         return redirect("spezspellz:home")
-
-    bookmark = Bookmark.objects.filter(user=user.id, spell=spell).first()
-
-    print(bookmark)
-
-    return render(request,
-                  "spell.html",
-                  {"spell": spell, "bookmark": bookmark})
+    bookmark = None
+    if request.user.is_authenticated:
+        bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
+    return render(
+        request,
+        "spell.html",
+        {
+            "spell": spell,
+            "bookmark": bookmark
+        }
+    )
 
 
 def thumbnail_view(_: HttpRequest, spell_id: int):
     """Return the thumbnail for a spell."""
-    try:
-        spell = Spell.objects.get(pk=spell_id)
-    except Spell.DoesNotExist:
-        return HttpResponse("Not Found", status=404)
-    if not spell.thumbnail:
+    spell = get_or_none(Spell, pk=spell_id)
+    if spell is None or not spell.thumbnail:
         return redirect("/assets/default_thumbnail.jpg")
     return FileResponse(spell.thumbnail)
 
 
 def attachment_view(_: HttpRequest, attachment_id: int):
     """Return the attachment."""
-    try:
-        attachment = Attachment.objects.get(pk=attachment_id)
-    except Attachment.DoesNotExist:
+    attachment = get_or_none(Attachment, pk=attachment_id)
+    if attachment is None:
         return HttpResponse("Not Found", status=404)
     return FileResponse(attachment.file)
 
@@ -251,25 +255,20 @@ def attachment_view(_: HttpRequest, attachment_id: int):
 @login_required
 def bookmark_view(request: HttpRequest, spell_id: int):
     """Bookmark the spell for the user."""
-    try:
-        spell = Spell.objects.filter(id=spell_id)
-    except spell.DoesNotExist:
-        messages.add_message(request,
-                             messages.ERROR,
-                             "The spell you were trying to bookmark does not exist.")
+    spell = get_or_none(Spell, pk=spell_id)
+    if spell is None:
+        messages.add_message(
+            request,
+            messages.ERROR,
+            "The spell you were trying to bookmark does not exist."
+        )
         return redirect("spezspellz:home")
-
-    user = request.user
-    spell = Spell.objects.filter(id=spell_id).first()
-
-    bookmark = Bookmark.objects.filter(user=user, spell=spell)
-
-    if bookmark.exists():
-        bookmark.delete()
+    bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
+    if bookmark is None:
+        Bookmark.objects.create(user=request.user, spell=spell)
     else:
-        bookmark = Bookmark.objects.create(user=user, spell=spell)
-
-    return redirect("spezspellz:spell", spell_id=spell.id)
+        bookmark.delete()
+    return redirect("spezspellz:spell", spell_id=spell.pk)
 
 
 class RegisterView(CreateView):

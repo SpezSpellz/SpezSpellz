@@ -51,13 +51,13 @@ class HasTagAdmin(admin.ModelAdmin):
 
 
 class BookmarkAdmin(admin.ModelAdmin):
-    """For configuring Bookmarks"""
+    """For configuring Bookmarks."""
 
     list_display = ["user", "spell"]
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    """For configuring list of category"""
+    """For configuring list of category."""
 
     list_display = ["name"]
 
