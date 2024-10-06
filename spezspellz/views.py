@@ -269,9 +269,7 @@ def bookmark_view(request: HttpRequest, spell_id: int):
     else:
         bookmark = Bookmark.objects.create(user=user, spell=spell)
 
-    return render(request,
-                  "spell.html",
-                  {"spell": spell, "bookmark": bookmark})
+    return redirect("spezspellz:spell", spell_id=spell.id)
 
 
 class RegisterView(CreateView):
