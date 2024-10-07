@@ -286,7 +286,7 @@ class UploadAPITest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         created_spell = Spell.objects.get(title="Test Spell")
-        self.assertEqual(request.category, str(created_spell.category))
+        self.assertEqual(request.category, created_spell.category.name)
         attachment = Attachment.objects.filter(spell=created_spell).first()
         self.assertIsNotNone(attachment, "Attachment not found.")
         self.assertEqual(
