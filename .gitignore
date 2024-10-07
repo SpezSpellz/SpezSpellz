@@ -27,3 +27,6 @@ content/
 
 # Formatters
 .style.yapf
+
+# Test coverage
+.coverage
