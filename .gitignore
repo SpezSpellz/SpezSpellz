@@ -24,3 +24,6 @@ __pycache__/
 # PyCharm
 .idea
 content/
+
+# Formatters
+.style.yapf
