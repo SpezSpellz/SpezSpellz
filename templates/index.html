@@ -15,14 +15,13 @@
         {% endfor %}
     </div>
     <a href="{% url 'spezspellz:upload' %}" class="btn-like" style="position: absolute;top: 8px;left: 8px;"><img width="32" src="/assets/upload.svg"/></a>
-    <div style="display: flex;position: absolute;top: 8px;right: 8px;flex-direction: row;">
+    <div style="display: flex;position: absolute;top: 8px;right: 0;flex-direction: row;">
         {% if user.is_authenticated %}
         <form class="btn-like" style="margin-right: 8px;" action="{% url 'logout' %}?next={% url 'spezspellz:home' %}" method="POST">
             {% csrf_token %}
             <input type="image" alt="Logout" name="submit" width="32" src="/assets/logout.svg"/>
         </form>
         {% endif %}
-        <a href="{% url 'spezspellz:profile' %}" class="btn-like"><img width="32" src="/assets/profile.svg"/></a>
     </div>
 </body>
 {% endblock %}
