@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/assets/profile.css">
+  <h1>Profile of {{ user.username }}</h1>
+
+  <h2>Your Spells</h2>
+  <ul>
+    {% for spell in spells %}
+      <li>{{ spell.title }}</li>
+    {% empty %}
+      <li>You have no spells.</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Your Bookmarks</h2>
+  <ul>
+    {% for bookmark in bookmarks %}
+      <li>{{ bookmark.spell.title }}</li>
+    {% empty %}
+      <li>You have no bookmarks.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

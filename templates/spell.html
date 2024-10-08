@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block Title %}Spell#{{ spell.id }} - SpezSpellz{% endblock %}
+{% block Content %}
+    <link rel="stylesheet" href="/assets/spell.css">
+    <div>
+        <a href="{% url 'spezspellz:home' %} " class="btn-like">
+            <img width="32" src="/assets/home.svg"/>
+        </a>
+    </div>
+    <div class="spell-title">
+        <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img">
+        <text>
+            <h1>{{ spell.title }}</h1>
+            <h3>by: {{ spell.creator.username }}</h3>
+        </text>
+    </div>
+    <br>
+<textarea id="x_data" style="display: none;">
+{{ spell.data }}
+</textarea>
+    <div id="detail" class="spell">
+
+    </div>
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" integrity="sha512-jB0TkTBeQC9ZSkBqDhdmfTv1qdfbWpGE72yJ/01Srq6hEzZIz2xkz1e57p9ai7IeHMwEG7HpzG6NdptChif5Pg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.2/marked.min.js" integrity="sha512-bXyBT2/sYjZg1D7ykDS6eJSE4DFDVPJHvbRAfdfYKr6IusrCz7wAmSm36vz9G8zMob25Rvqu90vft3JI71ygcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="module">
+        window.detail.innerHTML = DOMPurify.sanitize(marked.parse(window.x_data.value));
+    </script>
+    <br><br>
+{% endblock %}

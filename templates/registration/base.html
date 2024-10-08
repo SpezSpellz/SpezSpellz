@@ -1,0 +1,104 @@
+<!doctype html>
+<html style="height: 100%; overflow: hidden;" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/ico.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+  <body style="height: 100%;margin: 0;background-color: #1E1E1E;">
+    <div style="height: 100%;">
+        <div class="bg">
+            <form method="post" class="box">
+                <h1>{% block blk_title %}{% endblock %}</h1>
+                <div style="display: flex;flex-direction: column;">
+                    {% csrf_token %}
+                    {% block fields %}
+                    {% endblock %}
+                    {% if form.errors %}
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <p style="color: #F00;margin: auto;text-align: center">{{ error|escape }}</p>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <p style="color: #F00;margin: auto;text-align: center">{{ error|escape }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="noacc" >{% block other_msg %}{% endblock %} <a href="{% block other_link %}{% endblock %}">{% block other_link_msg %}{% endblock %}</a></p>
+                </div>
+                
+                <button type="submit">{% block btn_text %}{% endblock %}</button>
+            </form>
+        </div>
+    </div>
+  </body>
+  <style>
+    /* div li, div span, div p {
+        color: #FFF;
+    } */
+    a {
+        color: #50F;
+        cursor: pointer;
+    }
+    button {
+        cursor: pointer;
+        color: #FFF;
+        border: none;
+        display: block;
+        border-radius: 10px;
+        background-color: #3E3E3E;
+        padding: 10px;
+        padding-left: 20px;
+        padding-right: 20px;
+        font-size: 16pt;
+        margin: auto;
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+    button:hover {
+        background-color: #4E4E4E;
+    }
+    button:active {
+        background-color: #5E5E5E;
+    }
+    .noacc {
+        color: #FFF;
+        margin: auto;
+        text-align: center;
+    }
+    .bg {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .box {
+        padding: 20px;
+        border-radius: 10px;  
+        margin: auto;
+        margin: top;
+        width: min(80%, 400px);
+        background-color: #2E2E2E;
+    }
+    h1 {
+        margin: auto;
+        margin-bottom: 15px;
+        text-align: center;
+        color: #FFF;
+        font-size: 32pt;
+    }
+    input {
+        padding: 10px;
+        margin: 5px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+        color: #FFF;
+        font-size: 12pt;
+        border-radius: 10px;
+        border: none;
+        background-color: #1E1E1E;
+    }
+    </style>
+</html>

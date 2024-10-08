@@ -20,3 +20,13 @@ __pycache__/
 # Linters
 .mypy_cache
 .ruff_cache
+
+# PyCharm
+.idea
+content/
+
+# Formatters
+.style.yapf
+
+# Test coverage
+.coverage

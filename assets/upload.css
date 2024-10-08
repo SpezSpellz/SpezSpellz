@@ -1,0 +1,232 @@
+body {
+    background-color: #2B2B2B;
+}
+
+.section {
+    margin: 0;
+    padding: 0;
+    margin-bottom: 10px;
+    color: #FFF;
+}
+
+.markdown-input {
+    border-radius: 12px;
+    background-color: #3B3B3B;
+    color: #FFF;
+    font-size: 12pt;
+    margin: auto;
+    padding: 0;
+    width: 100%;
+    height: calc(100vh - 130px);
+}
+
+.div-box {
+    border-radius: 12px;
+    background-color: #3B3B3B;
+    margin: auto;
+    display: inline-block;
+    padding: 10px;
+}
+
+.settings-list > li {
+    margin: 10px;
+}
+
+.tag {
+    font-family: monospace;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 20px;
+    margin: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.tag-add {
+    background-color: rgba(127, 127, 127, 0.3);
+    border-color: #7f7f7f;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+
+.tag-add:hover {
+    background-color: rgba(127, 127, 127, 0.5);
+}
+
+#add_noti_dlg, #add_tag_dlg, #upload_dlg {
+    border-radius: 12px;
+    background-color: #2B2B2B;
+    border-style: none;
+    box-shadow: inset;
+    padding: 10px;
+}
+
+#add_noti_dlg > .dlgheader, #add_tag_dlg > .dlgheader,  #upload_dlg > .dlgheader {
+    margin: auto;
+    margin-left: 50px;
+    margin-right: 50px;
+    text-align: center;
+}
+
+#add_noti_dlg > div > div {
+    margin: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#add_noti_dlg > div > div > span {
+    font-size: 12pt;
+    margin-right: 10px;
+    color: #FFF;
+}
+
+#add_noti_dlg > div > div > button, #add_tag_dlg > div > button, #upload_dlg > button,
+#upload_dlg > a {
+    font-size: 12pt;
+    font-weight: bold;
+    width: 100px;
+    background-color: #4B4B4B;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    color: #FFF;
+}
+
+#add_noti_dlg textarea, #add_noti_dlg input, #add_noti_dlg select, #category {
+    color: #FFF;
+    background-color: #3B3B3B;
+    border-style: solid;
+}
+
+#add_noti_dlg > div > div > button:hover, #add_tag_dlg > div > button:hover,
+#upload_dlg > button:hover, #upload_dlg > a:hover {
+    background-color: #5B5B5B;
+}
+
+#md_preview > * {
+    color: #FFF;
+}
+
+
+#preview_md {
+    top: 5px;
+    right: 5px;
+    position: absolute;
+    background-color: #4F4F4F;
+    padding: 2px;
+    border-radius: 5px;
+}
+
+#preview_md:hover {
+    background-color: #5F5F5F;
+}
+
+#preview_md:active {
+    background-color: #6F6F6F;
+}
+
+#upload_attachment_box {
+    padding: 10px;
+    border-radius: 12px;
+    background-color: #3B3B3B;
+    margin-left: 15px;
+    height: calc(100vh - 95px);
+}
+
+.upload-btn {
+    margin-top: 10px;
+    font-size: 16pt;
+    color: #FFF;
+    border-style: none;
+}
+
+.upload-btn:hover {
+    background-color: #4B4B4B;
+}
+
+.upload-btn:active {
+    background-color: #5B5B5B;
+}
+.search-bar {
+    background-color: #3B3B3B;
+    border: none;
+    font-size: 12pt;
+    color: #FFF;
+    padding-left: 32px;
+    margin: auto;
+    margin-top: 10px;
+    background-image: url("/assets/search.svg");
+    background-position: 3px, 3px;
+    background-size: 24px;
+    background-repeat: no-repeat;
+    display: block;
+    outline: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+#spell_title {
+    border-radius: 8px;
+    background-color: #3B3B3B;
+    border: none;
+    font-size: 12pt;
+    color: #FFF;
+    padding-left: 32px;
+    margin: auto;
+    margin-top: 10px;
+    background-image: url("/assets/text_field.svg");
+    background-position: 3px, 3px;
+    background-size: 24px;
+    background-repeat: no-repeat;
+    display: block;
+    outline: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.tag-search-entry {
+    border-style: none;
+    color: #FFF;
+    background-color: #3B3B3B;
+    margin: auto;
+    display: block;
+    font-size: 12pt;
+    width: 227px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.tag-search-entry:hover {
+    background-color: #4B4B4B;
+}
+
+.tag-search-entry:active {
+    background-color: #5B5B5B;
+}
+
+.attach-link-btn {
+    background-color: #3B3B3B;
+    border-radius: 6px;
+    padding: 4px;
+    margin: 2px;
+}
+
+.attach-link-btn:hover {
+    background-color: #5B5B5B;
+}
+
+.attach-link-btn:active {
+    background-color: #6B6B6B;
+}
+
+.attach-remove-btn {
+    background-color: #A00000;
+    border-radius: 6px;
+    padding: 4px;
+    margin: 2px;
+}
+
+.attach-remove-btn:hover {
+    background-color: #EF0000;
+}

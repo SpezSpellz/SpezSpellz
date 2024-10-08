@@ -1,0 +1,19 @@
+body {
+    background-color: #2B2B2B;
+}
+.btn-like {
+    border-radius: 8px;
+    background-color: #3B3B3B;
+    margin: auto;
+    display: inline-block;
+    padding: 2px;
+    transition: background-color 0.1s ease;
+}
+
+.btn-like:hover {
+    background-color: #4B4B4B;
+}
+
+.btn-like:active {
+    background-color: #5B5B5B;
+}

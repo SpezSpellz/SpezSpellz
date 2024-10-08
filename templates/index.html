@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpezSpellz</title>
-</head>
+{% extends 'base.html' %}
+{% block Title %}Home - SpezSpellz{% endblock %}
+{% block Content %}
 <link rel="stylesheet" href="/assets/index.css">
 <body>
     <h1 class="sp-title">SpezSpellz</h1>
@@ -12,11 +8,22 @@
     <h2 style="padding-left: 20px;">Latest posts</h2>
     <div class="strip-box">
         {% for spell in latest_spells %}
-        <a href="{% url 'spezspellz:home' %}32"><div class="spell">
-            <img src="{{ spell.image_url }}" class="spell-img"/>
+        <a href="{% url 'spezspellz:spell' spell.pk %}"><div class="spell">
+            <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" "{{ spell.pk }}" class="spell-img"/>
             <h2 class="spell-title">{{ spell.title }}</h2>
         </div></a>
         {% endfor %}
     </div>
+    <a href="{% url 'spezspellz:upload' %}" class="btn-like" style="position: absolute;top: 8px;left: 8px;"><img width="32" src="/assets/upload.svg"/></a>
+    <div style="display: flex;position: absolute;top: 8px;right: 0;flex-direction: row;">
+        {% if user.is_authenticated %}
+        <form action="{% url 'logout' %}?next={% url 'spezspellz:home' %}" method="POST">
+            {% csrf_token %}
+            <input type="image" alt="Logout" name="submit" width="32" class="btn-like" style="margin-right: 8px;padding: 5px 20px;" src="/assets/logout.svg"/>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}?next={% url 'spezspellz:home' %}"><button class="btn-like" style="margin-right: 8px;font-size: 16pt; color: white; padding: 10px 20px;border-style: none;cursor: pointer;">Log in</button></a>
+        {% endif %}
+    </div>
 </body>
-</html>
+{% endblock %}
