@@ -19,7 +19,12 @@
         {% if user.is_authenticated %}
         <form class="btn-like" style="margin-right: 8px;" action="{% url 'logout' %}?next={% url 'spezspellz:home' %}" method="POST">
             {% csrf_token %}
-            <input type="image" alt="Logout" name="submit" width="32" src="/assets/logout.svg"/>
+            <input type="image" alt="Logout" name="submit" width="32" style="padding: 5px 20px;" src="/assets/logout.svg"/>
+        </form>
+        {% else %}
+        <form class="btn-like" style="margin-right: 8px;" action="{% url 'login' %}?next={% url 'spezspellz:home' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" name="submit" style="background-color: #3b3b3b; font-size: 23px; color: white; padding: 10px 20px; border: none; border-radius: 25px;">Log in</button>
         </form>
         {% endif %}
     </div>
