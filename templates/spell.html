@@ -15,13 +15,7 @@
             <h3>by: {{ spell.creator.username }}</h3>
         </text>
     </div>
-    <div class="button">
-        {% if bookmark %}
-        <a href="{% url 'spezspellz:bookmark' spell.pk 0 %}"><i class="fas fa-bookmark"></i></a>
-        {% else %}
-        <a href="{% url 'spezspellz:bookmark' spell.pk 0 %}"><i class="far fa-bookmark"></i></a>
-        {% endif %}
-    </div>
+    <input id="bookmark" type="image" class="btn-like" style="margin-left: 5%;" width="32" src="/assets/bookmark_{% if bookmark %}remove{% else %}add{% endif %}.svg"/>
     <br>
 <textarea id="x_data" style="display: none;">
 {{ spell.data }}
@@ -33,6 +27,24 @@
     <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.2/marked.min.js" integrity="sha512-bXyBT2/sYjZg1D7ykDS6eJSE4DFDVPJHvbRAfdfYKr6IusrCz7wAmSm36vz9G8zMob25Rvqu90vft3JI71ygcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="module">
         window.detail.innerHTML = DOMPurify.sanitize(marked.parse(window.x_data.value));
+        window.bookmark.onclick = () => {
+            fetch("{% url 'spezspellz:usersettings' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    method: "bookmark",
+                    spell_id: parseInt("{{ spell.pk }}")
+                })
+            }).then(res => {
+                if(!res.ok)
+                    return Promise.reject();
+                return res.text()
+            }).then(text => {
+                window.bookmark.src = "/assets/bookmark_" + ((text == "Bookmarked") ? "remove" : "add") + ".svg";
+            })
+        }
     </script>
     <br><br>
 {% endblock %}

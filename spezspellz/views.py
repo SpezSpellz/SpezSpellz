@@ -329,6 +329,22 @@ class UserSettingsPage(View, RPCView):
         """Handle GET requests for this view."""
         return render(request, "user_settings.html")
 
+    def rpc_bookmark(self, request: HttpRequest, spell_id: int = None) -> HttpResponseBase:
+        """Handle bookmarking."""
+        if not request.user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        if not isinstance(spell_id, int):
+            return HttpResponse("Parameter `spell_id` must be an integer", status=400)
+        spell = get_or_none(Spell, pk=spell_id)
+        if spell is None:
+            return HttpResponse("Spell not found", status=404)
+        bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
+        if bookmark is None:
+            Bookmark.objects.create(user=request.user, spell=spell)
+        else:
+            bookmark.delete()
+        return HttpResponse("Bookmarked" if bookmark is None else "Unbookmarked")
+
     def rpc_update(
         self,
         request: HttpRequest,
@@ -385,28 +401,6 @@ def attachment_view(_: HttpRequest, attachment_id: int):
     if attachment is None:
         return HttpResponse("Not Found", status=404)
     return FileResponse(attachment.file)
-
-
-@login_required
-def bookmark_view(request: HttpRequest, spell_id: int, profile: bool):
-    """Bookmark the spell for the user."""
-    spell = get_or_none(Spell, pk=spell_id)
-    if spell is None:
-        messages.add_message(
-            request, messages.ERROR,
-            "The spell you were trying to bookmark does not exist."
-        )
-        return redirect("spezspellz:home")
-    bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
-    if bookmark is None:
-        Bookmark.objects.create(user=request.user, spell=spell)
-    else:
-        bookmark.delete()
-    if profile:
-        return redirect("spezspellz:profile")
-    return redirect("spezspellz:spell", spell_id=spell.pk)
-
-
 
 
 class RegisterView(CreateView):
