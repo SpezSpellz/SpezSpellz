@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_datetime
 from django.views.generic import CreateView
 from django.db import transaction
-from .models import Spell, User, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, Bookmark
+from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, Bookmark
 
 
 def safe_cast(t, val, default=None):
@@ -260,6 +260,7 @@ class TagsPage(View, RPCView):
 
 @login_required
 def profile_view(request):
+    """Show the profile page."""
     user = request.user
     spells = Spell.objects.filter(creator=user)
     bookmarks = Bookmark.objects.filter(user=user)
