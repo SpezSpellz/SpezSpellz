@@ -83,7 +83,8 @@ body {
     color: #FFF;
 }
 
-#add_noti_dlg > div > div > button, #add_tag_dlg > div > button, #upload_dlg > button {
+#add_noti_dlg > div > div > button, #add_tag_dlg > div > button, #upload_dlg > button,
+#upload_dlg > a {
     font-size: 12pt;
     font-weight: bold;
     width: 100px;
@@ -100,7 +101,8 @@ body {
     border-style: solid;
 }
 
-#add_noti_dlg > div > div > button:hover, #add_tag_dlg > div > button:hover, #upload_dlg > button:hover {
+#add_noti_dlg > div > div > button:hover, #add_tag_dlg > div > button:hover,
+#upload_dlg > button:hover, #upload_dlg > a:hover {
     background-color: #5B5B5B;
 }
 

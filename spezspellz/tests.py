@@ -1,8 +1,8 @@
 """This file contains tests."""
 import json
 from typing import Any
-from io import StringIO
 from dataclasses import dataclass
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -20,6 +20,7 @@ def create_test_user():
 @dataclass(frozen=True)
 class AttachmentInfo:
     """Stores Attachment Info used to make UploadRequests."""
+
     attachment: Any
     name: str
 
@@ -28,6 +29,7 @@ class UploadRequest:
     """Holds information to make an upload request."""
 
     def __init__(self):
+        """Initialize the upload request fields."""
         self.title = None
         self.data = None
         self.category = None
@@ -168,8 +170,7 @@ class SimpleTest(TestCase):
         self.assertEqual(
             res.redirect_chain[0][1],
             302,
-            msg=
-            f"Status code is not temp redirect, got: {res.redirect_chain[0][1]}"
+            msg=f"Status code is not temp redirect, got: {res.redirect_chain[0][1]}"
         )
         final_url = res.redirect_chain[-1][0]
         self.assertEqual(
@@ -277,14 +278,21 @@ class UploadAPITest(TestCase):
         request.category = "Test Category"
         request.attachments.append(
             AttachmentInfo(
-                attachment=StringIO("simple attachment"), name="[ATTACHMENT0]"
+                attachment=SimpleUploadedFile(
+                    "test_file.txt",
+                    b"simple test file content",
+                    content_type="text/plain"
+                ),
+                name="[ATTACHMENT0]"
             )
         )
         request.tags.extend(("Ice Element", "Dark Element"))
         response = self.client.post(
             reverse("spezspellz:upload"), request.craft()
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.status_code, 200, str(response.content, encoding="UTF-8")
+        )
         created_spell = Spell.objects.get(title="Test Spell")
         self.assertEqual(request.category, created_spell.category.name)
         attachment = Attachment.objects.filter(spell=created_spell).first()

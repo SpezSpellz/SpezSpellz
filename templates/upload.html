@@ -6,7 +6,10 @@
     <dialog id="upload_dlg">
         <h1 class="section dlgheader">Upload</h1>
         <p id="upload_text" style="color: #FFF;"></p>
-        <button id="upload_dlg_close" style="margin: auto;display: block;">Close</button>
+        <button id="upload_dlg_close">Close</button>
+        <a href="{% url 'spezspellz:home' %}" style="text-decoration: none; margin-left: 5px; font-family: 'Arial'">
+            Back to home
+        </a>
     </dialog>
     <dialog id="add_tag_dlg" style="height: 400px;width:400px">
         <h1 class="section dlgheader">Add Tags</h1>
@@ -140,16 +143,8 @@
     <script type="module">
         const noti_list = window.noti_list;
         const selected_tags = new Set();
-        window.add_noti_btn.onclick = () => window.add_noti_dlg.showModal();
-        window.ok_noti_dlg.onclick = () => {
-            const time = new Date(window.noti_dlg_date_time.value);
-            if(isNaN(time)) {
-                window.noti_dlg_err.innerText = "Please enter a valid date and time.";
-                window.noti_dlg_err.style.display = null;
-                return;
-            }
+        function add_notification(msg, time, every) {
             var text = "";
-            const every = window.noti_dlg_every.value;
             const time_str = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
             switch(every) {
                 case "D": {
@@ -177,14 +172,14 @@
             }
             const li = document.createElement("li");
             li.setAttribute("every", every);
-            li.setAttribute("time", window.noti_dlg_date_time.value);
-            li.setAttribute("msg", window.noti_dlg_text.value);
+            li.setAttribute("time", time.toISOString());
+            li.setAttribute("msg", msg);
             const div = document.createElement("div");
             div.style.margin = "5px";
             const span = document.createElement("span");
             span.style.color = "#FFF";
             span.style.margin = "5px";
-            span.innerText = "`" + window.noti_dlg_text.value + "`" + text;
+            span.innerText = "`" + msg + "`" + text;
             const remove_btn = document.createElement("button");
             remove_btn.classList.add("tag");
             remove_btn.classList.add("tag-add")    
@@ -194,6 +189,16 @@
             div.append(remove_btn);
             li.append(div);
             noti_list.append(li);
+        }
+        window.add_noti_btn.onclick = () => window.add_noti_dlg.showModal();
+        window.ok_noti_dlg.onclick = () => {
+            const time = new Date(window.noti_dlg_date_time.value);
+            if(isNaN(time)) {
+                window.noti_dlg_err.innerText = "Please enter a valid date and time.";
+                window.noti_dlg_err.style.display = null;
+                return;
+            }
+            add_notification(window.noti_dlg_text.value, time, window.noti_dlg_every.value)
             window.cancel_noti_dlg.click();
         };
         window.preview_md.onclick = () => {
@@ -225,6 +230,55 @@
             }, 0);
         }
         const tag_colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'];
+        function add_tag(tag) {
+            const col = tag_colors[hashStr(tag) % tag_colors.length];
+            const div = document.createElement("button");
+            div.classList.add("tag");
+            div.style.backgroundColor = col + "4C";
+            div.style.borderColor = col;
+            const span = document.createElement("span");
+            span.innerText = tag;
+            span.style.color = col;
+            div.append(span);
+            selected_tags.add(tag);
+            document.getElementById("tag-list").append(div);
+            div.onclick = () => {
+                div.remove();
+                selected_tags.delete(tag);
+            }
+        }
+        function loadData() {
+            const draft = localStorage.getItem("upload_draft");
+            if(draft == null)
+                return;
+            const saved_data = JSON.parse(draft);
+            window.spell_title.value = saved_data.title;
+            window.markdown_input.value = saved_data.body;
+            window.category.value = saved_data.category;
+            for(const tag of saved_data.tags)
+                add_tag(tag);
+            for(const noti of saved_data.notis)
+                add_notification(noti.msg, new Date(noti.time), noti.every);
+        }
+        function autoSave() {
+            const notis = window.noti_list.querySelectorAll("li");
+            const notis_to_save = []
+            for(const noti of notis)
+                notis_to_save.push({
+                    msg: noti.getAttribute("msg"),
+                    time: noti.getAttribute("time"),
+                    every: noti.getAttribute("every")
+                });
+            localStorage.setItem("upload_draft", JSON.stringify({
+                title: window.spell_title.value,
+                body: window.markdown_input.value,
+                category: window.category.value,
+                notis: notis_to_save,
+                tags: Array.from(selected_tags)
+            }));
+        }
+        loadData();
+        setInterval(autoSave, 1000);
         var update_tags_tm = null;
         window.add_tag_dlg_search.onkeyup = () => {
             const query = window.add_tag_dlg_search.value.toLowerCase();
@@ -258,23 +312,9 @@
                             btn.classList.add("tag-search-entry");
                             btn.innerText = tag;
                             btn.onclick = () => {
-                                const col = tag_colors[hashStr(tag) % tag_colors.length];
-                                const div = document.createElement("button");
-                                div.classList.add("tag");
-                                div.style.backgroundColor = col + "4C";
-                                div.style.borderColor = col;
-                                const span = document.createElement("span");
-                                span.innerText = tag;
-                                span.style.color = col;
-                                div.append(span);
-                                selected_tags.add(tag);
                                 li.remove();
-                                document.getElementById("tag-list").append(div);
-                                div.onclick = () => {
-                                    div.remove();
-                                    selected_tags.delete(tag);
-                                }
-                            }
+                                add_tag(tag);
+                            };
                             li.append(btn);
                             window.tag_search_list.append(li);
                         }
