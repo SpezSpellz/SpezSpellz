@@ -1,6 +1,7 @@
 """Contains views for SpezSpellz."""
 from typing import Optional, Generator, TypeVar, Any
 import json
+import os
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login
@@ -74,15 +75,45 @@ class UploadPage(View):
     # 2MB thumbnail limit
     MAX_THUMBNAIL_SIZE = 2e6
 
-    def get(self, request: HttpRequest) -> HttpResponseBase:
+    def get(self, request: HttpRequest, spell_id: Optional[int] = None) -> HttpResponseBase:
         """Handle GET requests for this view."""
         if not request.user.is_authenticated:
             return redirect_to_login(
                 request.get_full_path(), settings.LOGIN_URL,
                 REDIRECT_FIELD_NAME
             )
+        context = {"categories": Category.objects.all()}
+        if spell_id is not None:
+            spell = get_or_none(Spell, pk=spell_id)
+            if spell is None:
+                return HttpResponse("No such spell", status=404)
+            json_data = json.dumps({
+                "title": spell.title,
+                "body": spell.data,
+                "category": spell.category.name,
+                "notis": [{
+                    "msg": noti.message,
+                    "time": noti.datetime.isoformat(),
+                    "every": noti.every
+                } for noti in spell.spellnotification_set.all()],
+                "tags": [tag.tag.name for tag in spell.hastag_set.all()],
+                "thumbnail": {
+                    "url": reverse("spezspellz:spell_thumbnail", args=(spell.pk,)),
+                    "name": os.path.basename(spell.thumbnail.name)
+                },
+                "attachs": [
+                    {
+                        "id": attachment.pk,
+                        "size": attachment.file.size,
+                        "name": os.path.basename(attachment.file.name),
+                        "url": reverse("spezspellz:attachments", args=(attachment.pk,))
+                    } for attachment in spell.attachment_set.all()
+                ]
+            })
+            context["spell"] = spell
+            context["extra_data"] = json_data
         return render(
-            request, "upload.html", {"categories": Category.objects.all()}
+            request, "upload.html", context
         )
 
     @staticmethod
@@ -139,16 +170,16 @@ class UploadPage(View):
             new_objects.append(object_type(**info, **kwargs))
         return new_objects
 
-    def post(self, request: HttpRequest) -> HttpResponseBase:
+    def post(self, request: HttpRequest, spell_id: Optional[int] = None) -> HttpResponseBase:
         """Handle POST requests for this view."""
         if not request.user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
         data = request.POST.get("data")
         if data is None:
-            return HttpResponse("Missing parameter `data`.", status=400)
+            return HttpResponse("Missing parameter `data`", status=400)
         category_name = request.POST.get("category")
         if category_name is None:
-            return HttpResponse("Missing parameter `category`.", status=400)
+            return HttpResponse("Missing parameter `category`", status=400)
         thumbnail = request.FILES.get("thumbnail")
         if thumbnail is not None and thumbnail.size is not None and thumbnail.size > self.__class__.MAX_THUMBNAIL_SIZE:
             return HttpResponse("Thumbnail too large.", status=400)
@@ -160,14 +191,35 @@ class UploadPage(View):
             return HttpResponse("Title must not be empty", status=400)
         category = get_or_none(Category, name=category_name)
         if category is None:
-            return HttpResponse("Unknown category.", status=404)
-        spell = Spell(
-            creator=request.user,
-            title=title,
-            data=request.POST.get("data", ""),
-            category=category,
-            thumbnail=thumbnail
-        )
+            return HttpResponse("Unknown category", status=404)
+        spell = None
+        if spell_id is not None:
+            old_spell = get_or_none(Spell, pk=spell_id)
+            if old_spell is None:
+                return HttpResponse("Spell not found", status=404)
+            spell = old_spell
+            old_attach_len = min(50, safe_cast(int, request.POST.get("oattachs"), 0))
+            old_attachs = []
+            for i in range(old_attach_len):
+                old_attach = safe_cast(int, request.POST.get(f"oattach{i}"))
+                if old_attach is not None:
+                    old_attachs.append(old_attach)
+            spell.attachment_set.all().exclude(pk__in=old_attachs).delete()
+            spell.hastag_set.all().delete()
+            spell.spellnotification_set.all().delete()
+            spell.title = title
+            spell.data = request.POST.get("data", "")
+            spell.category = category
+            if thumbnail is not None:
+                spell.thumbnail = thumbnail
+        else:
+            spell = Spell(
+                creator=request.user,
+                title=title,
+                data=request.POST.get("data", ""),
+                category=category,
+                thumbnail=thumbnail
+            )
         new_hastags = self.__class__.make_new_objects(
             HasTag, (
                 self.__class__.validate_tag_info(request.POST.get(f"tag{i}"))
@@ -277,6 +329,22 @@ class UserSettingsPage(View, RPCView):
         """Handle GET requests for this view."""
         return render(request, "user_settings.html")
 
+    def rpc_bookmark(self, request: HttpRequest, spell_id: int = None) -> HttpResponseBase:
+        """Handle bookmarking."""
+        if not request.user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        if not isinstance(spell_id, int):
+            return HttpResponse("Parameter `spell_id` must be an integer", status=400)
+        spell = get_or_none(Spell, pk=spell_id)
+        if spell is None:
+            return HttpResponse("Spell not found", status=404)
+        bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
+        if bookmark is None:
+            Bookmark.objects.create(user=request.user, spell=spell)
+        else:
+            bookmark.delete()
+        return HttpResponse("Bookmarked" if bookmark is None else "Unbookmarked")
+
     def rpc_update(
         self,
         request: HttpRequest,
@@ -336,26 +404,6 @@ def attachment_view(_: HttpRequest, attachment_id: int):
 
 
 @login_required
-def bookmark_view(request: HttpRequest, spell_id: int, profile: bool):
-    """Bookmark the spell for the user."""
-    spell = get_or_none(Spell, pk=spell_id)
-    if spell is None:
-        messages.add_message(
-            request, messages.ERROR,
-            "The spell you were trying to bookmark does not exist."
-        )
-        return redirect("spezspellz:home")
-    bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
-    if bookmark is None:
-        Bookmark.objects.create(user=request.user, spell=spell)
-    else:
-        bookmark.delete()
-    if profile:
-        return redirect("spezspellz:profile")
-    return redirect("spezspellz:spell", spell_id=spell.pk)
-
-
-@login_required
 def review_view(request: HttpRequest, spell_id: int):
     """User post review on a spell"""
     spell = get_or_none(Spell, pk=spell_id)
@@ -371,7 +419,7 @@ def review_view(request: HttpRequest, spell_id: int):
     else:
         pass
         # TODO: make the user decide whether to edit old review or replace it
-
+        # Also make it tolerant to CSRF attack thingy
     return redirect("spezspellz:spell", spell_id=spell.pk)
 
 

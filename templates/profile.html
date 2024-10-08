@@ -21,14 +21,35 @@
 
   <ul>
     {% for bookmark in bookmarks %}
-    <li>
+    <li bookmark_spell="{{ bookmark.spell.pk }}">
       <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" style="padding-left:60px;">{{ bookmark.spell.title }}</a>
-      <a href="{% url 'spezspellz:bookmark' bookmark.spell.pk 1 %}" style="flex-grow:0;"><i class="fas fa-bookmark"></i></a>
+      <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="btn-like bookmark" width="32" src="/assets/bookmark_remove.svg"/>
     </li>
     {% empty %}
       <li>You have no bookmarks.</li>
     {% endfor %}
   </ul>
-
+  <script>
+    window.bookmark_spell = (spell) => {
+        fetch("{% url 'spezspellz:usersettings' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                method: "bookmark",
+                spell_id: spell
+            })
+        }).then(res => {
+            if(!res.ok)
+                return Promise.reject();
+            return res.text()
+        }).then(text => {
+            if(text != "Unbookmarked")
+              return;
+            document.querySelector("[bookmark_spell=\"" + spell + "\"]").remove();
+        })
+    }
+</script>
 </body>
 {% endblock %}

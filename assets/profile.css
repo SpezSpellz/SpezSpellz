@@ -52,7 +52,7 @@ ul li {
     text-align: center;
     font-size: 1.2rem;
     color: #FFF;
-    transition: background-color 0.3s;
+    transition: background-color 0.2s;
 }
 
 ul li a {
@@ -60,10 +60,8 @@ ul li a {
     flex-grow:1;
 }
 
-
-
 ul li:hover {
-    background-color: #2B2B2B;
+    background-color: #4B4B4B;
 }
 
 li:empty {
@@ -77,3 +75,15 @@ li:empty {
     max-width: 800px;
 }
 
+.bookmark {
+    margin-right: 8px;
+    background-color: #A00000;
+}
+
+.bookmark:hover {
+    background-color: #E00000;
+}
+
+.bookmark:active {
+    background-color: #F00;
+}
