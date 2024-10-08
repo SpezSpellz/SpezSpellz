@@ -389,6 +389,9 @@ class UserSettingsPage(View, RPCView):
         return HttpResponse("OK")
 
 
+MAX_HISTORY_COUNT = 30
+
+
 def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
     """Return the spell detail page."""
     spell = get_or_none(Spell, pk=spell_id)
@@ -397,12 +400,15 @@ def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
     bookmark = None
     if request.user.is_authenticated:
         bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
-        history = cast(Any, request.user).spellhistoryentry_set.filter(spell=spell).first()
-        if history is None:
-            SpellHistoryEntry.objects.create(user=request.user, spell=spell, time=timezone.now())
-        else:
-            history.time = timezone.now()
-            history.save()
+        with transaction.atomic():
+            history = cast(Any, request.user).spellhistoryentry_set.filter(spell=spell).first()
+            if history is None:
+                SpellHistoryEntry.objects.create(user=request.user, spell=spell, time=timezone.now())
+            else:
+                history.time = timezone.now()
+                history.save()
+            if cast(Any, request.user).spellhistoryentry_set.all().count() > MAX_HISTORY_COUNT:
+                SpellHistoryEntry.objects.filter(pk__in=cast(Any, request.user).spellhistoryentry_set.all().order_by("-time")[MAX_HISTORY_COUNT:]).delete()
 
     return render(
         request, "spell.html", {
