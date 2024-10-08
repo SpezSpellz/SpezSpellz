@@ -1,6 +1,9 @@
 """Contains views for SpezSpellz."""
-from typing import Optional
+from typing import Optional, Generator, TypeVar, Any
 import json
+from django.conf import settings
+from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse, HttpResponseBase, FileResponse
 from django.shortcuts import render, redirect
 from django.views import View
@@ -39,8 +42,18 @@ class RPCView:
         if not hasattr(self, method_name):
             return HttpResponse("Unknown method", status=404)
         method = getattr(self, method_name)
-        params = set(filter(lambda k: k not in ("request", "return"), method.__annotations__))
-        return getattr(self, method_name)(request, **{k: v for k, v in data.items() if k in params})
+        params = set(
+            filter(
+                lambda k: k not in ("request", "return"),
+                method.__annotations__
+            )
+        )
+        return getattr(self, method_name)(
+            request, **{
+                k: v
+                for k, v in data.items() if k in params
+            }
+        )
 
 
 class HomePage(View):
@@ -48,7 +61,9 @@ class HomePage(View):
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Handle GET requests for this view."""
-        return render(request, "index.html", {"latest_spells": Spell.objects.all()})
+        return render(
+            request, "index.html", {"latest_spells": Spell.objects.all()}
+        )
 
 
 class UploadPage(View):
@@ -61,12 +76,73 @@ class UploadPage(View):
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Handle GET requests for this view."""
-        return render(request, "upload.html", {
-            "categories": Category.objects.all()
-        })
+        if not request.user.is_authenticated:
+            return redirect_to_login(
+                request.get_full_path(), settings.LOGIN_URL,
+                REDIRECT_FIELD_NAME
+            )
+        return render(
+            request, "upload.html", {"categories": Category.objects.all()}
+        )
+
+    @staticmethod
+    def validate_tag_info(tag_name: Optional[str]) -> Optional[dict[str, Any]]:
+        """Check if tag_name is valid or not."""
+        if tag_name is None:
+            return None
+        tag = get_or_none(Tag, name=tag_name)
+        if tag is None:
+            return None
+        return {"tag": tag}
+
+    @staticmethod
+    def validate_spellnotification_info(
+        message: Optional[str], period: Optional[str], datetime: Optional[str]
+    ) -> Optional[dict[str, Any]]:
+        """Attempt to parse, validate, and convert the provided arguments to values fit for SpellNotification constructor."""
+        if message is None or datetime is None or period is None \
+                or period not in SpellNotification.EveryType.choices:
+            return None
+        try:
+            parsed_date = parse_datetime(datetime)
+            if parsed_date is not None:
+                return {
+                    "message": message,
+                    "every": period,
+                    "datetime": parsed_date
+                }
+        except ValueError:
+            pass
+        return None
+
+    MakeNewObjectsObjectType = TypeVar("MakeNewObjectsObjectType")
+
+    @staticmethod
+    def make_new_objects(
+        object_type: type[MakeNewObjectsObjectType],
+        infos: Generator[Optional[dict[str, Any]], None, None], **kwargs
+    ) -> list[MakeNewObjectsObjectType]:
+        """Construct new objects.
+
+        Arguments:
+            object_type -- The type of object to create.
+            infos -- A generator that generate parameters for objects.
+            **kwargs -- Other static parameters.
+
+        Returns:
+            The list that contains all the new objects.
+        """
+        new_objects: list[UploadPage.MakeNewObjectsObjectType] = []
+        for info in infos:
+            if info is None:
+                continue
+            new_objects.append(object_type(**info, **kwargs))
+        return new_objects
 
     def post(self, request: HttpRequest) -> HttpResponseBase:
         """Handle POST requests for this view."""
+        if not request.user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
         data = request.POST.get("data")
         if data is None:
             return HttpResponse("Missing parameter `data`.", status=400)
@@ -80,6 +156,8 @@ class UploadPage(View):
         noti_len = min(50, safe_cast(int, request.POST.get("notis"), 0))
         attach_len = min(50, safe_cast(int, request.POST.get("attachs"), 0))
         title = request.POST.get("title", "No Title")
+        if not title.strip():
+            return HttpResponse("Title must not be empty", status=400)
         category = get_or_none(Category, name=category_name)
         if category is None:
             return HttpResponse("Unknown category.", status=404)
@@ -90,34 +168,24 @@ class UploadPage(View):
             category=category,
             thumbnail=thumbnail
         )
-        tags_to_add = []
-        for i in range(tags_len):
-            tag_entry_name = request.POST.get(f"tag{i}")
-            if tag_entry_name is None:
-                continue
-            tag = get_or_none(Tag, name=tag_entry_name)
-            if tag is None:
-                continue
-            has_tag = HasTag(spell=spell, tag=tag, rating=0)
-            tags_to_add.append(has_tag)
-        notis_to_add = []
-        for i in range(noti_len):
-            noti_msg = request.POST.get(f"notimsg{i}")
-            noti_every = request.POST.get(f"notiev{i}")
-            if noti_msg is None or noti_every is None or noti_every not in SpellNotification.EveryType.choices:
-                continue
-            noti_date_str = request.POST.get(f"notidate{i}")
-            if noti_date_str is None:
-                continue
-            noti_date = None
-            try:
-                noti_date = parse_datetime(noti_date_str)
-                if noti_date is None:
-                    continue
-            except ValueError:
-                continue
-            noti = SpellNotification(spell=spell, datetime=noti_date, every=noti_every, message=noti_msg, data=data)
-            notis_to_add.append(noti)
+        new_hastags = self.__class__.make_new_objects(
+            HasTag, (
+                self.__class__.validate_tag_info(request.POST.get(f"tag{i}"))
+                for i in range(tags_len)
+            ),
+            rating=0,
+            spell=spell
+        )
+        new_spellnotifications = self.__class__.make_new_objects(
+            SpellNotification, (
+                self.__class__.validate_spellnotification_info(
+                    message=request.POST.get(f"notimsg{i}"),
+                    period=request.POST.get(f"notiev{i}"),
+                    datetime=request.POST.get(f"notidate{i}")
+                ) for i in range(noti_len)
+            ),
+            spell=spell
+        )
         total_attach_size = 0
         attach_names = []
         attach_to_add = []
@@ -136,11 +204,16 @@ class UploadPage(View):
             attach_names.append(attach_name)
         with transaction.atomic():
             spell.save()
-            HasTag.objects.bulk_create(tags_to_add)
-            SpellNotification.objects.bulk_create(notis_to_add)
+            HasTag.objects.bulk_create(new_hastags)
+            SpellNotification.objects.bulk_create(new_spellnotifications)
             Attachment.objects.bulk_create(attach_to_add)
             for i in range(len(attach_to_add)):
-                data = data.replace(attach_names[i], reverse("spezspellz:attachments", args=(attach_to_add[i].pk,)))
+                data = data.replace(
+                    attach_names[i],
+                    reverse(
+                        "spezspellz:attachments", args=(attach_to_add[i].pk, )
+                    )
+                )
             spell.data = data
             spell.save()
         return HttpResponse("OK", status=200)
@@ -153,17 +226,37 @@ class TagsPage(View, RPCView):
         """Show the tags page."""
         return HttpResponse("Not Implemented", status=404)
 
-    def rpc_search(self, _: HttpRequest, query: Optional[str] = None, max_len: int = 50) -> HttpResponseBase:
+    def rpc_search(
+        self,
+        _: HttpRequest,
+        query: Optional[str] = None,
+        max_len: int = 50
+    ) -> HttpResponseBase:
         """Search for tags that contain the query."""
         if query is None:
             return HttpResponse("Missing `query` parameter", status=400)
         if not isinstance(query, str):
-            return HttpResponse("Parameter `query` must be a string", status=400)
+            return HttpResponse(
+                "Parameter `query` must be a string", status=400
+            )
         if not isinstance(max_len, int):
-            return HttpResponse("Parameter `max_len` must be an integer", status=400)
+            return HttpResponse(
+                "Parameter `max_len` must be an integer", status=400
+            )
         if max_len > 100 or max_len < 1:
-            return HttpResponse("Parameter `max_len` must be more than 0 but less than 100", status=400)
-        return HttpResponse(json.dumps([tag.name for tag in Tag.objects.filter(name__icontains=query)[0:max_len]]), status=200)
+            return HttpResponse(
+                "Parameter `max_len` must be more than 0 but less than 100",
+                status=400
+            )
+        return HttpResponse(
+            json.dumps(
+                [
+                    tag.name for tag in
+                    Tag.objects.filter(name__icontains=query)[0:max_len]
+                ]
+            ),
+            status=200
+        )
 
 
 @login_required
@@ -172,11 +265,7 @@ def profile_view(request: HttpRequest) -> HttpResponseBase:
     user = request.user
     spells = Spell.objects.filter(creator=user)
     bookmarks = Bookmark.objects.filter(user=user)
-    context = {
-        'user': user,
-        'spells': spells,
-        'bookmarks': bookmarks
-    }
+    context = {'user': user, 'spells': spells, 'bookmarks': bookmarks}
 
     return render(request, 'profile.html', context)
 
@@ -201,7 +290,9 @@ class UserSettingsPage(View, RPCView):
         if not request.user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
         with transaction.atomic():
-            user_info = request.user.userinfo if hasattr(request.user, "userinfo") else UserInfo(user=request.user)
+            user_info = request.user.userinfo if hasattr(
+                request.user, "userinfo"
+            ) else UserInfo(user=request.user)
             user_info.timed_notification = bool(timed_noti)
             user_info.review_comment_notification = bool(re_coms_noti)
             user_info.spell_review_notification = bool(sp_re_noti)
@@ -213,37 +304,32 @@ class UserSettingsPage(View, RPCView):
 
 def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
     """Return the spell detail page."""
-    user = request.user
-    try:
-        spell = Spell.objects.get(id=spell_id)
-    except Spell.DoesNotExist:
+    spell = get_or_none(Spell, pk=spell_id)
+    if spell is None:
         return redirect("spezspellz:home")
-
-    bookmark = Bookmark.objects.filter(user=user.id, spell=spell).first()
-
-    print(bookmark)
-
-    return render(request,
-                  "spell.html",
-                  {"spell": spell, "bookmark": bookmark})
+    bookmark = None
+    if request.user.is_authenticated:
+        bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
+    return render(
+        request, "spell.html", {
+            "spell": spell,
+            "bookmark": bookmark
+        }
+    )
 
 
 def thumbnail_view(_: HttpRequest, spell_id: int):
     """Return the thumbnail for a spell."""
-    try:
-        spell = Spell.objects.get(pk=spell_id)
-    except Spell.DoesNotExist:
-        return HttpResponse("Not Found", status=404)
-    if not spell.thumbnail:
+    spell = get_or_none(Spell, pk=spell_id)
+    if spell is None or not spell.thumbnail:
         return redirect("/assets/default_thumbnail.jpg")
     return FileResponse(spell.thumbnail)
 
 
 def attachment_view(_: HttpRequest, attachment_id: int):
     """Return the attachment."""
-    try:
-        attachment = Attachment.objects.get(pk=attachment_id)
-    except Attachment.DoesNotExist:
+    attachment = get_or_none(Attachment, pk=attachment_id)
+    if attachment is None:
         return HttpResponse("Not Found", status=404)
     return FileResponse(attachment.file)
 
@@ -251,25 +337,19 @@ def attachment_view(_: HttpRequest, attachment_id: int):
 @login_required
 def bookmark_view(request: HttpRequest, spell_id: int):
     """Bookmark the spell for the user."""
-    try:
-        spell = Spell.objects.filter(id=spell_id)
-    except spell.DoesNotExist:
-        messages.add_message(request,
-                             messages.ERROR,
-                             "The spell you were trying to bookmark does not exist.")
+    spell = get_or_none(Spell, pk=spell_id)
+    if spell is None:
+        messages.add_message(
+            request, messages.ERROR,
+            "The spell you were trying to bookmark does not exist."
+        )
         return redirect("spezspellz:home")
-
-    user = request.user
-    spell = Spell.objects.filter(id=spell_id).first()
-
-    bookmark = Bookmark.objects.filter(user=user, spell=spell)
-
-    if bookmark.exists():
-        bookmark.delete()
+    bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
+    if bookmark is None:
+        Bookmark.objects.create(user=request.user, spell=spell)
     else:
-        bookmark = Bookmark.objects.create(user=user, spell=spell)
-
-    return redirect("spezspellz:spell", spell_id=spell.id)
+        bookmark.delete()
+    return redirect("spezspellz:spell", spell_id=spell.pk)
 
 
 class RegisterView(CreateView):

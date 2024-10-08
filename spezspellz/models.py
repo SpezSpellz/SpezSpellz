@@ -2,7 +2,6 @@
 from typing import Optional, cast, TypeVar
 from django.contrib.auth.models import User
 from django.db import models
-from config.settings import BASE_DIR
 
 
 ModelClass = TypeVar('ModelClass')
@@ -29,6 +28,7 @@ class Category(models.Model):
     name: models.CharField = models.CharField(max_length=50)
 
     def __str__(self):
+        """Return the category name."""
         return str(self.name)
 
 
@@ -54,7 +54,7 @@ class Spell(models.Model):
     title: models.CharField = models.CharField(max_length=50)
     data: models.CharField = models.CharField(max_length=4096 * 10)
     thumbnail: models.FileField = models.FileField(
-        upload_to=BASE_DIR / "content",
+        upload_to="content",
         null=True
     )
     category: models.ForeignKey[Category] = models.ForeignKey(
@@ -78,6 +78,7 @@ class Tag(models.Model):
     name: models.CharField = models.CharField(max_length=50)
 
     def __str__(self):
+        """Return the tag name."""
         return str(self.name)
 
 
@@ -121,7 +122,7 @@ class Attachment(models.Model):
 
     spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, on_delete=models.CASCADE)
     file: models.FileField = models.FileField(
-        upload_to=BASE_DIR / "content"
+        upload_to="content"
     )
 
 

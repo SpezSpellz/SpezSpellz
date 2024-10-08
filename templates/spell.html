@@ -3,10 +3,18 @@
 {% block Title %}Spell#{{ spell.id }} - SpezSpellz{% endblock %}
 {% block Content %}
     <link rel="stylesheet" href="/assets/spell.css">
+    <div>
+        <a href="{% url 'spezspellz:home' %} " class="btn-like">
+            <img width="32" src="/assets/home.svg"/>
+        </a>
+    </div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
     <div class="spell-title">
         <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img">
-        <text><h1>{{ spell.title }}</h1></text>
+        <text>
+            <h1>{{ spell.title }}</h1>
+            <h3>by: {{ spell.creator.username }}</h3>
+        </text>
     </div>
     <div class="button">
         {% if bookmark %}
@@ -27,7 +35,5 @@
     <script type="module">
         window.detail.innerHTML = DOMPurify.sanitize(marked.parse(window.x_data.value));
     </script>
-    <div class="button">
-        <a href="{% url 'spezspellz:home' %}">Home</a>
-    </div>
+    <br><br>
 {% endblock %}
