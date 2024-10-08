@@ -16,5 +16,5 @@ urlpatterns = [
     path("spell/<int:spell_id>/", spell_detail, name="spell"),
     path("spell/thumbnail/<int:spell_id>/", thumbnail_view, name="spell_thumbnail"),
     path("profile/", profile_view, name="profile"),
-    path("bookmark/<int:spell_id>", bookmark_view, name="bookmark"),
+    path("bookmark/<int:spell_id>/<int:profile>", bookmark_view, name="bookmark"),
 ]

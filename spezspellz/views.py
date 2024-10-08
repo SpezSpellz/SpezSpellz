@@ -310,6 +310,7 @@ def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
     bookmark = None
     if request.user.is_authenticated:
         bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
+
     return render(
         request, "spell.html", {
             "spell": spell,
@@ -335,7 +336,7 @@ def attachment_view(_: HttpRequest, attachment_id: int):
 
 
 @login_required
-def bookmark_view(request: HttpRequest, spell_id: int):
+def bookmark_view(request: HttpRequest, spell_id: int, profile: bool):
     """Bookmark the spell for the user."""
     spell = get_or_none(Spell, pk=spell_id)
     if spell is None:
@@ -349,7 +350,11 @@ def bookmark_view(request: HttpRequest, spell_id: int):
         Bookmark.objects.create(user=request.user, spell=spell)
     else:
         bookmark.delete()
+    if profile:
+        return redirect("spezspellz:profile")
     return redirect("spezspellz:spell", spell_id=spell.pk)
+
+
 
 
 class RegisterView(CreateView):

@@ -23,7 +23,7 @@
     {% for bookmark in bookmarks %}
     <li>
       <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" style="padding-left:60px;">{{ bookmark.spell.title }}</a>
-      <a href="{% url 'spezspellz:bookmark' bookmark.spell.pk %}" style="flex-grow:0;"><i class="fas fa-bookmark"></i></a>
+      <a href="{% url 'spezspellz:bookmark' bookmark.spell.pk 1 %}" style="flex-grow:0;"><i class="fas fa-bookmark"></i></a>
     </li>
     {% empty %}
       <li>You have no bookmarks.</li>
