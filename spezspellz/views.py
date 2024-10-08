@@ -1,5 +1,5 @@
 """Contains views for SpezSpellz."""
-from typing import Optional, Generator, TypeVar, Any
+from typing import Optional, Generator, TypeVar, Any, cast
 import json
 import os
 from django.conf import settings
@@ -14,7 +14,6 @@ from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_datetime
 from django.views.generic import CreateView
 from django.db import transaction
-from django.contrib import messages
 from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark
 
 
@@ -82,21 +81,22 @@ class UploadPage(View):
                 request.get_full_path(), settings.LOGIN_URL,
                 REDIRECT_FIELD_NAME
             )
-        context = {"categories": Category.objects.all()}
+        context: dict = {"categories": Category.objects.all()}
         if spell_id is not None:
             spell = get_or_none(Spell, pk=spell_id)
             if spell is None:
                 return HttpResponse("No such spell", status=404)
+            any_spell = cast(Any, spell)
             json_data = json.dumps({
                 "title": spell.title,
                 "body": spell.data,
-                "category": spell.category.name,
+                "category": any_spell.category.name,
                 "notis": [{
                     "msg": noti.message,
                     "time": noti.datetime.isoformat(),
                     "every": noti.every
-                } for noti in spell.spellnotification_set.all()],
-                "tags": [tag.tag.name for tag in spell.hastag_set.all()],
+                } for noti in any_spell.spellnotification_set.all()],
+                "tags": [tag.tag.name for tag in any_spell.hastag_set.all()],
                 "thumbnail": {
                     "url": reverse("spezspellz:spell_thumbnail", args=(spell.pk,)),
                     "name": os.path.basename(spell.thumbnail.name)
@@ -107,7 +107,7 @@ class UploadPage(View):
                         "size": attachment.file.size,
                         "name": os.path.basename(attachment.file.name),
                         "url": reverse("spezspellz:attachments", args=(attachment.pk,))
-                    } for attachment in spell.attachment_set.all()
+                    } for attachment in any_spell.attachment_set.all()
                 ]
             })
             context["spell"] = spell
@@ -197,6 +197,8 @@ class UploadPage(View):
             old_spell = get_or_none(Spell, pk=spell_id)
             if old_spell is None:
                 return HttpResponse("Spell not found", status=404)
+            if old_spell.creator != request.user:
+                return HttpResponse("Forbidden", status=403)
             spell = old_spell
             old_attach_len = min(50, safe_cast(int, request.POST.get("oattachs"), 0))
             old_attachs = []
@@ -204,9 +206,10 @@ class UploadPage(View):
                 old_attach = safe_cast(int, request.POST.get(f"oattach{i}"))
                 if old_attach is not None:
                     old_attachs.append(old_attach)
-            spell.attachment_set.all().exclude(pk__in=old_attachs).delete()
-            spell.hastag_set.all().delete()
-            spell.spellnotification_set.all().delete()
+            any_spell = cast(Any, spell)
+            any_spell.attachment_set.all().exclude(pk__in=old_attachs).delete()
+            any_spell.hastag_set.all().delete()
+            any_spell.spellnotification_set.all().delete()
             spell.title = title
             spell.data = request.POST.get("data", "")
             spell.category = category
@@ -259,11 +262,11 @@ class UploadPage(View):
             HasTag.objects.bulk_create(new_hastags)
             SpellNotification.objects.bulk_create(new_spellnotifications)
             Attachment.objects.bulk_create(attach_to_add)
-            for i in range(len(attach_to_add)):
+            for i, to_add in enumerate(attach_to_add):
                 data = data.replace(
                     attach_names[i],
                     reverse(
-                        "spezspellz:attachments", args=(attach_to_add[i].pk, )
+                        "spezspellz:attachments", args=(to_add.pk, )
                     )
                 )
             spell.data = data
@@ -329,7 +332,21 @@ class UserSettingsPage(View, RPCView):
         """Handle GET requests for this view."""
         return render(request, "user_settings.html")
 
-    def rpc_bookmark(self, request: HttpRequest, spell_id: int = None) -> HttpResponseBase:
+    def rpc_delete_spell(self, request: HttpRequest, spell_id: Any = None) -> HttpResponseBase:
+        """Delete a spell."""
+        if not request.user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        if not isinstance(spell_id, int):
+            return HttpResponse("Parameter `spell_id` must be an integer", status=400)
+        spell = get_or_none(Spell, pk=spell_id)
+        if spell is None:
+            return HttpResponse("Spell not found", status=404)
+        if spell.creator != request.user:
+            return HttpResponse("Forbidden", status=403)
+        spell.delete()
+        return HttpResponse("Spell deleted")
+
+    def rpc_bookmark(self, request: HttpRequest, spell_id: Any = None) -> HttpResponseBase:
         """Handle bookmarking."""
         if not request.user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
