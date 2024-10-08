@@ -14,7 +14,7 @@ from django.utils.dateparse import parse_datetime
 from django.views.generic import CreateView
 from django.db import transaction
 from django.contrib import messages
-from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark
+from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark, Review
 
 
 def safe_cast(t, val, default=None):
@@ -352,6 +352,26 @@ def bookmark_view(request: HttpRequest, spell_id: int, profile: bool):
         bookmark.delete()
     if profile:
         return redirect("spezspellz:profile")
+    return redirect("spezspellz:spell", spell_id=spell.pk)
+
+
+@login_required
+def review_view(request: HttpRequest, spell_id: int):
+    """User post review on a spell"""
+    spell = get_or_none(Spell, pk=spell_id)
+    if spell is None:
+        messages.add_message(
+            request, messages.ERROR,
+            "The spell you were trying to review does not exist."
+        )
+        return redirect("spezspellz:home")
+    review = get_or_none(Review, user=request.user, spell=spell)
+    if review is None:
+        Review.objects.create(user=request.user, spell=spell)
+    else:
+        pass
+        # TODO: make the user decide whether to edit old review or replace it
+
     return redirect("spezspellz:spell", spell_id=spell.pk)
 
 
