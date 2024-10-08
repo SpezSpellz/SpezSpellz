@@ -10,6 +10,7 @@ urlpatterns = [
     path("login/", lambda _: redirect("login")),
     path("register/", RegisterView.as_view(), name="register"),
     path("upload/", UploadPage.as_view(), name="upload"),
+    path("edit/<int:spell_id>/", UploadPage.as_view(), name="edit"),
     path("settings/", UserSettingsPage.as_view(), name="usersettings"),
     path("tags/", TagsPage.as_view(), name="tags"),
     path("attachment/<int:attachment_id>/", attachment_view, name="attachments"),

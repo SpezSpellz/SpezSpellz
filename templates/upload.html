@@ -3,8 +3,11 @@
 {% block Content %}
 <link rel="stylesheet" href="/assets/upload.css">
 <body>
+    {% if extra_data %}
+    <data id="x-data" hidden>{{ extra_data }}</data>
+    {% endif %}
     <dialog id="upload_dlg">
-        <h1 class="section dlgheader">Upload</h1>
+        <h1 class="section dlgheader">{% if extra_data %}Apply Changes{% else %}Upload{% endif %}</h1>
         <p id="upload_text" style="color: #FFF;"></p>
         <button id="upload_dlg_close">Close</button>
         <a href="{% url 'spezspellz:home' %}" style="text-decoration: none; margin-left: 5px; font-family: 'Arial'">
@@ -80,7 +83,7 @@
                 </ul>
             </th>
             <th valign="top">
-                <h1 class="section">Upload</h1>
+                <h1 class="section">{% if extra_data %}Edit{% else %}Upload{% endif %}</h1>
                 <div style="position: relative;height: auto">
                     <div id="md_preview" class="markdown-input" style="text-align: left;display: none;padding: 10px;overflow: scroll;width: calc(100% - 20px);height: calc(100vh - 150px);"></div>
                     <textarea id="markdown_input" class="markdown-input">
@@ -111,7 +114,7 @@
 [Insert any changes or enhancements when cast at higher levels.]
 </textarea>
                     <input type="image" src="/assets/preview.svg" width="32px" id="preview_md"></input>
-                    <button class="div-box upload-btn" id="upload_btn">Upload</button>
+                    <button class="div-box upload-btn" id="upload_btn">{% if extra_data %}Apply Changes{% else %}Upload{% endif %}</button>
                 </div>
             </th>
             <th style="width: 300px" valign="top">
@@ -247,11 +250,7 @@
                 selected_tags.delete(tag);
             }
         }
-        function loadData() {
-            const draft = localStorage.getItem("upload_draft");
-            if(draft == null)
-                return;
-            const saved_data = JSON.parse(draft);
+        function loadData(saved_data) {
             window.spell_title.value = saved_data.title;
             window.markdown_input.value = saved_data.body;
             window.category.value = saved_data.category;
@@ -259,6 +258,15 @@
                 add_tag(tag);
             for(const noti of saved_data.notis)
                 add_notification(noti.msg, new Date(noti.time), noti.every);
+            if(saved_data.thumbnail != null) {
+                window.change_thumbnail.src = saved_data.thumbnail.url;
+                fetch(saved_data.thumbnail.url)
+                    .then(res => res.blob())
+                    .then(blob => window.thumbnail_file.file = new File([blob], saved_data.thumbnail.name));
+            }
+            if(saved_data.attachs != null)
+                for(const attachs of saved_data.attachs)
+                    add_attachment(attachs)
         }
         function autoSave() {
             const notis = window.noti_list.querySelectorAll("li");
@@ -277,7 +285,14 @@
                 tags: Array.from(selected_tags)
             }));
         }
-        loadData();
+        const extra_data = document.getElementById("x-data");
+        if(extra_data != null) {
+            loadData(JSON.parse(extra_data.innerText));
+        } else {
+            const draft = localStorage.getItem("upload_draft");
+            if(draft != null)
+                loadData(JSON.parse(draft));
+        }
         setInterval(autoSave, 1000);
         var update_tags_tm = null;
         window.add_tag_dlg_search.onkeyup = () => {
@@ -361,24 +376,33 @@
             }
             navigator.clipboard.writeText(text).then(() => {});
         }
+        function add_attachment(file, file_handler) {
+            let file_url;
+            if(file_handler == null) {
+                file_handler = document.createElement("input");
+                file_handler.type = "file";
+                file_handler.file = file;
+                file_handler.setAttribute("file_id", file.id);
+                file_url = file.url;
+            } else {
+                file_url = URL.createObjectURL(file);
+            }
+            const attachment = window.attachment_template.content.cloneNode(true).firstElementChild;
+            file_handler.setAttribute("file_url", file_url);
+            attachment.querySelector("#attachment_file_name").innerText = file.name;
+            attachment.querySelector("#attachment_file_size").innerText = file.size + " bytes";
+            let appended;
+            attachment.querySelector(".attach-link-btn").onclick = () => copyTextToClipboard(file_url);
+            attachment.querySelector(".attach-remove-btn").onclick = () => attachment.remove();
+            file_handler.style.display = "none";
+            attachment.append(file_handler);
+            window.upload_attachment_list.appendChild(attachment);
+        }
         window.add_attachment_btn.onclick = () => {
             const file_handler = document.createElement("input");
             file_handler.type = "file";
             file_handler.click();
-            file_handler.onchange = () => {
-                const file = file_handler.files.item(0);
-                const attachment = window.attachment_template.content.cloneNode(true).firstElementChild;
-                const file_url = URL.createObjectURL(file);
-                file_handler.setAttribute("file_url", file_url);
-                attachment.querySelector("#attachment_file_name").innerText = file.name;
-                attachment.querySelector("#attachment_file_size").innerText = file.size + " bytes";
-                let appended;
-                attachment.querySelector(".attach-link-btn").onclick = () => copyTextToClipboard(file_url);
-                attachment.querySelector(".attach-remove-btn").onclick = () => attachment.remove();
-                file_handler.style.display = "none";
-                attachment.append(file_handler);
-                window.upload_attachment_list.appendChild(attachment);
-            }
+            file_handler.onchange = () => add_attachment(file_handler.files.item(0), file_handler)
         };
         window.upload_btn.onclick = () => {
             const [thumbnail] = window.thumbnail_file.files
@@ -390,7 +414,12 @@
             var i = 0;
             for(const tag of selected_tags)
                 data.append("tag" + i++, tag);
-            const file_inputs = window.upload_attachment_list.querySelectorAll("input[type=\"file\"]");
+            const same_file_inputs = window.upload_attachment_list.querySelectorAll("input[type=\"file\"][file_id]");
+            data.append("oattachs", same_file_inputs.length);
+            i = 0;
+            for(const file of same_file_inputs)
+                data.append("oattach" + i++, file.getAttribute("file_id"));
+            const file_inputs = window.upload_attachment_list.querySelectorAll("input[type=\"file\"]:not([file_id])");
             data.append("attachs", file_inputs.length);
             i = 0;
             for(const file of file_inputs) {
@@ -412,25 +441,20 @@
             window.upload_text.innerText = "Uploading...";
             window.upload_dlg.showModal();
             window.upload_dlg_close.onclick = () => window.upload_dlg.close();
-            fetch("{% url 'spezspellz:upload' %}", {
+            fetch("{% if spell %}{% url 'spezspellz:edit' spell.pk %}{% else %}{% url 'spezspellz:upload' %}{% endif %}", {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": "{{ csrf_token }}"
                 },
                 body: data
-            }).then(res => {
-                res.text().then(text => {
-                    if(res.status != 200)
-                        window.upload_text.style.color = "#F00";
-                    if(res.status == 200 && text == "OK") 
-                        window.upload_text.innerText = "Successfully uploaded";
-                    else
-                        window.upload_text.innerText = text;
-                }).catch(() => {
+            }).then(res => res.text().then(text => {
+                if(res.status != 200)
                     window.upload_text.style.color = "#F00";
-                    window.upload_text.innerText = "Failed to upload.";
-                })
-            }).catch(() => {
+                if(res.status == 200 && text == "OK") 
+                    window.upload_text.innerText = "Successfully uploaded";
+                else
+                    window.upload_text.innerText = text;
+            })).catch(() => {
                 window.upload_text.style.color = "#F00";
                 window.upload_text.innerText = "Failed to upload.";
             });
