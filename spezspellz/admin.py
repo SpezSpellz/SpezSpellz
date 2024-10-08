@@ -32,6 +32,13 @@ class SpellAdmin(admin.ModelAdmin):
 class UserInfoAdmin(admin.ModelAdmin):
     """For configuring user info."""
 
+    # stackoverflow.com/a/37676970/2848256
+    # def formfield_for_dbfield(self, db_field, **kwargs):
+    #     if db_field.name == 'colour':
+    #         kwargs['widget'] = ColourChooserWidget
+    #     return super(VehicleAdmin, self).formfield_for_dbfield(db_field,
+    #                                                            **kwargs)
+
     fieldsets = [
         ("Settings", {"fields": ["timed_notification",
                                  "review_comment_notification",
