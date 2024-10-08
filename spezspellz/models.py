@@ -135,3 +135,11 @@ class Bookmark(models.Model):
     def __str__(self):
         """Return bookmark as a string."""
         return f"Bookmark(spell={self.spell.pk}, user={self.user.pk})"
+
+
+class SpellHistoryEntry(models.Model):
+    """An entry in the spell history."""
+
+    user: models.ForeignKey[User] = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, null=False, on_delete=models.CASCADE)
+    time: models.DateTimeField = models.DateTimeField()

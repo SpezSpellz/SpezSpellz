@@ -29,6 +29,16 @@
       <li>You have no bookmarks.</li>
     {% endfor %}
   </ul>
+  <h2>Spell History</h2>
+  <ul>
+    {% for spell in history %}
+    <li>
+      <a href="{% url 'spezspellz:spell' spell.spell.pk %}">{{ spell.spell.title }}</a>
+    </li>
+    {% empty %}
+      <li>You have no spells.</li>
+    {% endfor %}
+  </ul>
   <script>
     window.bookmark_spell = (spell) => {
         fetch("{% url 'spezspellz:usersettings' %}", {

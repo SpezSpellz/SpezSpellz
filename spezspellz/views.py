@@ -2,6 +2,7 @@
 from typing import Optional, Generator, TypeVar, Any, cast
 import json
 import os
+from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login
@@ -14,7 +15,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_datetime
 from django.views.generic import CreateView
 from django.db import transaction
-from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark
+from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark, SpellHistoryEntry
 
 
 def safe_cast(t, val, default=None):
@@ -320,7 +321,8 @@ def profile_view(request: HttpRequest) -> HttpResponseBase:
     user = request.user
     spells = Spell.objects.filter(creator=user)
     bookmarks = Bookmark.objects.filter(user=user)
-    context = {'user': user, 'spells': spells, 'bookmarks': bookmarks}
+    history = cast(Any, user).spellhistoryentry_set.order_by("-time")
+    context = {'user': user, 'spells': spells, 'bookmarks': bookmarks, 'history': history}
 
     return render(request, 'profile.html', context)
 
@@ -395,6 +397,12 @@ def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
     bookmark = None
     if request.user.is_authenticated:
         bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
+        history = cast(Any, request.user).spellhistoryentry_set.filter(spell=spell).first()
+        if history is None:
+            SpellHistoryEntry.objects.create(user=request.user, spell=spell, time=timezone.now())
+        else:
+            history.time = timezone.now()
+            history.save()
 
     return render(
         request, "spell.html", {
