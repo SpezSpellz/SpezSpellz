@@ -9,19 +9,26 @@
   <h2>Your Spells</h2>
   <ul>
     {% for spell in spells %}
-    <a href="{% url 'spezspellz:spell' spell.pk %}"><li>{{ spell.title }}</li></a>
+    <li>
+      <a href="{% url 'spezspellz:spell' spell.pk %}">{{ spell.title }}</a>
+    </li>
     {% empty %}
       <li>You have no spells.</li>
     {% endfor %}
   </ul>
 
   <h2>Your Bookmarks</h2>
+
   <ul>
     {% for bookmark in bookmarks %}
-      <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}"><li>{{ bookmark.spell.title }}</li></a>
+    <li>
+      <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" style="padding-left:60px;">{{ bookmark.spell.title }}</a>
+      <a href="{% url 'spezspellz:bookmark' bookmark.spell.pk %}" style="flex-grow:0;"><i class="fas fa-bookmark"></i></a>
+    </li>
     {% empty %}
       <li>You have no bookmarks.</li>
     {% endfor %}
   </ul>
+
 </body>
 {% endblock %}

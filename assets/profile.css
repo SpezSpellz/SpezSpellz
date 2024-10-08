@@ -21,6 +21,21 @@ h2 {
     text-align: center;
 }
 
+.button {
+    display: inline-block;
+    margin-left: 5%;
+    margin-top: 1.5%;
+}
+
+.button a {
+    color: #FFFFFF;
+    padding: 1%;
+    background-color: #3B3B3B;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: filter 0.3s ease;
+}
+
 ul {
     list-style-type: none;
     padding: 0;
@@ -28,9 +43,9 @@ ul {
 }
 
 ul li {
+    display: flex;
     background-color: #3B3B3B;
     margin: 10px auto;
-    padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     max-width: 600px;
@@ -39,6 +54,13 @@ ul li {
     color: #FFF;
     transition: background-color 0.3s;
 }
+
+ul li a {
+    padding: 15px;
+    flex-grow:1;
+}
+
+
 
 ul li:hover {
     background-color: #2B2B2B;
@@ -54,3 +76,4 @@ li:empty {
     padding: 20px;
     max-width: 800px;
 }
+
