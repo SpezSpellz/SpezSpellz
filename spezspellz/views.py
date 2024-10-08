@@ -355,8 +355,6 @@ def bookmark_view(request: HttpRequest, spell_id: int, profile: bool):
     return redirect("spezspellz:spell", spell_id=spell.pk)
 
 
-
-
 class RegisterView(CreateView):
     """View for registration/signup."""
 

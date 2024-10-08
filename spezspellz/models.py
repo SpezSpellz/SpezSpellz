@@ -135,3 +135,17 @@ class Bookmark(models.Model):
     def __str__(self):
         """Return bookmark as a string."""
         return f"Bookmark(spell={self.spell.pk}, user={self.user.pk})"
+
+
+class Review(models.Model):
+    """Collection of reviews for spells"""
+
+    user: models.ForeignKey[User] = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, null=False, on_delete=models.CASCADE)
+    review_desc: models.CharField = models.CharField(max_length=256)
+    star: models.IntegerField = models.IntegerField()
+    # lowest 1 star highest 5 star
+
+    def __str__(self):
+        """Return a review for a spell"""
+        return f"Spell: {self.spell}/ User: {self.user}/ Rating: {self.star}"
