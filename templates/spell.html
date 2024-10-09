@@ -64,4 +64,13 @@
             <input type="submit" value="Submit" class="submitButton">
         </form>
     </div>
+    <br><br>
+
+    <div class="spell">
+        {% for review in review_list %}
+        <p> {{ review.user }}</p>
+        {% empty %}
+        <p>There are no reviews on this spell yet.</p>
+        {% endfor %}
+    </div>
 {% endblock %}

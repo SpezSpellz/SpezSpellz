@@ -142,7 +142,7 @@ class Review(models.Model):
 
     user: models.ForeignKey[User] = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, null=False, on_delete=models.CASCADE)
-    review_desc: models.CharField = models.CharField(max_length=256)
+    review_desc: models.CharField = models.CharField(max_length=256, null=True)
     star: models.IntegerField = models.IntegerField()
     # lowest 1 star highest 5 star
 

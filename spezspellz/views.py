@@ -378,11 +378,12 @@ def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
     bookmark = None
     if request.user.is_authenticated:
         bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
-
+    review = Review.objects.filter(spell=spell).all()
     return render(
         request, "spell.html", {
             "spell": spell,
-            "bookmark": bookmark
+            "bookmark": bookmark,
+            "review_list": review,
         }
     )
 
@@ -418,8 +419,7 @@ def review_view(request: HttpRequest, spell_id: int):
     desc = request.POST.get('description')
 
     if review is None:
-        pass
-        # Review.objects.create(user=request.user, spell=spell, star=star, review_desc=desc)
+        Review.objects.create(user=request.user, spell=spell, star=star, review_desc=desc)
     else:
         pass
         # TODO: make the user decide whether to edit old review or replace it
