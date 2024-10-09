@@ -34,3 +34,33 @@ text {
     padding: 1%;
     border-radius: 20px;
 }
+
+.submitButton {
+    border-radius: 8px;
+    background-color: #3B3B3B;
+    margin: auto;
+    display: inline-block;
+    padding: 10px 20px;
+    transition: background-color 0.1s ease;
+    font-size: 22px;
+    color: #FFFFFF;
+}
+
+.submitButton:hover {
+    background-color: #4B4B4B;
+}
+
+.submitButton:active {
+    background-color: #5B5B5B;
+}
+
+.reviewDesc {
+    color: #FFFFFF;
+    background-color: #4B4B4B;
+    width: 90%;
+    height: 150px;
+    padding: 0px;
+    margin: 0px 20px 0px 0px;
+    border-radius: 4px;
+    font-size: 16px;
+}

@@ -1,7 +1,7 @@
 """This file contains urls of SpezSpellz."""
 from django.urls import path
 from django.shortcuts import redirect
-from .views import HomePage, UploadPage, TagsPage, profile_view, spell_detail, thumbnail_view, RegisterView, attachment_view, UserSettingsPage
+from .views import HomePage, UploadPage, TagsPage, profile_view, spell_detail, thumbnail_view, RegisterView, attachment_view, UserSettingsPage, review_view
 
 
 app_name = "spezspellz"
@@ -16,5 +16,6 @@ urlpatterns = [
     path("attachment/<int:attachment_id>/", attachment_view, name="attachments"),
     path("spell/<int:spell_id>/", spell_detail, name="spell"),
     path("spell/thumbnail/<int:spell_id>/", thumbnail_view, name="spell_thumbnail"),
-    path("profile/", profile_view, name="profile")
+    path("profile/", profile_view, name="profile"),
+    path("review/<int:spell_id>/", review_view, name="review")
 ]

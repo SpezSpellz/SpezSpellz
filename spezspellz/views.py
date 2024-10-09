@@ -419,7 +419,7 @@ def review_view(request: HttpRequest, spell_id: int):
     else:
         pass
         # TODO: make the user decide whether to edit old review or replace it
-        # Also make it tolerant to CSRF attack thingy
+
     return redirect("spezspellz:spell", spell_id=spell.pk)
 
 

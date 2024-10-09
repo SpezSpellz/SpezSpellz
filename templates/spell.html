@@ -47,4 +47,23 @@
         }
     </script>
     <br><br>
+
+    <div class="spell">
+        <h1>Review</h1>
+        <form action="submit" method="post">
+            <label for="integerInput">Enter an integer:</label>
+            <input type="number" id="integerInput" name="integerInput" required>
+            <br><br>
+
+            <label for="description">Description: </label>
+            <br><br>
+            <textarea id="description" name="description" class="reviewDesc" required></textarea>
+            <br><br><br>
+
+            <input type="submit" value="Submit" class="submitButton">
+
+
+        </form>
+
+    </div>
 {% endblock %}
