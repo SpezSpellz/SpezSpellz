@@ -414,8 +414,12 @@ def review_view(request: HttpRequest, spell_id: int):
         )
         return redirect("spezspellz:home")
     review = get_or_none(Review, user=request.user, spell=spell)
+    star = request.POST.get('star')
+    desc = request.POST.get('description')
+
     if review is None:
-        Review.objects.create(user=request.user, spell=spell)
+        pass
+        # Review.objects.create(user=request.user, spell=spell, star=star, review_desc=desc)
     else:
         pass
         # TODO: make the user decide whether to edit old review or replace it
