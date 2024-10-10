@@ -4,6 +4,9 @@ body {
 h1, h2 {
     color: #FFF;
 }
+a {
+    text-decoration: none;
+}
 .sp-title {
     margin: auto;
     text-align: center;
@@ -20,7 +23,7 @@ h1, h2 {
     color: #FFF;
     padding-left: 32px;
     border-radius: 6px 0 0 6px;
-    margin-left: 15px;
+    margin-left: 12px;
     margin-right: -1px;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -49,7 +52,6 @@ h1, h2 {
     flex-direction: row;
     margin: 10px;
     padding: 5px;
-    
 }
 .spell {
     position: relative;
@@ -72,4 +74,38 @@ h1, h2 {
     height: 100%;
     width: 100%;
     object-fit: contain;
+}
+.all-spell-container {
+    background-color: #3B3B3B;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+}
+.all-spell {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    background-color: #1C1C1C;
+    border-radius: 6px;
+    padding: 5px;
+}
+.all-spell-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-right: 10px;
+}
+.all-spell-title {
+    color: #FFF;
+    font-size: 16pt;
+    margin: 0;
+}
+.all-spell-category {
+    color: #AAA;
+    font-size: 12pt;
+    margin: 2px 0;
+}
+.all-spell-data {
+    color: #CCC;
+    font-size: 12pt;
 }
