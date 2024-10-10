@@ -443,7 +443,7 @@ class SpellPage(View, RPCView):
         spell = get_or_none(Spell, pk=spell_id)
         if spell is None:
             return redirect("spezspellz:home")
-        context: dict = {"spell": spell}
+        context: dict = {"spell": spell, "star_range": range(0, 10, 2)}
         context["reviews"] = Review.objects.filter(spell=spell).all()
         context["avg_star"] = spell.calc_avg_stars() or 5.0
         if user.is_authenticated:

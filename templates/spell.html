@@ -196,13 +196,13 @@
             </script>
         </div>
         {% endif %}
-        {% for review in review_list %}
+        {% for review in reviews %}
             <div>
                 <div class="review-entry">
                     <div style="display: flex">
                         <h2 style="margin: 0;margin-right: 16px;">{{ review.user }}</h2>
                         <div style="display: flex;">
-                            {% for star in star_list %}
+                            {% for star in star_range %}
                                 {% if review.star > star %}
                                 <img width="24" src="/assets/star.svg"/>
                                 {% elif review.star >= star %}
