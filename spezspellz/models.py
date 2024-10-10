@@ -171,3 +171,11 @@ class SpellHistoryEntry(models.Model):
     user: models.ForeignKey[User] = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, null=False, on_delete=models.CASCADE)
     time: models.DateTimeField = models.DateTimeField()
+
+
+class ReviewComment(models.Model):
+    """A comment for review."""
+
+    review: models.ForeignKey[Review] = models.ForeignKey(Review, on_delete=models.CASCADE)
+    commenter: models.ForeignKey[User] = models.ForeignKey(User, on_delete=models.CASCADE)
+    text: models.CharField = models.CharField(max_length=500)

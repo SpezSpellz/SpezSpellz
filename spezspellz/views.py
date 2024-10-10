@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_datetime
 from django.views.generic import CreateView
 from django.db import transaction
-from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark, Review, SpellHistoryEntry
+from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark, Review, SpellHistoryEntry, ReviewComment
 
 
 def safe_cast(t, val, default=None):
@@ -443,42 +443,59 @@ class SpellPage(View, RPCView):
         spell = get_or_none(Spell, pk=spell_id)
         if spell is None:
             return redirect("spezspellz:home")
-        bookmark = None
+        context: dict = {"spell": spell}
+        context["reviews"] = Review.objects.filter(spell=spell).all()
+        context["avg_star"] = spell.calc_avg_stars() or 5.0
         if user.is_authenticated:
-            bookmark = get_or_none(Bookmark, user=user, spell=spell)
-        review = Review.objects.filter(spell=spell).all()
-        my_review = get_or_none(Review, user=user, spell=spell)
-        average_star = spell.calc_avg_stars() or 5.0
-        average_star_round = float(round(average_star * 2) / 2)
-        with transaction.atomic():
-            history = cast(Any,
-                           user).spellhistoryentry_set.filter(spell=spell
-                                                              ).first()
-            if history is None:
-                SpellHistoryEntry.objects.create(
-                    user=user, spell=spell, time=timezone.now()
-                )
-            else:
-                history.time = timezone.now()
-                history.save()
-            if cast(Any, user).spellhistoryentry_set.all().count(
-            ) > self.__class__.MAX_HISTORY_COUNT:
-                SpellHistoryEntry.objects.filter(
-                    pk__in=cast(Any, user).spellhistoryentry_set.all().
-                    order_by("-time")[self.__class__.MAX_HISTORY_COUNT:]
-                ).delete()
+            context["review"] = get_or_none(Review, user=user, spell=spell)
+            context["bookmark"] = get_or_none(Bookmark, user=user, spell=spell)
+            with transaction.atomic():
+                history = cast(Any,
+                               user).spellhistoryentry_set.filter(spell=spell
+                                                                  ).first()
+                if history is None:
+                    SpellHistoryEntry.objects.create(
+                        user=user, spell=spell, time=timezone.now()
+                    )
+                else:
+                    history.time = timezone.now()
+                    history.save()
+                if cast(Any, user).spellhistoryentry_set.all().count(
+                ) > self.__class__.MAX_HISTORY_COUNT:
+                    SpellHistoryEntry.objects.filter(
+                        pk__in=cast(Any, user).spellhistoryentry_set.all().
+                        order_by("-time")[self.__class__.MAX_HISTORY_COUNT:]
+                    ).delete()
 
-        return render(
-            request, "spell.html", {
-                "spell": spell,
-                "bookmark": bookmark,
-                "review_list": review,
-                "review": my_review,
-                "star_list": range(0, 10, 2),
-                "avg_star": average_star,
-                "avg_star_round": average_star_round,
-            }
-        )
+        return render(request, "spell.html", context)
+
+    def rpc_review_comment(
+        self,
+        request: HttpRequest,
+        spell_id: int,
+        review_id: int,
+        text: str = "",
+    ) -> HttpResponseBase:
+        """Handle review comment requests."""
+        _ = spell_id
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        if not isinstance(text, str):
+            return HttpResponse(
+                "Parameter `text` must be a string", status=400
+            )
+        if not isinstance(review_id, int):
+            return HttpResponse(
+                "Parameter `review_id` must be a string", status=400
+            )
+        if len(text) > 500:
+            return HttpResponse("Text too long", status=400)
+        review = get_or_none(Review, pk=review_id)
+        if review is None:
+            return HttpResponse("Review not found", status=404)
+        ReviewComment.objects.create(review=review, commenter=user, text=text)
+        return HttpResponse("Comment posted", status=200)
 
     def rpc_review(
         self,
@@ -499,7 +516,7 @@ class SpellPage(View, RPCView):
             return HttpResponse(
                 "Parameter `stars` must be an integer", status=400
             )
-        if len(desc) > 500:
+        if len(desc) > 256:
             return HttpResponse("Description too long", status=400)
         if stars < 0 or stars > 19:
             return HttpResponse("Bad star parameter", status=400)
