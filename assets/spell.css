@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap')
+
 h1, h2, h3 {
     color: #FFFFFF;
 }
@@ -63,4 +65,68 @@ text {
     margin: 0px 20px 0px 0px;
     border-radius: 4px;
     font-size: 16px;
+}
+
+.container {
+    position: relative;
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    padding: 10px 0 5px 0;
+}
+
+.container .skills {
+    display: flex;
+    justify-content: center;
+    align-items: left;
+}
+
+.star {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.container .skills .rating {
+    display: flex;
+    position: relative;
+    flex-direction: row-reverse;
+}
+
+.container .skills .rating input {
+    position: relative;
+    width: 20px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: left;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    overflow: hidden;
+}
+
+.container .skills .rating input::before {
+    content: '\f005';
+    position: absolute;
+    font-family: fontAwesome;
+    font-size: 34px;
+    position: absolute;
+    left: 4px;
+    color: #030b0f;
+    transition: 0.5s;
+}
+
+.container .skills .rating input:nth-child(2n+1)::before{
+    right: 4px;
+    left: initial;
+}
+
+.container .skills .rating input:hover ~ input::before,
+.container .skills .rating input:hover::before,
+.container .skills .rating input:checked ~ input::before,
+.container .skills .rating input:checked::before
+{
+    color: #FFFFFF
 }

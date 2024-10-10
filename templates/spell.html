@@ -3,6 +3,7 @@
 {% block Title %}Spell#{{ spell.id }} - SpezSpellz{% endblock %}
 {% block Content %}
     <link rel="stylesheet" href="/assets/spell.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <div>
         <a href="{% url 'spezspellz:home' %} " class="btn-like">
             <img width="32" src="/assets/home.svg"/>
@@ -48,29 +49,49 @@
     </script>
     <br><br>
 
-    <div class="spell">
-        <h1>Review</h1>
-        <form action="{% url 'spezspellz:review' spell.pk %}" method="post">
-            {% csrf_token %}
-            <label for="star">Enter an integer:</label>
-            <input type="number" id="star" name="star" required>
-            <br><br>
+    {% if not review %}
+        <div class="spell">
+            <h1>Review</h1>
+            <form action="{% url 'spezspellz:review' spell.pk %}" method="post">
+                {% csrf_token %}
+                <h2>Star</h2>
+                <div class="container">
+                    <div class="skills">
+                        <div class="rating">
+                            <input type="radio" name="star" class="star" value="0.5" required>
+                            <input type="radio" name="star" class="star" value="1">
+                            <input type="radio" name="star" class="star" value="1.5">
+                            <input type="radio" name="star" class="star" value="2">
+                            <input type="radio" name="star" class="star" value="2.5">
+                            <input type="radio" name="star" class="star" value="3">
+                            <input type="radio" name="star" class="star" value="3.5">
+                            <input type="radio" name="star" class="star" value="4">
+                            <input type="radio" name="star" class="star" value="4.5">
+                            <input type="radio" name="star" class="star" value="5">
+                        </div>
+                    </div>
+                </div>
 
-            <label for="description">Description: </label>
-            <br><br>
-            <textarea id="description" name="description" class="reviewDesc"></textarea>
-            <br><br><br>
+                <br><br>
 
-            <input type="submit" value="Submit" class="submitButton">
-        </form>
-    </div>
-    <br><br>
+                <label for="description">Description: </label>
+                <br><br>
+                <textarea id="description" name="description" class="reviewDesc"></textarea>
+                <br><br><br>
+
+                <input type="submit" value="Submit" class="submitButton">
+            </form>
+        </div>
+        <br><br>
+    {% else %}
+       <p>Put your review template here</p>
+    {% endif %}
 
     <div class="spell">
         {% for review in review_list %}
         <p> {{ review.user }}</p>
         {% empty %}
-        <p>There are no reviews on this spell yet.</p>
+        <h2>There are no reviews on this spell yet.</h2>
         {% endfor %}
     </div>
 {% endblock %}

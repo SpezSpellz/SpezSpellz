@@ -372,6 +372,7 @@ class UserSettingsPage(View, RPCView):
 
 def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
     """Return the spell detail page."""
+    user = request.user
     spell = get_or_none(Spell, pk=spell_id)
     if spell is None:
         return redirect("spezspellz:home")
@@ -379,11 +380,13 @@ def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
     if request.user.is_authenticated:
         bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
     review = Review.objects.filter(spell=spell).all()
+    my_review = Review.objects.filter(user=user.id, spell=spell).first()
     return render(
         request, "spell.html", {
             "spell": spell,
             "bookmark": bookmark,
             "review_list": review,
+            "review": my_review,
         }
     )
 
@@ -416,6 +419,8 @@ def review_view(request: HttpRequest, spell_id: int):
         return redirect("spezspellz:home")
     review = get_or_none(Review, user=request.user, spell=spell)
     star = request.POST.get('star')
+    star = float(star)
+
     desc = request.POST.get('description')
 
     if review is None:
