@@ -34,7 +34,7 @@
     <div class="right-top-btns">
         {% if request.resolver_match.url_name == 'profile' %}
         <a href="{% url 'spezspellz:usersettings' %}" class="btn-like right-top-btn"><img width="32" src="/assets/cog.svg"/></a>
-        <form action="{% url 'logout' %}?next={% url 'spezspellz:home' %}" method="POST"></form>
+        <form action="{% url 'logout' %}?next={% url 'spezspellz:home' %}" method="POST">
             {% csrf_token %}
             <input type="image" alt="Logout" name="submit" width="32" class="btn-like right-top-btn" src="/assets/logout.svg"/>
         </form>
