@@ -4,6 +4,7 @@ import json
 import os
 from django.utils import timezone
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse, HttpResponseBase, FileResponse
@@ -15,7 +16,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_datetime
 from django.views.generic import CreateView
 from django.db import transaction
-from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark, SpellHistoryEntry
+from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark, \
+    SpellHistoryEntry
 
 
 def safe_cast(t, val, default=None):
@@ -65,6 +67,18 @@ class HomePage(View):
         return render(
             request, "index.html", {"latest_spells": Spell.objects.all()}
         )
+
+
+def search_spell(request):
+    search_query = request.GET.get('search_query', '').strip()
+    latest_spells = Spell.objects.all()
+    if search_query:
+        try:
+            spell = Spell.objects.get(title__iexact=search_query)
+            return redirect(f'/spell/{spell.id}/')
+        except Spell.DoesNotExist:
+            pass
+    return render(request, 'index.html', {'latest_spells': latest_spells})
 
 
 class UploadPage(View):
@@ -131,7 +145,7 @@ class UploadPage(View):
 
     @staticmethod
     def validate_spellnotification_info(
-        message: Optional[str], period: Optional[str], datetime: Optional[str]
+            message: Optional[str], period: Optional[str], datetime: Optional[str]
     ) -> Optional[dict[str, Any]]:
         """Attempt to parse, validate, and convert the provided arguments to values fit for SpellNotification constructor."""
         if message is None or datetime is None or period is None \
@@ -153,8 +167,8 @@ class UploadPage(View):
 
     @staticmethod
     def make_new_objects(
-        object_type: type[MakeNewObjectsObjectType],
-        infos: Generator[Optional[dict[str, Any]], None, None], **kwargs
+            object_type: type[MakeNewObjectsObjectType],
+            infos: Generator[Optional[dict[str, Any]], None, None], **kwargs
     ) -> list[MakeNewObjectsObjectType]:
         """Construct new objects.
 
@@ -269,7 +283,7 @@ class UploadPage(View):
                 data = data.replace(
                     attach_names[i],
                     reverse(
-                        "spezspellz:attachments", args=(to_add.pk, )
+                        "spezspellz:attachments", args=(to_add.pk,)
                     )
                 )
             spell.data = data
@@ -285,10 +299,10 @@ class TagsPage(View, RPCView):
         return HttpResponse("Not Implemented", status=404)
 
     def rpc_search(
-        self,
-        _: HttpRequest,
-        query: Optional[str] = None,
-        max_len: int = 50
+            self,
+            _: HttpRequest,
+            query: Optional[str] = None,
+            max_len: int = 50
     ) -> HttpResponseBase:
         """Search for tags that contain the query."""
         if query is None:
@@ -367,13 +381,13 @@ class UserSettingsPage(View, RPCView):
         return HttpResponse("Bookmarked" if bookmark is None else "Unbookmarked")
 
     def rpc_update(
-        self,
-        request: HttpRequest,
-        timed_noti: bool = True,
-        re_coms_noti: bool = True,
-        sp_re_noti: bool = True,
-        sp_coms_noti: bool = True,
-        desc: str = ""
+            self,
+            request: HttpRequest,
+            timed_noti: bool = True,
+            re_coms_noti: bool = True,
+            sp_re_noti: bool = True,
+            sp_coms_noti: bool = True,
+            desc: str = ""
     ) -> HttpResponse:
         """Handle settings update."""
         if not request.user.is_authenticated:
@@ -410,7 +424,9 @@ def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
                 history.time = timezone.now()
                 history.save()
             if cast(Any, request.user).spellhistoryentry_set.all().count() > MAX_HISTORY_COUNT:
-                SpellHistoryEntry.objects.filter(pk__in=cast(Any, request.user).spellhistoryentry_set.all().order_by("-time")[MAX_HISTORY_COUNT:]).delete()
+                SpellHistoryEntry.objects.filter(
+                    pk__in=cast(Any, request.user).spellhistoryentry_set.all().order_by("-time")[
+                           MAX_HISTORY_COUNT:]).delete()
 
     return render(
         request, "spell.html", {
