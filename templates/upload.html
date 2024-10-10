@@ -301,6 +301,42 @@
     }
     setInterval(autoSave, 1000);
     var update_tags_tm = null;
+    function update_tags(query) {
+        fetch("{% url 'spezspellz:tags' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                "method": "search",
+                "query": query
+            })
+        }).then(res => {
+            if(res.status != 200)
+                return Promise.reject();
+            return res.json();
+        }).then(json => {
+            window.tag_search_list.innerHTML = '';
+            for(const tag of json) {
+                if(selected_tags.has(tag))
+                    continue;
+                const li = document.createElement("li");
+                const btn = document.createElement("button");
+                btn.classList.add("tag-search-entry");
+                btn.innerText = tag;
+                btn.onclick = () => {
+                    li.remove();
+                    add_tag(tag);
+                };
+                li.append(btn);
+                window.tag_search_list.append(li);
+            }
+            for(const entry of window.tag_search_list.children) {
+                const btn = entry.querySelector("button");
+                entry.style.display = (btn.innerText.toLowerCase().indexOf(query) != -1) ? null : "none";
+            }
+        });
+    }
     window.add_tag_dlg_search.onkeyup = () => {
         const query = window.add_tag_dlg_search.value.toLowerCase();
         for(const entry of window.tag_search_list.children) {
@@ -311,42 +347,10 @@
             clearTimeout(update_tags_tm);
         update_tags_tm = setTimeout(() => {
             update_tags_tm = null;
-            fetch("{% url 'spezspellz:tags' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: JSON.stringify({
-                    "method": "search",
-                    "query": query
-                })
-            }).then(res => {
-                if(res.status != 200)
-                    return;
-                res.json().then(json => {
-                    window.tag_search_list.innerHTML = '';
-                    for(const tag of json) {
-                        if(selected_tags.has(tag))
-                            continue;
-                        const li = document.createElement("li");
-                        const btn = document.createElement("button");
-                        btn.classList.add("tag-search-entry");
-                        btn.innerText = tag;
-                        btn.onclick = () => {
-                            li.remove();
-                            add_tag(tag);
-                        };
-                        li.append(btn);
-                        window.tag_search_list.append(li);
-                    }
-                    for(const entry of window.tag_search_list.children) {
-                        const btn = entry.querySelector("button");
-                        entry.style.display = (btn.innerText.toLowerCase().indexOf(query) != -1) ? null : "none";
-                    }
-                });
-            })
+            update_tags(query);
         }, 250); 
     };
+    update_tags("");
     window.close_add_tag_dlg.onclick = () => {
         window.tag_search_list.innerHTML = '';
         window.add_tag_dlg_search.value = "";

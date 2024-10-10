@@ -67,70 +67,10 @@
 </script>
 {% endif %}
 <br>
-
-{#{% if not review %}#}
-{#    <div class="spell">#}
-{#        <h1>Your Review</h1>#}
-{##}
-{#        <form action="{% url 'spezspellz:review' spell.pk %}" method="post">#}
-{#            {% csrf_token %}#}
-{#            <h2>Star</h2>#}
-{#            <div class="container">#}
-{#                <div class="skills">#}
-{#                    <div class="rating">#}
-{#                        <input type="radio" name="star" class="star" value="5" required>#}
-{#                        <input type="radio" name="star" class="star" value="4.5">#}
-{#                        <input type="radio" name="star" class="star" value="4">#}
-{#                        <input type="radio" name="star" class="star" value="3.5">#}
-{#                        <input type="radio" name="star" class="star" value="3">#}
-{#                        <input type="radio" name="star" class="star" value="2.5">#}
-{#                        <input type="radio" name="star" class="star" value="2">#}
-{#                        <input type="radio" name="star" class="star" value="1.5">#}
-{#                        <input type="radio" name="star" class="star" value="1">#}
-{#                        <input type="radio" name="star" class="star" value="0.5">#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{##}
-{#            <br><br>#}
-{##}
-{#            <label for="description">Description: </label>#}
-{#            <br><br>#}
-{#            <textarea id="description" name="description" class="reviewDesc"></textarea>#}
-{#            <br><br><br>#}
-{##}
-{#            {% if user.is_authenticated %}#}
-{#            <input type="submit" value="Submit" class="submitButton">#}
-{#            {% else %}#}
-{#            <a href="{% url 'login' %}?next={% url 'spezspellz:spell' spell.pk %}" class="loginButton">Login to Submit</a>#}
-{#            {% endif %}#}
-{##}
-{#        </form>#}
-{#    </div>#}
-{#    <br><br>#}
-{#{% else %}#}
-{#    <div class="spell">#}
-{#        <h1>Your Review</h1>#}
-{#            <div class="container">#}
-{#                <div class="skills">#}
-{#                    <div class="rating">#}
-{#                        {% for star in star_list %}#}
-{#                            {% if review.star == star %}#}
-{#                                <input type="radio" name="star" class="star" value="{{ star }}" disabled checked>#}
-{#                            {% else %}#}
-{#                                <input type="radio" name="star" class="star" value="{{ star }}" disabled>#}
-{#                            {% endif %}#}
-{#                        {% endfor %}#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        <p>{{ review.review_desc }}</p>#}
-{#    </div>#}
-{#{% endif %}#}
-<br><br>
 <template id="review_reply_template">
     <div style="margin-top: 8px;margin-left: 50px;display: flex;justify-items: left;">
         <textarea c_text class="review-desc" placeholder="Enter reply"></textarea>
+        <input c_cancel class="btn-like send-btn" style="margin-left: 8px;" width="32" type="image" src="/assets/cancel.svg"/>
         <input c_send class="btn-like send-btn" style="margin-left: 8px;" width="32" type="image" src="/assets/send.svg"/>
     </div>
 </template>
@@ -141,6 +81,7 @@
     </div>
     <hr>
     <div id="reviews_tab">
+        {% if user.is_authenticated %}
         <div style="padding: 5px;">
             <div id="rate_stars" style="display: flex;">
                 <h2 style="margin: 0;margin-bottom: 8px;margin-right: 8px;">{% if review %}Update your{% else %}Leave a{% endif %} Review</h2>
@@ -213,27 +154,55 @@
                             window.base_dlg.addEventListener("close", () => location.reload());
                         });
                     }).catch((res) => {
-                        console.log(res.message)
                         window.dlg_header.innerText = "Review Submission Error";
                         window.dlg_text.innerText = res;
                         window.base_dlg.showModal();
                     });
                 };
-                window.addReviewReplyWindow = (btn, review) => {
+                function send_review_comment(review_id, text) {
+                    return fetch("{% url 'spezspellz:spell' spell.pk %}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: JSON.stringify({
+                            method: "review_comment",
+                            text: text,
+                            review_id: review_id
+                        })
+                    }).then(res => {
+                        if(!res.ok)
+                            return res.text().then(msg => Promise.reject(msg));
+                        return res.text();
+                    });
+                }
+                window.addReviewReplyWindow = (btn, review, review_id) => {
                     const clone = window.review_reply_template.content.cloneNode(true).firstElementChild;
                     const text = clone.querySelector("[c_text]");
                     btn.style.display = "none";
+                    clone.querySelector("[c_cancel]").onclick = () => {
+                        clone.remove();
+                        btn.style.display = null;
+                    }
+                    clone.querySelector("[c_send]").onclick = () => {
+                        send_review_comment(review_id, text.value).then(() => {
+                            clone.remove();
+                            btn.style.display = null;
+                            location.reload();
+                        });
+                    }
                     review.firstElementChild.after(clone);
                 }
             </script>
         </div>
-        {% for review in review_list %}
+        {% endif %}
+        {% for review in reviews %}
             <div>
                 <div class="review-entry">
                     <div style="display: flex">
                         <h2 style="margin: 0;margin-right: 16px;">{{ review.user }}</h2>
                         <div style="display: flex;">
-                            {% for star in star_list %}
+                            {% for star in star_range %}
                                 {% if review.star > star %}
                                 <img width="24" src="/assets/star.svg"/>
                                 {% elif review.star >= star %}
@@ -246,13 +215,15 @@
                     </div>
                     <div style="display: flex">
                         <p>{{ review.desc }}</p>
-                        <input onclick="window.addReviewReplyWindow(this, this.parentElement.parentElement.parentElement)" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
+                        <input onclick="window.addReviewReplyWindow(this, this.parentElement.parentElement.parentElement, {{ review.pk }})" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
                     </div>
                 </div>
-                <!-- <div class="review-entry" style="margin-left: 50px;">
-                    <h3 style="margin: 0;margin-right: 16px;">Review Commenter A</h3>
-                    <p>Nah this shit trash tf u talkin bout /\/j993r</p>
-                </div> -->
+                {% for comment in review.reviewcomment_set.all %}
+                <div class="review-entry" style="margin-left: 50px;">
+                    <h3 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h3>
+                    <p>{{ comment.text }}</p>
+                </div>
+                {% endfor %}
             </div>
         </div>
         {% empty %}
