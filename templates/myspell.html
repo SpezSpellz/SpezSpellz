@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block Title %}My Spells{% endblock %}
+{% block Content %}
+<link rel="stylesheet" href="/assets/myspell.css">
+<body>
+    <h1 style="margin: auto; text-align: center">All created spell</h1>
+    <input class="search-bar" placeholder="Search my spell" type="text">
+    <br>
+    {% for spell in spells %}
+        <div class="spell-container">
+            <div class="spell-info">
+                <img src="{% url 'spezspellz:spell_thumbnail' spell.id %}">
+                <div class="spell-title">{{ spell.title }}</div>
+            </div>
+            <div class="actions">
+                <a href="{% url 'spezspellz:edit' spell.id %}">Edit</a>
+                <a>Delete</a>
+            </div>
+        </div>
+    {% endfor %}
+</body>
+{% endblock %}

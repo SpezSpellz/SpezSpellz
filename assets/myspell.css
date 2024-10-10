@@ -1,0 +1,60 @@
+.spell-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+.spell-info {
+    display: flex;
+    align-items: center;
+}
+.spell-info img {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+.spell-title {
+    font-size: 18px;
+    font-weight: bold;
+    overflow-wrap: break-word;
+    text-align: center;
+}
+.actions {
+    display: flex;
+    gap: 10px;
+}
+.actions a {
+    color: white;
+    text-decoration: none;
+    padding: 20px 20px;
+    background-color: #404040;
+    border-radius: 5px;
+}
+.actions a:hover {
+    background-color: #4B4B4B;
+}
+.actions a:active {
+    background-color: #5B5B5B;
+}
+.search-bar {
+    background-color: #3B3B3B;
+    border: none;
+    font-size: 12pt;
+    color: #FFF;
+    padding-left: 32px;
+    border-radius: 6px;
+    margin: auto;
+    margin-top: 10px;
+    background-image: url("/assets/search.svg");
+    background-position: 3px, 3px;
+    background-size: 24px;
+    background-repeat: no-repeat;
+    display: block;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}

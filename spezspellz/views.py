@@ -447,3 +447,12 @@ class RegisterView(CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy("login")
     template_name = "registration/register.html"
+
+
+@login_required
+def myspell_view(request: HttpRequest) -> HttpResponseBase:
+    """View for all created spell by current user."""
+    user = request.user
+    spells = Spell.objects.filter(creator=user)
+    return render(request, "myspell.html", {"spells": spells})
+
