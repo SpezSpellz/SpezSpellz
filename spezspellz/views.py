@@ -381,12 +381,14 @@ def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
         bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
     review = Review.objects.filter(spell=spell).all()
     my_review = Review.objects.filter(user=user.id, spell=spell).first()
+    star_list = [5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5]
     return render(
         request, "spell.html", {
             "spell": spell,
             "bookmark": bookmark,
             "review_list": review,
             "review": my_review,
+            "star_list": star_list,
         }
     )
 
@@ -407,9 +409,9 @@ def attachment_view(_: HttpRequest, attachment_id: int):
     return FileResponse(attachment.file)
 
 
-@login_required
 def review_view(request: HttpRequest, spell_id: int):
     """User post review on a spell"""
+    user = request.user
     spell = get_or_none(Spell, pk=spell_id)
     if spell is None:
         messages.add_message(
@@ -417,14 +419,14 @@ def review_view(request: HttpRequest, spell_id: int):
             "The spell you were trying to review does not exist."
         )
         return redirect("spezspellz:home")
-    review = get_or_none(Review, user=request.user, spell=spell)
+    review = get_or_none(Review, user=user, spell=spell)
     star = request.POST.get('star')
     star = float(star)
-
+    print(f"got {star} star")
     desc = request.POST.get('description')
 
     if review is None:
-        Review.objects.create(user=request.user, spell=spell, star=star, review_desc=desc)
+        Review.objects.create(user=user, spell=spell, star=star, review_desc=desc)
     else:
         pass
         # TODO: make the user decide whether to edit old review or replace it

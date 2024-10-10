@@ -51,23 +51,24 @@
 
     {% if not review %}
         <div class="spell">
-            <h1>Review</h1>
+            <h1>Your Review</h1>
+
             <form action="{% url 'spezspellz:review' spell.pk %}" method="post">
                 {% csrf_token %}
                 <h2>Star</h2>
                 <div class="container">
                     <div class="skills">
                         <div class="rating">
-                            <input type="radio" name="star" class="star" value="0.5" required>
-                            <input type="radio" name="star" class="star" value="1">
-                            <input type="radio" name="star" class="star" value="1.5">
-                            <input type="radio" name="star" class="star" value="2">
-                            <input type="radio" name="star" class="star" value="2.5">
-                            <input type="radio" name="star" class="star" value="3">
-                            <input type="radio" name="star" class="star" value="3.5">
-                            <input type="radio" name="star" class="star" value="4">
+                            <input type="radio" name="star" class="star" value="5" required>
                             <input type="radio" name="star" class="star" value="4.5">
-                            <input type="radio" name="star" class="star" value="5">
+                            <input type="radio" name="star" class="star" value="4">
+                            <input type="radio" name="star" class="star" value="3.5">
+                            <input type="radio" name="star" class="star" value="3">
+                            <input type="radio" name="star" class="star" value="2.5">
+                            <input type="radio" name="star" class="star" value="2">
+                            <input type="radio" name="star" class="star" value="1.5">
+                            <input type="radio" name="star" class="star" value="1">
+                            <input type="radio" name="star" class="star" value="0.5">
                         </div>
                     </div>
                 </div>
@@ -79,15 +80,38 @@
                 <textarea id="description" name="description" class="reviewDesc"></textarea>
                 <br><br><br>
 
+                {% if user.is_authenticated %}
                 <input type="submit" value="Submit" class="submitButton">
+                {% else %}
+                <a href="{% url 'login' %}?next={% url 'spezspellz:spell' spell.pk %}" class="loginButton">Login to Submit</a>
+                {% endif %}
+
             </form>
         </div>
         <br><br>
     {% else %}
-       <p>Put your review template here</p>
+        <div class="spell">
+            <h1>Your Review</h1>
+                <div class="container">
+                    <div class="skills">
+                        <div class="rating">
+                            {% for i in star_list %}
+                                {% if review.star == i %}
+                                    <input type="radio" name="star" class="star" value="{{ i }}" disabled checked>
+                                {% else %}
+                                    <input type="radio" name="star" class="star" value="{{ i }}" disabled>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            <p>{{ review.review_desc }}</p>
+        </div>
     {% endif %}
+    <br><br>
 
     <div class="spell">
+        <h1>User Reviews</h1>
         {% for review in review_list %}
         <p> {{ review.user }}</p>
         {% empty %}
