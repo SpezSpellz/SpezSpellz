@@ -2,7 +2,7 @@
 from django.urls import path
 from django.shortcuts import redirect
 from .views import (HomePage, UploadPage, TagsPage, profile_view, spell_detail
-, thumbnail_view, RegisterView, attachment_view, UserSettingsPage, search_spell, filter_spell)
+, thumbnail_view, RegisterView, attachment_view, UserSettingsPage, filter_spell)
 
 
 app_name = "spezspellz"
@@ -18,6 +18,5 @@ urlpatterns = [
     path("spell/<int:spell_id>/", spell_detail, name="spell"),
     path("spell/thumbnail/<int:spell_id>/", thumbnail_view, name="spell_thumbnail"),
     path("profile/", profile_view, name="profile"),
-    path("search/", search_spell, name="search_spell"),
     path("filter/", filter_spell, name="filter_spell"),
 ]

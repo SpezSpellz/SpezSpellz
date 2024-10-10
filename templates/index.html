@@ -5,7 +5,7 @@
 {% endblock %}
 {% block Body %}
 <h1 class="sp-title">SpezSpellz</h1>
-<form method="get" action="{% url 'spezspellz:search_spell' %}" class="search-form">
+<form method="get" action="{% url 'spezspellz:home' %}" class="search-form">
     <input class="search-bar" name="search_query" placeholder="Cool spells" type="text"/>
     <button type="submit" class="search-button">Search</button>
     <a href="{% url 'spezspellz:filter_spell' %}" class="filter-button">Filter</a>

@@ -64,28 +64,29 @@ class HomePage(View):
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Handle GET requests for this view."""
+        search_query = request.GET.get('search_query', '').strip()
+
+        if search_query:
+            try:
+                spell = Spell.objects.get(title__iexact=search_query)
+                return redirect(f'/spell/{spell.id}/')
+            except Spell.DoesNotExist:
+                return redirect('spezspellz:home')
+
         all_spells = Spell.objects.all()
 
         for spell in all_spells:
             the_index = spell.data.find("is")
             spell.truncated_data = spell.data[the_index:]
+
         return render(
-            request, "index.html", {"latest_spells": Spell.objects.order_by('-id')[:5], "all_spells":all_spells}
+            request,
+            "index.html",
+            {
+                "latest_spells": Spell.objects.order_by('-id')[:5],
+                "all_spells": all_spells
+            }
         )
-
-
-def search_spell(request):
-    """Used for search bar in the HomePage"""
-    search_query = request.GET.get('search_query', '').strip()
-
-    if not search_query:
-        return redirect('spezspellz:home')
-
-    try:
-        spell = Spell.objects.get(title__iexact=search_query)
-        return redirect(f'/spell/{spell.id}/')
-    except Spell.DoesNotExist:
-        return redirect('spezspellz:home')
 
 
 def filter_spell(request):
@@ -114,6 +115,7 @@ def filter_spell(request):
         "selected_categories": selected_categories,
         "selected_tags": selected_tags,
     })
+
 
 class UploadPage(View):
     """Handle the upload page."""
