@@ -11,7 +11,8 @@
 <ul>
   {% for spell in spells %}
   <li>
-    <a href="{% url 'spezspellz:spell' spell.pk %}">{{ spell.title }}</a>
+    <a href="{% url 'spezspellz:spell' spell.pk %}" style="padding-left: 60px">{{ spell.title }}</a>
+    <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
   </li>
   {% empty %}
     <li>You have no spells.</li>

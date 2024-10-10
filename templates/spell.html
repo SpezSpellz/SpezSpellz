@@ -12,13 +12,20 @@
         <h3>by: {{ spell.creator.username }}</h3>
     </text>
 </div>
+<div style="display: flex;flex-direction: row;margin-left: calc(5% - 8px);">
 {% if not user.is_authenticated %}
 <a href="{% url 'login' %}?next={% url 'spezspellz:spell' spell.pk %}">
 {% endif %}
-<input id="bookmark" type="image" class="btn-like" style="margin-left: 5%;" width="32" src="/assets/bookmark_{% if bookmark %}remove{% else %}add{% endif %}.svg"/>
+<input id="bookmark" type="image" class="btn-like" style="margin: 0;margin-left: 8px" width="32" src="/assets/bookmark_{% if bookmark %}remove{% else %}add{% endif %}.svg"/>
 {% if not user.is_authenticated %}
 </a>
 {% endif %}
+{% if user == spell.creator %}
+<a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like" style="margin: 0;margin-left: 8px">
+    <img width="32" src="/assets/edit.svg"/>
+</a>
+{% endif %}
+</div>
 <br>
 <textarea id="x_data" style="display: none;">
 {{ spell.data }}

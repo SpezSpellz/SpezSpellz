@@ -87,6 +87,8 @@ class UploadPage(View):
             spell = get_or_none(Spell, pk=spell_id)
             if spell is None:
                 return HttpResponse("No such spell", status=404)
+            if spell.creator != request.user:
+                return HttpResponse("Forbidden", status=403)
             any_spell = cast(Any, spell)
             json_data = json.dumps({
                 "title": spell.title,
