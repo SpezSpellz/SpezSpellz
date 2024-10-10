@@ -76,14 +76,15 @@ class HomePage(View):
 
 def search_spell(request):
     search_query = request.GET.get('search_query', '').strip()
-    latest_spells = Spell.objects.all()
-    if search_query:
-        try:
-            spell = Spell.objects.get(title__iexact=search_query)
-            return redirect(f'/spell/{spell.id}/')
-        except Spell.DoesNotExist:
-            pass
-    return render(request, 'index.html', {'latest_spells': latest_spells})
+
+    if not search_query:
+        return redirect('spezspellz:home')
+
+    try:
+        spell = Spell.objects.get(title__iexact=search_query)
+        return redirect(f'/spell/{spell.id}/')
+    except Spell.DoesNotExist:
+        return redirect('spezspellz:home')
 
 
 class UploadPage(View):
