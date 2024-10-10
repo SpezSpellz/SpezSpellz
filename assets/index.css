@@ -8,22 +8,39 @@ h1, h2 {
     margin: auto;
     text-align: center;
 }
+.search-form {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
 .search-bar {
     background-color: #3B3B3B;
     border: none;
     font-size: 12pt;
     color: #FFF;
     padding-left: 32px;
-    border-radius: 6px;
-    margin: auto;
-    margin-top: 10px;
-    background-image: url("/assets/search.svg");
-    background-position: 3px, 3px;
-    background-size: 24px;
-    background-repeat: no-repeat;
-    display: block;
+    border-radius: 6px 0 0 6px;
+    margin-left: 15px;
+    margin-right: -1px;
     padding-top: 5px;
     padding-bottom: 5px;
+    background-image: url("/assets/search.svg");
+    background-position: 8px 50%;
+    background-size: 24px;
+    background-repeat: no-repeat;
+}
+.search-button {
+    background-color: #3B3B3B;
+    border: none;
+    color: #FFF;
+    font-size: 12pt;
+    padding: 5px 15px;
+    border-radius: 0 6px 6px 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.search-button:hover {
+    background-color: #555555;
 }
 .strip-box {
     background-color: #3B3B3B;
