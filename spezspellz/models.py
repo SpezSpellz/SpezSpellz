@@ -2,6 +2,7 @@
 from typing import Optional, cast, TypeVar
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Avg
 
 
 ModelClass = TypeVar('ModelClass')
@@ -145,6 +146,12 @@ class Review(models.Model):
     review_desc: models.CharField = models.CharField(max_length=256, null=True)
     star: models.FloatField = models.FloatField()
     # lowest 0.5 star highest 5 star
+
+    @staticmethod
+    def average_star(spell):
+        spell_review = Review.objects.filter(spell=spell)
+        avg_star = spell_review.aggregate(Avg('star'))['star__avg']
+        return avg_star
 
     def __str__(self):
         """Return a review for a spell"""

@@ -381,7 +381,9 @@ def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
         bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
     review = Review.objects.filter(spell=spell).all()
     my_review = Review.objects.filter(user=user.id, spell=spell).first()
-    star_list = [5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5]
+    average_star = Review.average_star(spell)
+    average_star_round = float(round(average_star*2) / 2)
+    star_list = [5.0, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.5]
     return render(
         request, "spell.html", {
             "spell": spell,
@@ -389,6 +391,8 @@ def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
             "review_list": review,
             "review": my_review,
             "star_list": star_list,
+            "avg_star": average_star,
+            "avg_star_round": average_star_round,
         }
     )
 

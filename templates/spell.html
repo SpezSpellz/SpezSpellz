@@ -95,11 +95,11 @@
                 <div class="container">
                     <div class="skills">
                         <div class="rating">
-                            {% for i in star_list %}
-                                {% if review.star == i %}
-                                    <input type="radio" name="star" class="star" value="{{ i }}" disabled checked>
+                            {% for star in star_list %}
+                                {% if review.star == star %}
+                                    <input type="radio" name="star" class="star" value="{{ star }}" disabled checked>
                                 {% else %}
-                                    <input type="radio" name="star" class="star" value="{{ i }}" disabled>
+                                    <input type="radio" name="star" class="star" value="{{ star }}" disabled>
                                 {% endif %}
                             {% endfor %}
                         </div>
@@ -112,8 +112,43 @@
 
     <div class="spell">
         <h1>User Reviews</h1>
+        <h2>{{ avg_star }} stars</h2>
+        <div class="container">
+            <div class="skills">
+                <div class="rating">
+                    {% for star in star_list %}
+                        {% if avg_star_round == star %}
+                            <input type="radio" name="star2" class="star" value="{{ star }}" disabled checked>
+                        {% else %}
+                            <input type="radio" name="star2" class="star" value="{{ star }}" disabled>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <hr>
         {% for review in review_list %}
-        <p> {{ review.user }}</p>
+        <div class="container">
+            <div style="font-size:20px;">
+            [Profile Picture] <span><strong>{{ review.user }}</strong></span> [Date]
+            </div>
+            <div class="skills" style="padding: 0 0 0 60px; margin-top: -5px;">
+                <div class="rating">
+                    {% for star in star_list %}
+                        {% if review.star == star %}
+                            <input type="radio" name="star{{review.id}}" class="star" value="{{ star }}" disabled checked>
+                        {% else %}
+                            <input type="radio" name="star{{review.id}}" class="star" value="{{ star }}" disabled>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+
+        <p> {{ review.review_desc }}</p>
+        <br>
+        <hr>
         {% empty %}
         <h2>There are no reviews on this spell yet.</h2>
         {% endfor %}
