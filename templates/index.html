@@ -24,6 +24,7 @@
         {% else %}
         <a href="{% url 'login' %}?next={% url 'spezspellz:home' %}"><button class="btn-like" style="margin-right: 8px;font-size: 16pt; color: white; padding: 10px 20px;border-style: none;cursor: pointer;">Log in</button></a>
         {% endif %}
+        <a href="{% url 'spezspellz:profile' %}" class="btn-like" style="margin-right: 8px;"><img width="32" src="/assets/profile.svg"/></a>
     </div>
 </body>
 {% endblock %}

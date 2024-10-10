@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block Title %}Settings - {{ user.username }}{% endblock %}
+{% block Content %}
+<link rel="stylesheet" href="/assets/user_settings.css">
+<body>
+    <dialog id="popup_dlg">
+        <h1 style="text-align: center;margin: auto;margin-top: 0px;">Apply changes</h1>
+        <p id="popup_msg"></p>
+        <button id="close_popup" class="generic-button" style="display: block;margin: auto;">Close</button>
+    </dialog>
+    <h1>User settings for {{ user.username }}</h1>
+    <h2>About me</h2>
+    <textarea id="about_me">{{ user.userinfo.user_desc }}</textarea>
+    <h2>Notifications</h2>
+    <table>
+        <tr>
+            <td><span>Timed notifications</span></td>
+            <td>
+                <label class="switch">
+                    <input id="timed_noti" type="checkbox" {% if user.userinfo.timed_notification %}checked{% endif %}>
+                    <span class="slider round"></span>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td><span>Review comments notifications</span></td>
+            <td>
+                <label class="switch">
+                    <input id="re_coms_noti" type="checkbox" {% if user.userinfo.review_comment_notification %}checked{% endif %}>
+                    <span class="slider round"></span>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td><span>Spell reviews notifications</span></td>
+            <td>
+                <label class="switch">
+                    <input id="sp_re_noti" type="checkbox" {% if user.userinfo.spell_review_notification %}checked{% endif %}>
+                    <span class="slider round"></span>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td><span>Spell comments notifications</span></td>
+            <td>
+                <label class="switch">
+                    <input id="sp_coms_noti" type="checkbox" {% if user.userinfo.spell_comment_notification %}checked{% endif %}>
+                    <span class="slider round"></span>
+                </label>
+            </td>
+        </tr>
+    </table>
+    <button id="apply_changes" class="generic-button">Apply changes</button>
+    <script>
+        function display_generic_failure() {
+            window.popup_msg.style.color = "#F00";
+            window.popup_msg.innerText = "Failed to apply changes.";
+        }
+        window.close_popup.onclick = () => window.popup_dlg.close();
+        window.apply_changes.onclick = () => {
+            window.popup_msg.style.color = "#FFF";
+            window.popup_msg.innerText = "Applying changes, please wait."
+            window.popup_dlg.showModal();
+            fetch("{% url 'spezspellz:usersettings' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    method: "update",
+                    desc: window.about_me.value,
+                    timed_noti: window.timed_noti.checked,
+                    re_coms_noti: window.re_coms_noti.checked,
+                    sp_re_noti: window.sp_re_noti.checked,
+                    sp_coms_noti: window.sp_coms_noti.checked
+                })
+            }).then(res => {
+                if(!res.ok) {
+                    display_generic_failure();
+                    return;
+                }
+                res.text().then(text => {
+                    if(res.status != 200)
+                        window.popup_msg.style.color = "#F00";
+                    if(res.status == 200 && text == "OK")
+                    window.popup_msg.innerText = "Changes applied.";
+                    else
+                        window.popup_msg.innerText = text;
+                }).catch(() => display_generic_failure());
+            }).catch(() => display_generic_failure());
+        }
+    </script>
+</body>
+{% endblock %}

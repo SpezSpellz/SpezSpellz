@@ -3,6 +3,7 @@
 {% block Title %}Spell#{{ spell.id }} - SpezSpellz{% endblock %}
 {% block Content %}
     <link rel="stylesheet" href="/assets/spell.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <div>
         <a href="{% url 'spezspellz:home' %} " class="btn-like">
             <img width="32" src="/assets/home.svg"/>
@@ -15,6 +16,7 @@
             <h3>by: {{ spell.creator.username }}</h3>
         </text>
     </div>
+    <input id="bookmark" type="image" class="btn-like" style="margin-left: 5%;" width="32" src="/assets/bookmark_{% if bookmark %}remove{% else %}add{% endif %}.svg"/>
     <br>
 <textarea id="x_data" style="display: none;">
 {{ spell.data }}
@@ -26,6 +28,133 @@
     <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.2/marked.min.js" integrity="sha512-bXyBT2/sYjZg1D7ykDS6eJSE4DFDVPJHvbRAfdfYKr6IusrCz7wAmSm36vz9G8zMob25Rvqu90vft3JI71ygcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="module">
         window.detail.innerHTML = DOMPurify.sanitize(marked.parse(window.x_data.value));
+        window.bookmark.onclick = () => {
+            fetch("{% url 'spezspellz:usersettings' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    method: "bookmark",
+                    spell_id: parseInt("{{ spell.pk }}")
+                })
+            }).then(res => {
+                if(!res.ok)
+                    return Promise.reject();
+                return res.text()
+            }).then(text => {
+                window.bookmark.src = "/assets/bookmark_" + ((text == "Bookmarked") ? "remove" : "add") + ".svg";
+            })
+        }
     </script>
     <br><br>
+
+    {% if not review %}
+        <div class="spell">
+            <h1>Your Review</h1>
+
+            <form action="{% url 'spezspellz:review' spell.pk %}" method="post">
+                {% csrf_token %}
+                <h2>Star</h2>
+                <div class="container">
+                    <div class="skills">
+                        <div class="rating">
+                            <input type="radio" name="star" class="star" value="5" required>
+                            <input type="radio" name="star" class="star" value="4.5">
+                            <input type="radio" name="star" class="star" value="4">
+                            <input type="radio" name="star" class="star" value="3.5">
+                            <input type="radio" name="star" class="star" value="3">
+                            <input type="radio" name="star" class="star" value="2.5">
+                            <input type="radio" name="star" class="star" value="2">
+                            <input type="radio" name="star" class="star" value="1.5">
+                            <input type="radio" name="star" class="star" value="1">
+                            <input type="radio" name="star" class="star" value="0.5">
+                        </div>
+                    </div>
+                </div>
+
+                <br><br>
+
+                <label for="description">Description: </label>
+                <br><br>
+                <textarea id="description" name="description" class="reviewDesc"></textarea>
+                <br><br><br>
+
+                {% if user.is_authenticated %}
+                <input type="submit" value="Submit" class="submitButton">
+                {% else %}
+                <a href="{% url 'login' %}?next={% url 'spezspellz:spell' spell.pk %}" class="loginButton">Login to Submit</a>
+                {% endif %}
+
+            </form>
+        </div>
+        <br><br>
+    {% else %}
+        <div class="spell">
+            <h1>Your Review</h1>
+                <div class="container">
+                    <div class="skills">
+                        <div class="rating">
+                            {% for star in star_list %}
+                                {% if review.star == star %}
+                                    <input type="radio" name="star" class="star" value="{{ star }}" disabled checked>
+                                {% else %}
+                                    <input type="radio" name="star" class="star" value="{{ star }}" disabled>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            <p>{{ review.review_desc }}</p>
+        </div>
+    {% endif %}
+    <br><br>
+
+    <div class="spell">
+        <h1>User Reviews</h1>
+        <h2>{{ avg_star }} stars</h2>
+        <div class="container">
+            <div class="skills">
+                <div class="read">
+                    <div class="rating">
+                        {% for star in star_list %}
+                            {% if avg_star_round == star %}
+                                <input type="radio" name="star2" class="star" value="{{ star }}" disabled checked>
+                            {% else %}
+                                <input type="radio" name="star2" class="star" value="{{ star }}" disabled>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        {% for review in review_list %}
+        <div class="container">
+            <div style="font-size:20px;">
+            [Profile Picture] <span><strong>{{ review.user }}</strong></span> [Date]
+            </div>
+            <div class="skills" style="padding: 0 0 0 60px; margin-top: -5px;">
+                <div class="read">
+                    <div class="rating">
+                    {% for star in star_list %}
+                        {% if review.star == star %}
+                            <input type="radio" name="star{{review.id}}" class="star" value="{{ star }}" disabled checked>
+                        {% else %}
+                            <input type="radio" name="star{{review.id}}" class="star" value="{{ star }}" disabled>
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <p> {{ review.review_desc }}</p>
+        <br>
+        <hr>
+        {% empty %}
+        <h2>There are no reviews on this spell yet.</h2>
+        {% endfor %}
+    </div>
 {% endblock %}

@@ -7,6 +7,16 @@
     <title>{% block Title %}{% endblock %}</title>
 </head>
 <link rel="stylesheet" href="/assets/base.css">
+
+<!--Messages go here-->
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li>{% if message.tags %}{% endif %}{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
 {% block Content %}
 {% endblock %}
 </html>

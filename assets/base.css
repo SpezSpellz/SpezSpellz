@@ -1,6 +1,9 @@
 body {
     background-color: #2B2B2B;
 }
+h1, h2, li, a {
+    color: #FFFFFF;
+}
 .btn-like {
     border-radius: 8px;
     background-color: #3B3B3B;

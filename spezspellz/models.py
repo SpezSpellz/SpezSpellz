@@ -2,6 +2,7 @@
 from typing import Optional, cast, TypeVar
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Avg
 
 
 ModelClass = TypeVar('ModelClass')
@@ -27,14 +28,20 @@ class Category(models.Model):
 
     name: models.CharField = models.CharField(max_length=50)
 
+    def __str__(self):
+        """Return the category name."""
+        return str(self.name)
+
 
 class UserInfo(models.Model):
     """Store the user info."""
 
     user: models.OneToOneField[User] = models.OneToOneField(User, on_delete=models.CASCADE)
-    privacy: models.BooleanField = models.BooleanField(default=False)
-    notification: models.BooleanField = models.BooleanField(default=True)
-    user_desc: models.CharField = models.CharField(max_length=400)
+    timed_notification: models.BooleanField = models.BooleanField(default=True)
+    review_comment_notification: models.BooleanField = models.BooleanField(default=True)
+    spell_review_notification: models.BooleanField = models.BooleanField(default=True)
+    spell_comment_notification: models.BooleanField = models.BooleanField(default=True)
+    user_desc: models.CharField = models.CharField(default="", max_length=400)
 
     def __str__(self):
         """Return user info as string."""
@@ -70,6 +77,10 @@ class Tag(models.Model):
     """The tag."""
 
     name: models.CharField = models.CharField(max_length=50)
+
+    def __str__(self):
+        """Return the tag name."""
+        return str(self.name)
 
 
 class HasTag(models.Model):
@@ -125,3 +136,23 @@ class Bookmark(models.Model):
     def __str__(self):
         """Return bookmark as a string."""
         return f"Bookmark(spell={self.spell.pk}, user={self.user.pk})"
+
+
+class Review(models.Model):
+    """Collection of reviews for spells"""
+
+    user: models.ForeignKey[User] = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, null=False, on_delete=models.CASCADE)
+    review_desc: models.CharField = models.CharField(max_length=256, null=True)
+    star: models.FloatField = models.FloatField()
+    # lowest 0.5 star highest 5 star
+
+    @staticmethod
+    def average_star(spell):
+        spell_review = Review.objects.filter(spell=spell)
+        avg_star = spell_review.aggregate(Avg('star'))['star__avg']
+        return avg_star
+
+    def __str__(self):
+        """Return a review for a spell"""
+        return f"Spell: {self.spell}/ User: {self.user}/ Rating: {self.star}"
