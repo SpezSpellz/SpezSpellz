@@ -1,8 +1,61 @@
-{% extends 'base.html' %}
-{% block Title %}Filter{% endblock %}
+{% extends 'base.html' %} 
+
+{% block Title %}
+Filter
+{% endblock %}
+
 {% block BeforeBody %}
 <link rel="stylesheet" href="/assets/filter.css">
 {% endblock %}
+
 {% block Body %}
 
+<div class="filter-box">
+    <form method="GET" action="{% url 'spezspellz:filter_spell' %}">
+        <div class="filter-container">
+            <h2 style="color: #FFF;">Categories</h2>
+            {% for category in spell_categories %}
+                <label style="color: #FFF;">
+                    <input type="checkbox" name="category" value="{{ category.category__name }}"
+                        {% if category.category__name in selected_categories %} checked {% endif %}>
+                    {{ category.category__name }}
+                </label>
+            {% endfor %}
+
+            <h2 style="color: #FFF;">Tags</h2>
+            {% for tag in tags %}
+                <label style="color: #FFF;">
+                    <input type="checkbox" name="tag" value="{{ tag.id }}"
+                        {% if tag.id in selected_tags %} checked {% endif %}>
+                    {{ tag.name }}
+                </label>
+            {% endfor %}
+        </div>
+
+        <div class="button-container">
+            <button type="submit" class="apply-button">Apply</button>
+            <button type="reset" class="clear-button">Clear</button>
+        </div>
+    </form>
+</div>
+    
+    <div class="results">
+        <h2 style="color: #FFF;">Results:</h2>
+        {% if spells %}
+            {% for spell in spells %}
+            <a href="{% url 'spezspellz:spell' spell.pk %}">
+            <div class="spell">
+                <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img" alt="{{ spell.title }}"/>
+                    <div>
+                        <h3 class="spell-title">{{ spell.title }}</h3>
+                        <p class="spell-category">{{ spell.category }}</p>
+                        <p class="spell-creator">{{ spell.creator }}</p>
+                        <p class="spell-data">{{ spell.title }} {{ spell.truncated_data|slice:":100" }}...</p>
+                    </div>
+            </div></a>
+            {% endfor %}
+        {% else %}
+            <p style="color: #FFF;">No spells found.</p>
+        {% endif %}
+    </div>
 {% endblock %}

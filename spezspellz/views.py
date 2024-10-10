@@ -75,6 +75,7 @@ class HomePage(View):
 
 
 def search_spell(request):
+    """Used for search bar in the HomePage"""
     search_query = request.GET.get('search_query', '').strip()
 
     if not search_query:
@@ -86,8 +87,33 @@ def search_spell(request):
     except Spell.DoesNotExist:
         return redirect('spezspellz:home')
 
+
 def filter_spell(request):
-    return render(request, "filter.html")
+    selected_categories = request.GET.getlist('category')
+    selected_tags = request.GET.getlist('tag')
+
+    if not selected_categories and not selected_tags:
+        spells = Spell.objects.all()
+    else:
+        spells = Spell.objects.all()
+
+        if selected_categories:
+            spells = spells.filter(category__name__in=selected_categories)
+
+        if selected_tags:
+            spells = spells.filter(hastag__tag__name__in=selected_tags)
+
+    for spell in spells:
+        the_index = spell.data.find("is")
+        spell.truncated_data = spell.data[the_index:]
+
+    return render(request, "filter.html", {
+        "tags": Tag.objects.all(),
+        "spell_categories": Spell.objects.values('category__name').distinct(),
+        "spells": spells,
+        "selected_categories": selected_categories,
+        "selected_tags": selected_tags,
+    })
 
 class UploadPage(View):
     """Handle the upload page."""
