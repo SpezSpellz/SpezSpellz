@@ -1,60 +1,57 @@
 {% extends "base.html" %}
 
 {% block Title %}Spell#{{ spell.id }} - SpezSpellz{% endblock %}
-{% block Content %}
-    <link rel="stylesheet" href="/assets/spell.css">
-    <div>
-        <a href="{% url 'spezspellz:home' %} " class="btn-like">
-            <img width="32" src="/assets/home.svg"/>
-        </a>
-    </div>
-    <div class="spell-title">
-        <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img">
-        <text>
-            <h1>{{ spell.title }}</h1>
-            <h3>by: {{ spell.creator.username }}</h3>
-        </text>
-    </div>
-    {% if not user.is_authenticated %}
-    <a href="{% url 'login' %}?next={% url 'spezspellz:spell' spell.pk %}">
-    {% endif %}
-    <input id="bookmark" type="image" class="btn-like" style="margin-left: 5%;" width="32" src="/assets/bookmark_{% if bookmark %}remove{% else %}add{% endif %}.svg"/>
-    {% if not user.is_authenticated %}
-    </a>
-    {% endif %}
-    <br>
+{% block BeforeBody %}
+<link rel="stylesheet" href="/assets/spell.css">
+{% endblock %}
+{% block Body %}
+<div class="spell-title">
+    <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img">
+    <text>
+        <h1>{{ spell.title }}</h1>
+        <h3>by: {{ spell.creator.username }}</h3>
+    </text>
+</div>
+{% if not user.is_authenticated %}
+<a href="{% url 'login' %}?next={% url 'spezspellz:spell' spell.pk %}">
+{% endif %}
+<input id="bookmark" type="image" class="btn-like" style="margin-left: 5%;" width="32" src="/assets/bookmark_{% if bookmark %}remove{% else %}add{% endif %}.svg"/>
+{% if not user.is_authenticated %}
+</a>
+{% endif %}
+<br>
 <textarea id="x_data" style="display: none;">
 {{ spell.data }}
 </textarea>
-    <div id="detail" class="spell">
+<div id="detail" class="spell">
 
-    </div>
-    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" integrity="sha512-jB0TkTBeQC9ZSkBqDhdmfTv1qdfbWpGE72yJ/01Srq6hEzZIz2xkz1e57p9ai7IeHMwEG7HpzG6NdptChif5Pg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.2/marked.min.js" integrity="sha512-bXyBT2/sYjZg1D7ykDS6eJSE4DFDVPJHvbRAfdfYKr6IusrCz7wAmSm36vz9G8zMob25Rvqu90vft3JI71ygcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="module">
-        window.detail.innerHTML = DOMPurify.sanitize(marked.parse(window.x_data.value));
-    </script>
-    {% if user.is_authenticated %}
-    <script>
-        window.bookmark.onclick = () => {
-            fetch("{% url 'spezspellz:usersettings' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: JSON.stringify({
-                    method: "bookmark",
-                    spell_id: parseInt("{{ spell.pk }}")
-                })
-            }).then(res => {
-                if(!res.ok)
-                    return Promise.reject();
-                return res.text()
-            }).then(text => {
-                window.bookmark.src = "/assets/bookmark_" + ((text == "Bookmarked") ? "remove" : "add") + ".svg";
+</div>
+<script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" integrity="sha512-jB0TkTBeQC9ZSkBqDhdmfTv1qdfbWpGE72yJ/01Srq6hEzZIz2xkz1e57p9ai7IeHMwEG7HpzG6NdptChif5Pg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.2/marked.min.js" integrity="sha512-bXyBT2/sYjZg1D7ykDS6eJSE4DFDVPJHvbRAfdfYKr6IusrCz7wAmSm36vz9G8zMob25Rvqu90vft3JI71ygcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="module">
+    window.detail.innerHTML = DOMPurify.sanitize(marked.parse(window.x_data.value));
+</script>
+{% if user.is_authenticated %}
+<script>
+    window.bookmark.onclick = () => {
+        fetch("{% url 'spezspellz:usersettings' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                method: "bookmark",
+                spell_id: parseInt("{{ spell.pk }}")
             })
-        }
-    </script>
-    {% endif %}
-    <br><br>
+        }).then(res => {
+            if(!res.ok)
+                return Promise.reject();
+            return res.text()
+        }).then(text => {
+            window.bookmark.src = "/assets/bookmark_" + ((text == "Bookmarked") ? "remove" : "add") + ".svg";
+        })
+    }
+</script>
+{% endif %}
+<br><br>
 {% endblock %}

@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
-{% block Content %}
-<body style="height: 100%;margin: 0;background-color: #1E1E1E;">
+{% block Body %}
 <div style="height: 100%;">
     <div class="bg">
         <form method="post" class="box">
@@ -26,7 +25,8 @@
         </form>
     </div>
 </div>
-</body>
+{% endblock %}
+{% block AfterBody %}
 <style>
 a {
     color: #50F;
@@ -94,6 +94,11 @@ input {
 html {
     height: 100%;
     overflow: hidden;
+}
+body {
+    height: 100%;
+    margin: 0;
+    background-color: #1E1E1E;
 }
 </style>
 {% endblock %}
