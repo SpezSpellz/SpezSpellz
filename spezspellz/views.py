@@ -1,4 +1,5 @@
 """Contains views for SpezSpellz."""
+from itertools import chain
 from typing import Optional, Generator, TypeVar, Any, cast
 import json
 import os
@@ -15,7 +16,6 @@ from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_datetime
 from django.views.generic import CreateView
 from django.db import transaction
-from django.contrib import messages
 from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark, Review, SpellHistoryEntry
 
 
@@ -30,7 +30,7 @@ def safe_cast(t, val, default=None):
 class RPCView:
     """A base view that handles RPC request via POST method."""
 
-    def post(self, request: HttpRequest) -> HttpResponseBase:
+    def post(self, request: HttpRequest, **kwargs) -> HttpResponseBase:
         """Handle queries and maybe tags creation."""
         data = None
         try:
@@ -53,7 +53,7 @@ class RPCView:
         return getattr(self, method_name)(
             request, **{
                 k: v
-                for k, v in data.items() if k in params
+                for k, v in chain(data.items(), kwargs.items()) if k in params
             }
         )
 
@@ -76,7 +76,11 @@ class UploadPage(View):
     # 2MB thumbnail limit
     MAX_THUMBNAIL_SIZE = 2e6
 
-    def get(self, request: HttpRequest, spell_id: Optional[int] = None) -> HttpResponseBase:
+    def get(
+        self,
+        request: HttpRequest,
+        spell_id: Optional[int] = None
+    ) -> HttpResponseBase:
         """Handle GET requests for this view."""
         if not request.user.is_authenticated:
             return redirect_to_login(
@@ -91,34 +95,51 @@ class UploadPage(View):
             if spell.creator != request.user:
                 return HttpResponse("Forbidden", status=403)
             any_spell = cast(Any, spell)
-            json_data = json.dumps({
-                "title": spell.title,
-                "body": spell.data,
-                "category": any_spell.category.name,
-                "notis": [{
-                    "msg": noti.message,
-                    "time": noti.datetime.isoformat(),
-                    "every": noti.every
-                } for noti in any_spell.spellnotification_set.all()],
-                "tags": [tag.tag.name for tag in any_spell.hastag_set.all()],
-                "thumbnail": {
-                    "url": reverse("spezspellz:spell_thumbnail", args=(spell.pk,)),
-                    "name": os.path.basename(spell.thumbnail.name)
-                },
-                "attachs": [
-                    {
-                        "id": attachment.pk,
-                        "size": attachment.file.size,
-                        "name": os.path.basename(attachment.file.name),
-                        "url": reverse("spezspellz:attachments", args=(attachment.pk,))
-                    } for attachment in any_spell.attachment_set.all()
-                ]
-            })
+            json_data = json.dumps(
+                {
+                    "title":
+                    spell.title,
+                    "body":
+                    spell.data,
+                    "category":
+                    any_spell.category.name,
+                    "notis": [
+                        {
+                            "msg": noti.message,
+                            "time": noti.datetime.isoformat(),
+                            "every": noti.every
+                        } for noti in any_spell.spellnotification_set.all()
+                    ],
+                    "tags":
+                    [tag.tag.name for tag in any_spell.hastag_set.all()],
+                    "thumbnail": {
+                        "url":
+                        reverse(
+                            "spezspellz:spell_thumbnail", args=(spell.pk, )
+                        ),
+                        "name":
+                        os.path.basename(spell.thumbnail.name)
+                    },
+                    "attachs": [
+                        {
+                            "id":
+                            attachment.pk,
+                            "size":
+                            attachment.file.size,
+                            "name":
+                            os.path.basename(attachment.file.name),
+                            "url":
+                            reverse(
+                                "spezspellz:attachments",
+                                args=(attachment.pk, )
+                            )
+                        } for attachment in any_spell.attachment_set.all()
+                    ]
+                }
+            )
             context["spell"] = spell
             context["extra_data"] = json_data
-        return render(
-            request, "upload.html", context
-        )
+        return render(request, "upload.html", context)
 
     @staticmethod
     def validate_tag_info(tag_name: Optional[str]) -> Optional[dict[str, Any]]:
@@ -174,7 +195,11 @@ class UploadPage(View):
             new_objects.append(object_type(**info, **kwargs))
         return new_objects
 
-    def post(self, request: HttpRequest, spell_id: Optional[int] = None) -> HttpResponseBase:
+    def post(
+        self,
+        request: HttpRequest,
+        spell_id: Optional[int] = None
+    ) -> HttpResponseBase:
         """Handle POST requests for this view."""
         if not request.user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
@@ -204,7 +229,9 @@ class UploadPage(View):
             if old_spell.creator != request.user:
                 return HttpResponse("Forbidden", status=403)
             spell = old_spell
-            old_attach_len = min(50, safe_cast(int, request.POST.get("oattachs"), 0))
+            old_attach_len = min(
+                50, safe_cast(int, request.POST.get("oattachs"), 0)
+            )
             old_attachs = []
             for i in range(old_attach_len):
                 old_attach = safe_cast(int, request.POST.get(f"oattach{i}"))
@@ -269,9 +296,7 @@ class UploadPage(View):
             for i, to_add in enumerate(attach_to_add):
                 data = data.replace(
                     attach_names[i],
-                    reverse(
-                        "spezspellz:attachments", args=(to_add.pk, )
-                    )
+                    reverse("spezspellz:attachments", args=(to_add.pk, ))
                 )
             spell.data = data
             spell.save()
@@ -325,7 +350,12 @@ def profile_view(request: HttpRequest) -> HttpResponseBase:
     spells = Spell.objects.filter(creator=user)
     bookmarks = Bookmark.objects.filter(user=user)
     history = cast(Any, user).spellhistoryentry_set.order_by("-time")
-    context = {'user': user, 'spells': spells, 'bookmarks': bookmarks, 'history': history}
+    context = {
+        'user': user,
+        'spells': spells,
+        'bookmarks': bookmarks,
+        'history': history
+    }
 
     return render(request, 'profile.html', context)
 
@@ -337,12 +367,16 @@ class UserSettingsPage(View, RPCView):
         """Handle GET requests for this view."""
         return render(request, "user_settings.html")
 
-    def rpc_delete_spell(self, request: HttpRequest, spell_id: Any = None) -> HttpResponseBase:
+    def rpc_delete_spell(
+        self, request: HttpRequest, spell_id: Any = None
+    ) -> HttpResponseBase:
         """Delete a spell."""
         if not request.user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
         if not isinstance(spell_id, int):
-            return HttpResponse("Parameter `spell_id` must be an integer", status=400)
+            return HttpResponse(
+                "Parameter `spell_id` must be an integer", status=400
+            )
         spell = get_or_none(Spell, pk=spell_id)
         if spell is None:
             return HttpResponse("Spell not found", status=404)
@@ -351,12 +385,16 @@ class UserSettingsPage(View, RPCView):
         spell.delete()
         return HttpResponse("Spell deleted")
 
-    def rpc_bookmark(self, request: HttpRequest, spell_id: Any = None) -> HttpResponseBase:
+    def rpc_bookmark(
+        self, request: HttpRequest, spell_id: Any = None
+    ) -> HttpResponseBase:
         """Handle bookmarking."""
         if not request.user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
         if not isinstance(spell_id, int):
-            return HttpResponse("Parameter `spell_id` must be an integer", status=400)
+            return HttpResponse(
+                "Parameter `spell_id` must be an integer", status=400
+            )
         spell = get_or_none(Spell, pk=spell_id)
         if spell is None:
             return HttpResponse("Spell not found", status=404)
@@ -365,7 +403,9 @@ class UserSettingsPage(View, RPCView):
             Bookmark.objects.create(user=request.user, spell=spell)
         else:
             bookmark.delete()
-        return HttpResponse("Bookmarked" if bookmark is None else "Unbookmarked")
+        return HttpResponse(
+            "Bookmarked" if bookmark is None else "Unbookmarked"
+        )
 
     def rpc_update(
         self,
@@ -392,44 +432,88 @@ class UserSettingsPage(View, RPCView):
         return HttpResponse("OK")
 
 
-MAX_HISTORY_COUNT = 30
+class SpellPage(View, RPCView):
+    """Handle spell page."""
 
+    MAX_HISTORY_COUNT = 30
 
-def spell_detail(request: HttpRequest, spell_id: int) -> HttpResponseBase:
-    """Return the spell detail page."""
-    user = request.user
-    spell = get_or_none(Spell, pk=spell_id)
-    if spell is None:
-        return redirect("spezspellz:home")
-    bookmark = None
-    if request.user.is_authenticated:
-        bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
-    review = Review.objects.filter(spell=spell).all()
-    my_review = Review.objects.filter(user=user.id, spell=spell).first()
-    average_star = Review.average_star(spell) or 5.0
-    average_star_round = float(round(average_star*2) / 2)
-    star_list = [5.0, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.5]
-    with transaction.atomic():
-        history = cast(Any, request.user).spellhistoryentry_set.filter(spell=spell).first()
-        if history is None:
-            SpellHistoryEntry.objects.create(user=request.user, spell=spell, time=timezone.now())
-        else:
-            history.time = timezone.now()
-            history.save()
-        if cast(Any, request.user).spellhistoryentry_set.all().count() > MAX_HISTORY_COUNT:
-            SpellHistoryEntry.objects.filter(pk__in=cast(Any, request.user).spellhistoryentry_set.all().order_by("-time")[MAX_HISTORY_COUNT:]).delete()
+    def get(self, request: HttpRequest, spell_id: int) -> HttpResponseBase:
+        """Return the spell detail page."""
+        user = request.user
+        spell = get_or_none(Spell, pk=spell_id)
+        if spell is None:
+            return redirect("spezspellz:home")
+        bookmark = None
+        if user.is_authenticated:
+            bookmark = get_or_none(Bookmark, user=user, spell=spell)
+        review = Review.objects.filter(spell=spell).all()
+        my_review = Review.objects.filter(user=user, spell=spell).first()
+        average_star = spell.calc_avg_stars() or 5.0
+        average_star_round = float(round(average_star * 2) / 2)
+        with transaction.atomic():
+            history = cast(Any,
+                           user).spellhistoryentry_set.filter(spell=spell
+                                                              ).first()
+            if history is None:
+                SpellHistoryEntry.objects.create(
+                    user=user, spell=spell, time=timezone.now()
+                )
+            else:
+                history.time = timezone.now()
+                history.save()
+            if cast(Any, user).spellhistoryentry_set.all().count(
+            ) > self.__class__.MAX_HISTORY_COUNT:
+                SpellHistoryEntry.objects.filter(
+                    pk__in=cast(Any, user).spellhistoryentry_set.all().
+                    order_by("-time")[self.__class__.MAX_HISTORY_COUNT:]
+                ).delete()
 
-    return render(
-        request, "spell.html", {
-            "spell": spell,
-            "bookmark": bookmark,
-            "review_list": review,
-            "review": my_review,
-            "star_list": star_list,
-            "avg_star": average_star,
-            "avg_star_round": average_star_round,
-        }
-    )
+        return render(
+            request, "spell.html", {
+                "spell": spell,
+                "bookmark": bookmark,
+                "review_list": review,
+                "review": my_review,
+                "star_list": range(0, 10, 2),
+                "avg_star": average_star,
+                "avg_star_round": average_star_round,
+            }
+        )
+
+    def rpc_review(
+        self,
+        request: HttpRequest,
+        spell_id: int,
+        desc: str = "",
+        stars: int = 19
+    ) -> HttpResponseBase:
+        """Handle review requests."""
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        if not isinstance(desc, str):
+            return HttpResponse(
+                "Parameter `desc` must be a string", status=400
+            )
+        if not isinstance(stars, int):
+            return HttpResponse(
+                "Parameter `stars` must be an integer", status=400
+            )
+        if len(desc) > 500:
+            return HttpResponse("Description too long", status=400)
+        if stars < 0 or stars > 19:
+            return HttpResponse("Bad star parameter", status=400)
+        spell = get_or_none(Spell, pk=spell_id)
+        if spell is None:
+            return HttpResponse("Spell not found", status=404)
+        review = get_or_none(Review, user=user, spell=spell)
+        if review is not None:
+            review.desc = desc
+            review.star = stars
+            review.save()
+            return HttpResponse("Updated", status=200)
+        Review.objects.create(user=user, spell=spell, star=stars, desc=desc)
+        return HttpResponse("Review posted", status=200)
 
 
 def thumbnail_view(_: HttpRequest, spell_id: int):
@@ -446,34 +530,6 @@ def attachment_view(_: HttpRequest, attachment_id: int):
     if attachment is None:
         return HttpResponse("Not Found", status=404)
     return FileResponse(attachment.file)
-
-
-def review_view(request: HttpRequest, spell_id: int):
-    """User post review on a spell"""
-    user = request.user
-    spell = get_or_none(Spell, pk=spell_id)
-    if spell is None:
-        messages.add_message(
-            request, messages.ERROR,
-            "The spell you were trying to review does not exist."
-        )
-        return redirect("spezspellz:home")
-    review = get_or_none(Review, user=user, spell=spell)
-    star = request.POST.get('star')
-    star = float(star)
-    print(f"got {star} star")
-    desc = request.POST.get('description')
-
-    if review:
-        # Replace the old review
-        review.delete()
-
-    Review.objects.create(user=user,
-                          spell=spell,
-                          star=star,
-                          review_desc=desc)
-
-    return redirect("spezspellz:spell", spell_id=spell.pk)
 
 
 class RegisterView(CreateView):
