@@ -115,14 +115,16 @@
         <h2>{{ avg_star }} stars</h2>
         <div class="container">
             <div class="skills">
-                <div class="rating">
-                    {% for star in star_list %}
-                        {% if avg_star_round == star %}
-                            <input type="radio" name="star2" class="star" value="{{ star }}" disabled checked>
-                        {% else %}
-                            <input type="radio" name="star2" class="star" value="{{ star }}" disabled>
-                        {% endif %}
-                    {% endfor %}
+                <div class="read">
+                    <div class="rating">
+                        {% for star in star_list %}
+                            {% if avg_star_round == star %}
+                                <input type="radio" name="star2" class="star" value="{{ star }}" disabled checked>
+                            {% else %}
+                                <input type="radio" name="star2" class="star" value="{{ star }}" disabled>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -133,7 +135,8 @@
             [Profile Picture] <span><strong>{{ review.user }}</strong></span> [Date]
             </div>
             <div class="skills" style="padding: 0 0 0 60px; margin-top: -5px;">
-                <div class="rating">
+                <div class="read">
+                    <div class="rating">
                     {% for star in star_list %}
                         {% if review.star == star %}
                             <input type="radio" name="star{{review.id}}" class="star" value="{{ star }}" disabled checked>
@@ -141,6 +144,7 @@
                             <input type="radio" name="star{{review.id}}" class="star" value="{{ star }}" disabled>
                         {% endif %}
                     {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

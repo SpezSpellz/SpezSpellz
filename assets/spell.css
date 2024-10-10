@@ -151,6 +151,10 @@ text {
     color: #FFFFFF
 }
 
+.container .skills .read .rating input {
+    pointer-events: none; /* Disable pointer events for all inputs within .read */
+}
+
 hr {
     border: 1px solid #2B2B2B
 }
