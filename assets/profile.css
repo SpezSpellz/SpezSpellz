@@ -87,3 +87,17 @@ li:empty {
 .bookmark:active {
     background-color: #F00;
 }
+
+.edit-btn {
+    margin-right: 8px;
+    flex: 0 0 36px;
+    background-color: #5B5B5B;
+}
+
+.edit-btn:hover {
+    background-color: #6B6B6B;
+}
+
+.edit-btn:active {
+    background-color: #7B7B7B;
+}

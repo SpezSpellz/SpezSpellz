@@ -5,9 +5,12 @@ h1, h2, li, a {
     color: #FFFFFF;
 }
 .btn-like {
+    color: #FFF;
+    border-style: none;
     border-radius: 8px;
     background-color: #3B3B3B;
     margin: auto;
+    cursor: pointer;
     display: inline-block;
     padding: 2px;
     transition: background-color 0.1s ease;
@@ -19,4 +22,41 @@ h1, h2, li, a {
 
 .btn-like:active {
     background-color: #5B5B5B;
+}
+
+.left-top-btns {
+    display: flex;
+    position: absolute;
+    top: 8px;
+    left: 0;
+    flex-direction: row;
+}
+
+.right-top-btns {
+    display: flex;
+    position: absolute;
+    top: 8px;
+    right: 0;
+    flex-direction: row;
+}
+
+.left-top-btn {
+    margin-left: 8px;
+    width: 36px;
+    height: 36px;
+}
+
+.right-top-btn {
+    margin-right: 8px;
+    width: 36px;
+    height: 36px;
+}
+
+.left-top-btn > img, .right-top-btn > img {
+    display: block;
+    margin: auto;
+}
+
+dialog::backdrop {
+    backdrop-filter: blur(2px);
 }

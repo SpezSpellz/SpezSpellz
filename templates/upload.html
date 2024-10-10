@@ -1,92 +1,98 @@
 {% extends 'base.html' %}
 {% block Title %}Upload - SpezSpellz{% endblock %}
-{% block Content %}
+{% block BeforeBody %}
 <link rel="stylesheet" href="/assets/upload.css">
-<body>
-    {% if extra_data %}
-    <data id="x-data" hidden>{{ extra_data }}</data>
-    {% endif %}
-    <dialog id="upload_dlg">
-        <h1 class="section dlgheader">{% if extra_data %}Apply Changes{% else %}Upload{% endif %}</h1>
-        <p id="upload_text" style="color: #FFF;"></p>
-        <button id="upload_dlg_close">Close</button>
-        <a href="{% url 'spezspellz:home' %}" style="text-decoration: none; margin-left: 5px; font-family: 'Arial'">
-            Back to home
-        </a>
-    </dialog>
-    <dialog id="add_tag_dlg" style="height: 400px;width:400px">
-        <h1 class="section dlgheader">Add Tags</h1>
-        <input id="add_tag_dlg_search" class="search-bar" placeholder="Enter tag name" type="text"/>
-        <ul id="tag_search_list" style="list-style: none;margin: 0;padding: 0;max-height: 250px;overflow: scroll;">
-        </ul>
-        <div style="position: absolute;bottom: 15px;left: 0;right: 0;display:flex;flex-direction: row;justify-content: space-evenly;">
-            <button id="close_add_tag_dlg">Close</button>
+{% endblock %}
+{% block Body %}
+{% if extra_data %}
+<data id="x-data" hidden>{{ extra_data }}</data>
+<dialog id="edit_warn_dlg">
+    <h1 class="section dlgheader">Warning</h1>
+    <p style="color: #FFF;">Editing a spell will result in all ratings, reviews, and comments being deleted.<br>This is to prevent people from changing a good post to spam or advertising later on.</p>
+    <button class="btn-like" style="display: block;margin: auto;padding: 10px;font-size: 12pt;" onclick="window.edit_warn_dlg.close()">Close</button>
+</dialog>
+{% endif %}
+<dialog id="upload_dlg">
+    <h1 class="section dlgheader">{% if extra_data %}Apply Changes{% else %}Upload{% endif %}</h1>
+    <p id="upload_text" style="color: #FFF;"></p>
+    <button id="upload_dlg_close">Close</button>
+    <a href="{% url 'spezspellz:home' %}" style="text-decoration: none; margin-left: 5px; font-family: 'Arial'">
+        Back to home
+    </a>
+</dialog>
+<dialog id="add_tag_dlg" style="height: 400px;width:400px">
+    <h1 class="section dlgheader">Add Tags</h1>
+    <input id="add_tag_dlg_search" class="search-bar" placeholder="Enter tag name" type="text"/>
+    <ul id="tag_search_list" style="list-style: none;margin: 0;padding: 0;max-height: 250px;overflow: scroll;">
+    </ul>
+    <div style="position: absolute;bottom: 15px;left: 0;right: 0;display:flex;flex-direction: row;justify-content: space-evenly;">
+        <button id="close_add_tag_dlg">Close</button>
+    </div>
+</dialog>
+<dialog id="add_noti_dlg">
+    <h1 class="section dlgheader">Add Notification</h1>
+    <div style="display: flex;flex-direction: column;">
+        <div><span style="font-size: 12pt;">Message: </span><textarea style="font-size: 12pt;" id="noti_dlg_text" type="text"></textarea></div><br>
+        <div><span style="font-size: 12pt;">Date and time: </span><input style="font-size: 12pt;" id="noti_dlg_date_time" type="datetime-local"/></div><br>
+        <div>
+            <span style="font-size: 12pt;">Repetition: </span>
+            <select style="width: 150px;font-size: 12pt;" name="noti_every" id="noti_dlg_every">
+                <option value="D">Every Day</option>
+                <option value="W">Every Week</option>
+                <option value="M">Every Month</option>
+                <option value="Y">Every Year</option>
+                <option value="S">Single Event</option>
+            </select>
+        </div><br>
+        <span id="noti_dlg_err" style="color: #F00;margin: auto;display: none;">Failed to eat shit.</span>
+        <div style="justify-content: space-evenly;">
+            <button id="ok_noti_dlg">Ok</button>
+            <button id="cancel_noti_dlg">Cancel</button>
         </div>
-    </dialog>
-    <dialog id="add_noti_dlg">
-        <h1 class="section dlgheader">Add Notification</h1>
-        <div style="display: flex;flex-direction: column;">
-            <div><span style="font-size: 12pt;">Message: </span><textarea style="font-size: 12pt;" id="noti_dlg_text" type="text"></textarea></div><br>
-            <div><span style="font-size: 12pt;">Date and time: </span><input style="font-size: 12pt;" id="noti_dlg_date_time" type="datetime-local"/></div><br>
-            <div>
-                <span style="font-size: 12pt;">Repetition: </span>
-                <select style="width: 150px;font-size: 12pt;" name="noti_every" id="noti_dlg_every">
-                    <option value="D">Every Day</option>
-                    <option value="W">Every Week</option>
-                    <option value="M">Every Month</option>
-                    <option value="Y">Every Year</option>
-                    <option value="S">Single Event</option>
-                </select>
-            </div><br>
-            <span id="noti_dlg_err" style="color: #F00;margin: auto;display: none;">Failed to eat shit.</span>
-            <div style="justify-content: space-evenly;">
-                <button id="ok_noti_dlg">Ok</button>
-                <button id="cancel_noti_dlg">Cancel</button>
-            </div>
-        </div>
-    </dialog>
-    <table style="width: 100%;">
-        <tr>
-            <th style="width: 300px" valign="top">
-                <h1 class="section">Settings</h1>
-                <ul style="list-style: none;margin: 0;padding: 0;" class="settings-list">
-                    <li>
-                        <h2 class="section">Title</h2>
-                        <input type="text" placeholder="Enter title here" id="spell_title"/>
-                    </li>
-                    <li>
-                        <h2 class="section">Thumbnail</h2>
-                        <input type="file" id="thumbnail_file" style="position: fixed; top: -100em" accept="image/png, image/jpeg"/>
-                        <input id="change_thumbnail" type="image" width="128" src="/assets/default_thumbnail.jpg"/>
-                    </li>
-                    <li>
-                        <h2 class="section">Category</h2>
-                        <select name="category" id="category">
-                            {% for category in categories %}
-                                <option value="{{ category.name }}">{{ category.name }}</option>
-                            {% endfor %}
-                        </select> 
-                    </li>
-                    <li>
-                        <h2 class="section">Tags</h2>
-                        <div style="display: inline-block;" id="tag-list">
-                        </div>
-                        <button id="add_tag" class="tag tag-add">+</button>
-                    </li>
-                    <li>
-                        <h2 class="section">Notifications</h2>
-                        <ul style="list-style: none;margin: 0;padding: 0;" id="noti_list">
-                            
-                        </ul>
-                        <button id="add_noti_btn" class="tag tag-add">+</button>
-                    </li>
-                </ul>
-            </th>
-            <th valign="top">
-                <h1 class="section">{% if extra_data %}Edit{% else %}Upload{% endif %}</h1>
-                <div style="position: relative;height: auto">
-                    <div id="md_preview" class="markdown-input" style="text-align: left;display: none;padding: 10px;overflow: scroll;width: calc(100% - 20px);height: calc(100vh - 150px);"></div>
-                    <textarea id="markdown_input" class="markdown-input">
+    </div>
+</dialog>
+<table style="width: 100%;">
+    <tr>
+        <th style="width: 300px" valign="top">
+            <h1 class="section">Settings</h1>
+            <ul style="list-style: none;margin: 0;padding: 0;" class="settings-list">
+                <li>
+                    <h2 class="section">Title</h2>
+                    <input type="text" placeholder="Enter title here" id="spell_title"/>
+                </li>
+                <li>
+                    <h2 class="section">Thumbnail</h2>
+                    <input type="file" id="thumbnail_file" style="position: fixed; top: -100em" accept="image/png, image/jpeg"/>
+                    <input id="change_thumbnail" type="image" width="128" src="/assets/default_thumbnail.jpg"/>
+                </li>
+                <li>
+                    <h2 class="section">Category</h2>
+                    <select name="category" id="category">
+                        {% for category in categories %}
+                            <option value="{{ category.name }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select> 
+                </li>
+                <li>
+                    <h2 class="section">Tags</h2>
+                    <div style="display: inline-block;" id="tag-list">
+                    </div>
+                    <button id="add_tag" class="tag tag-add">+</button>
+                </li>
+                <li>
+                    <h2 class="section">Notifications</h2>
+                    <ul style="list-style: none;margin: 0;padding: 0;" id="noti_list">
+                        
+                    </ul>
+                    <button id="add_noti_btn" class="tag tag-add">+</button>
+                </li>
+            </ul>
+        </th>
+        <th valign="top">
+            <h1 class="section">{% if extra_data %}Edit{% else %}Upload{% endif %}</h1>
+            <div style="position: relative;height: auto">
+                <div id="md_preview" class="markdown-input" style="text-align: left;display: none;padding: 10px;overflow: scroll;width: calc(100% - 20px);height: calc(100vh - 150px);"></div>
+                <textarea id="markdown_input" class="markdown-input">
 # Spell Name
 
 ## Level
@@ -113,352 +119,351 @@
 ## At Higher Levels
 [Insert any changes or enhancements when cast at higher levels.]
 </textarea>
-                    <input type="image" src="/assets/preview.svg" width="32px" id="preview_md"></input>
-                    <button class="div-box upload-btn" id="upload_btn">{% if extra_data %}Apply Changes{% else %}Upload{% endif %}</button>
-                </div>
-            </th>
-            <th style="width: 300px" valign="top">
-                <h1 class="section">Attachments</h1>
-                <div id="upload_attachment_box">
-                    <ul id="upload_attachment_list" style="list-style: none;margin: 0;padding: 0;">
-                        
-                    </ul>
-                    <button id="add_attachment_btn" class="tag tag-add">+</button>
-                </div>
-            </th>
-        </tr>
-    </table>
-    <template id="attachment_template">
-        <div class="div-box" style="background-color: #5F5F5F;display: flex;margin: 10px">
-            <img style="flex-basis: 32px; flex-grow: 0; flex-shrink: 0;" width="32" src="/assets/file.svg"/>
-            <div style="margin: auto;margin-left: 10px;">
-                <span style="color: #FFF;font-family: monospace;font-size: 11pt;" id="attachment_file_name"></span><br>
-                <span style="color: #AAA;font-family: monospace;font-size: 9pt;" id="attachment_file_size"></span>
+                <input type="image" src="/assets/preview.svg" width="32px" id="preview_md"></input>
+                <button class="div-box upload-btn" id="upload_btn">{% if extra_data %}Apply Changes{% else %}Upload{% endif %}</button>
             </div>
-            <div class="div-box" style="margin: 0;margin-left: 10px;background-color: #4b4b4b;padding: 3px;display: flex;flex-direction: column;border-radius: 5px;">
-                <input class="attach-link-btn" style="flex-basis: 12px; flex-grow: 0; flex-shrink: 0;" width="12" type="image" src="/assets/add-link.svg"/>
-                <input class="attach-remove-btn" style="flex-basis: 12px; flex-grow: 0; flex-shrink: 0;" width="12" type="image" src="/assets/delete.svg"/>
+        </th>
+        <th style="width: 300px" valign="top">
+            <h1 class="section">Attachments</h1>
+            <div id="upload_attachment_box">
+                <ul id="upload_attachment_list" style="list-style: none;margin: 0;padding: 0;">
+                    
+                </ul>
+                <button id="add_attachment_btn" class="tag tag-add">+</button>
             </div>
+        </th>
+    </tr>
+</table>
+<template id="attachment_template">
+    <div class="div-box" style="background-color: #5F5F5F;display: flex;margin: 10px">
+        <img style="flex-basis: 32px; flex-grow: 0; flex-shrink: 0;" width="32" src="/assets/file.svg"/>
+        <div style="margin: auto;margin-left: 10px;">
+            <span style="color: #FFF;font-family: monospace;font-size: 11pt;" id="attachment_file_name"></span><br>
+            <span style="color: #AAA;font-family: monospace;font-size: 9pt;" id="attachment_file_size"></span>
         </div>
-    </template>
-    <a href="{% url 'spezspellz:home' %}" class="btn-like" style="position: absolute;top: 8px;left: 8px;"><img width="32" src="/assets/home.svg"/></a>
-    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.2/marked.min.js" integrity="sha512-bXyBT2/sYjZg1D7ykDS6eJSE4DFDVPJHvbRAfdfYKr6IusrCz7wAmSm36vz9G8zMob25Rvqu90vft3JI71ygcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="module">
-        const noti_list = window.noti_list;
-        const selected_tags = new Set();
-        function add_notification(msg, time, every) {
-            var text = "";
-            const time_str = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-            switch(every) {
-                case "D": {
-                    text = "\nevery day at " + time_str;
-                    break;
-                }
-                case "W": {
-                    text = "\nevery " + ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"][time.getDay()] + " at " + time_str;
-                    break;
-                }
-                case "M": {
-                    text = "\nevery " + time.getDate() + " of every month at " + time_str;
-                    break;
-                }
-                case "Y": {
-                    text = "every " + time.getDate() + "/" + time.getMonth() + " at " + time_str + " every year.";
-                    break;
-                }
-                case "S": {
-                    text = "\non " + time.toLocaleString('en-US', { year: 'numeric', month: 'long', hour: 'numeric', minute: 'numeric', hour12: true });
-                    break;
-                }
-                default:
-                    break;
+        <div class="div-box" style="margin: 0;margin-left: 10px;background-color: #4b4b4b;padding: 3px;display: flex;flex-direction: column;border-radius: 5px;">
+            <input class="attach-link-btn" style="flex-basis: 12px; flex-grow: 0; flex-shrink: 0;" width="12" type="image" src="/assets/add-link.svg"/>
+            <input class="attach-remove-btn" style="flex-basis: 12px; flex-grow: 0; flex-shrink: 0;" width="12" type="image" src="/assets/delete.svg"/>
+        </div>
+    </div>
+</template>
+<script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.2/marked.min.js" integrity="sha512-bXyBT2/sYjZg1D7ykDS6eJSE4DFDVPJHvbRAfdfYKr6IusrCz7wAmSm36vz9G8zMob25Rvqu90vft3JI71ygcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="module">
+    const noti_list = window.noti_list;
+    const selected_tags = new Set();
+    function add_notification(msg, time, every) {
+        var text = "";
+        const time_str = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+        switch(every) {
+            case "D": {
+                text = "\nevery day at " + time_str;
+                break;
             }
-            const li = document.createElement("li");
-            li.setAttribute("every", every);
-            li.setAttribute("time", time.toISOString());
-            li.setAttribute("msg", msg);
-            const div = document.createElement("div");
-            div.style.margin = "5px";
-            const span = document.createElement("span");
-            span.style.color = "#FFF";
-            span.style.margin = "5px";
-            span.innerText = "`" + msg + "`" + text;
-            const remove_btn = document.createElement("button");
-            remove_btn.classList.add("tag");
-            remove_btn.classList.add("tag-add")    
-            remove_btn.innerText = "-";
-            remove_btn.onclick = () => li.remove();
-            div.append(span);
-            div.append(remove_btn);
-            li.append(div);
-            noti_list.append(li);
+            case "W": {
+                text = "\nevery " + ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"][time.getDay()] + " at " + time_str;
+                break;
+            }
+            case "M": {
+                text = "\nevery " + time.getDate() + " of every month at " + time_str;
+                break;
+            }
+            case "Y": {
+                text = "every " + time.getDate() + "/" + time.getMonth() + " at " + time_str + " every year.";
+                break;
+            }
+            case "S": {
+                text = "\non " + time.toLocaleString('en-US', { year: 'numeric', month: 'long', hour: 'numeric', minute: 'numeric', hour12: true });
+                break;
+            }
+            default:
+                break;
         }
-        window.add_noti_btn.onclick = () => window.add_noti_dlg.showModal();
-        window.ok_noti_dlg.onclick = () => {
-            const time = new Date(window.noti_dlg_date_time.value);
-            if(isNaN(time)) {
-                window.noti_dlg_err.innerText = "Please enter a valid date and time.";
-                window.noti_dlg_err.style.display = null;
-                return;
-            }
-            add_notification(window.noti_dlg_text.value, time, window.noti_dlg_every.value)
-            window.cancel_noti_dlg.click();
-        };
-        window.preview_md.onclick = () => {
-            if(!window.markdown_input.style.display) {
-                window.md_preview.innerHTML = marked.parse(window.markdown_input.value);
-                window.md_preview.style.display = "inline-block";
-                window.markdown_input.style.display = "none";
-                window.preview_md.src = "/assets/edit.svg";
-                return;
-            }
-            window.md_preview.style.display = "none";
-            window.markdown_input.style.display = null;
-            window.preview_md.src = "/assets/preview.svg";
-        };
-        window.cancel_noti_dlg.onclick = () => {
-            window.noti_dlg_text.value = "";
-            window.noti_dlg_err.style.display = "none";
-            window.noti_dlg_date_time.value = "";
-            window.noti_dlg_every.value = "day";
-            window.add_noti_dlg.close();
-        };
-        window.add_tag.onclick = () => {
-            window.add_tag_dlg.showModal();
-        };
-        function hashStr(s) {
-            return s.split("").reduce(function(a, b) {
-                a = ((a << 5) - a) + b.charCodeAt(0);
-                return a & a;
-            }, 0);
+        const li = document.createElement("li");
+        li.setAttribute("every", every);
+        li.setAttribute("time", time.toISOString());
+        li.setAttribute("msg", msg);
+        const div = document.createElement("div");
+        div.style.margin = "5px";
+        const span = document.createElement("span");
+        span.style.color = "#FFF";
+        span.style.margin = "5px";
+        span.innerText = "`" + msg + "`" + text;
+        const remove_btn = document.createElement("button");
+        remove_btn.classList.add("tag");
+        remove_btn.classList.add("tag-add")    
+        remove_btn.innerText = "-";
+        remove_btn.onclick = () => li.remove();
+        div.append(span);
+        div.append(remove_btn);
+        li.append(div);
+        noti_list.append(li);
+    }
+    window.add_noti_btn.onclick = () => window.add_noti_dlg.showModal();
+    window.ok_noti_dlg.onclick = () => {
+        const time = new Date(window.noti_dlg_date_time.value);
+        if(isNaN(time)) {
+            window.noti_dlg_err.innerText = "Please enter a valid date and time.";
+            window.noti_dlg_err.style.display = null;
+            return;
         }
-        const tag_colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'];
-        function add_tag(tag) {
-            const col = tag_colors[hashStr(tag) % tag_colors.length];
-            const div = document.createElement("button");
-            div.classList.add("tag");
-            div.style.backgroundColor = col + "4C";
-            div.style.borderColor = col;
-            const span = document.createElement("span");
-            span.innerText = tag;
-            span.style.color = col;
-            div.append(span);
-            selected_tags.add(tag);
-            document.getElementById("tag-list").append(div);
-            div.onclick = () => {
-                div.remove();
-                selected_tags.delete(tag);
-            }
+        add_notification(window.noti_dlg_text.value, time, window.noti_dlg_every.value)
+        window.cancel_noti_dlg.click();
+    };
+    window.preview_md.onclick = () => {
+        if(!window.markdown_input.style.display) {
+            window.md_preview.innerHTML = marked.parse(window.markdown_input.value);
+            window.md_preview.style.display = "inline-block";
+            window.markdown_input.style.display = "none";
+            window.preview_md.src = "/assets/edit.svg";
+            return;
         }
-        function loadData(saved_data) {
-            window.spell_title.value = saved_data.title;
-            window.markdown_input.value = saved_data.body;
-            window.category.value = saved_data.category;
-            for(const tag of saved_data.tags)
-                add_tag(tag);
-            for(const noti of saved_data.notis)
-                add_notification(noti.msg, new Date(noti.time), noti.every);
-            if(saved_data.thumbnail != null) {
-                window.change_thumbnail.src = saved_data.thumbnail.url;
-                fetch(saved_data.thumbnail.url)
-                    .then(res => res.blob())
-                    .then(blob => window.thumbnail_file.file = new File([blob], saved_data.thumbnail.name));
-            }
-            if(saved_data.attachs != null)
-                for(const attachs of saved_data.attachs)
-                    add_attachment(attachs)
+        window.md_preview.style.display = "none";
+        window.markdown_input.style.display = null;
+        window.preview_md.src = "/assets/preview.svg";
+    };
+    window.cancel_noti_dlg.onclick = () => {
+        window.noti_dlg_text.value = "";
+        window.noti_dlg_err.style.display = "none";
+        window.noti_dlg_date_time.value = "";
+        window.noti_dlg_every.value = "day";
+        window.add_noti_dlg.close();
+    };
+    window.add_tag.onclick = () => {
+        window.add_tag_dlg.showModal();
+    };
+    function hashStr(s) {
+        return s.split("").reduce(function(a, b) {
+            a = ((a << 5) - a) + b.charCodeAt(0);
+            return a & a;
+        }, 0);
+    }
+    const tag_colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'];
+    function add_tag(tag) {
+        const col = tag_colors[hashStr(tag) % tag_colors.length];
+        const div = document.createElement("button");
+        div.classList.add("tag");
+        div.style.backgroundColor = col + "4C";
+        div.style.borderColor = col;
+        const span = document.createElement("span");
+        span.innerText = tag;
+        span.style.color = col;
+        div.append(span);
+        selected_tags.add(tag);
+        document.getElementById("tag-list").append(div);
+        div.onclick = () => {
+            div.remove();
+            selected_tags.delete(tag);
         }
-        function autoSave() {
-            const notis = window.noti_list.querySelectorAll("li");
-            const notis_to_save = []
-            for(const noti of notis)
-                notis_to_save.push({
-                    msg: noti.getAttribute("msg"),
-                    time: noti.getAttribute("time"),
-                    every: noti.getAttribute("every")
-                });
-            localStorage.setItem("upload_draft", JSON.stringify({
-                title: window.spell_title.value,
-                body: window.markdown_input.value,
-                category: window.category.value,
-                notis: notis_to_save,
-                tags: Array.from(selected_tags)
-            }));
+    }
+    function loadData(saved_data) {
+        window.spell_title.value = saved_data.title;
+        window.markdown_input.value = saved_data.body;
+        window.category.value = saved_data.category;
+        for(const tag of saved_data.tags)
+            add_tag(tag);
+        for(const noti of saved_data.notis)
+            add_notification(noti.msg, new Date(noti.time), noti.every);
+        if(saved_data.thumbnail != null) {
+            window.change_thumbnail.src = saved_data.thumbnail.url;
+            fetch(saved_data.thumbnail.url)
+                .then(res => res.blob())
+                .then(blob => window.thumbnail_file.file = new File([blob], saved_data.thumbnail.name));
         }
-        const extra_data = document.getElementById("x-data");
-        if(extra_data != null) {
-            loadData(JSON.parse(extra_data.innerText));
-        } else {
-            const draft = localStorage.getItem("upload_draft");
-            if(draft != null)
-                loadData(JSON.parse(draft));
+        if(saved_data.attachs != null)
+            for(const attachs of saved_data.attachs)
+                add_attachment(attachs)
+    }
+    function autoSave() {
+        const notis = window.noti_list.querySelectorAll("li");
+        const notis_to_save = []
+        for(const noti of notis)
+            notis_to_save.push({
+                msg: noti.getAttribute("msg"),
+                time: noti.getAttribute("time"),
+                every: noti.getAttribute("every")
+            });
+        localStorage.setItem("upload_draft", JSON.stringify({
+            title: window.spell_title.value,
+            body: window.markdown_input.value,
+            category: window.category.value,
+            notis: notis_to_save,
+            tags: Array.from(selected_tags)
+        }));
+    }
+    const extra_data = document.getElementById("x-data");
+    if(extra_data != null) {
+        window.edit_warn_dlg.showModal();
+        loadData(JSON.parse(extra_data.innerText));
+    } else {
+        const draft = localStorage.getItem("upload_draft");
+        if(draft != null)
+            loadData(JSON.parse(draft));
+    }
+    setInterval(autoSave, 1000);
+    var update_tags_tm = null;
+    window.add_tag_dlg_search.onkeyup = () => {
+        const query = window.add_tag_dlg_search.value.toLowerCase();
+        for(const entry of window.tag_search_list.children) {
+            const btn = entry.querySelector("button");
+            entry.style.display = (btn.innerText.toLowerCase().indexOf(query) != -1) ? null : "none";
         }
-        setInterval(autoSave, 1000);
-        var update_tags_tm = null;
-        window.add_tag_dlg_search.onkeyup = () => {
-            const query = window.add_tag_dlg_search.value.toLowerCase();
-            for(const entry of window.tag_search_list.children) {
-                const btn = entry.querySelector("button");
-                entry.style.display = (btn.innerText.toLowerCase().indexOf(query) != -1) ? null : "none";
-            }
-            if(update_tags_tm)
-                clearTimeout(update_tags_tm);
-            update_tags_tm = setTimeout(() => {
-                update_tags_tm = null;
-                fetch("{% url 'spezspellz:tags' %}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": "{{ csrf_token }}"
-                    },
-                    body: JSON.stringify({
-                        "method": "search",
-                        "query": query
-                    })
-                }).then(res => {
-                    if(res.status != 200)
-                        return;
-                    res.json().then(json => {
-                        window.tag_search_list.innerHTML = '';
-                        for(const tag of json) {
-                            if(selected_tags.has(tag))
-                                continue;
-                            const li = document.createElement("li");
-                            const btn = document.createElement("button");
-                            btn.classList.add("tag-search-entry");
-                            btn.innerText = tag;
-                            btn.onclick = () => {
-                                li.remove();
-                                add_tag(tag);
-                            };
-                            li.append(btn);
-                            window.tag_search_list.append(li);
-                        }
-                        for(const entry of window.tag_search_list.children) {
-                            const btn = entry.querySelector("button");
-                            entry.style.display = (btn.innerText.toLowerCase().indexOf(query) != -1) ? null : "none";
-                        }
-                    });
-                })
-            }, 250); 
-        };
-        window.close_add_tag_dlg.onclick = () => {
-            window.tag_search_list.innerHTML = '';
-            window.add_tag_dlg_search.value = "";
-            window.add_tag_dlg.close();
-        };
-        window.change_thumbnail.onclick = () => {
-            window.thumbnail_file.click();
-        };
-        window.thumbnail_file.onchange = () => {
-            const [file] = window.thumbnail_file.files
-            if (!file)
-                return;
-            window.change_thumbnail.src = URL.createObjectURL(file);
-        };
-        function fallbackCopyTextToClipboard(text) {
-            var text_area = document.createElement("textarea");
-            text_area.value = text;
-            text_area.style.top = "0";
-            text_area.style.left = "0";
-            text_area.style.position = "fixed";
-            document.body.appendChild(text_area);
-            text_area.focus();
-            text_area.select();
-            try {
-                document.execCommand('copy');
-            } catch (_) { }
-            document.body.removeChild(text_area);
-        }
-        function copyTextToClipboard(text) {
-            if (!navigator.clipboard) {
-                fallbackCopyTextToClipboard(text);
-                return;
-            }
-            navigator.clipboard.writeText(text).then(() => {});
-        }
-        function add_attachment(file, file_handler) {
-            let file_url;
-            if(file_handler == null) {
-                file_handler = document.createElement("input");
-                file_handler.type = "file";
-                file_handler.file = file;
-                file_handler.setAttribute("file_id", file.id);
-                file_url = file.url;
-            } else {
-                file_url = URL.createObjectURL(file);
-            }
-            const attachment = window.attachment_template.content.cloneNode(true).firstElementChild;
-            file_handler.setAttribute("file_url", file_url);
-            attachment.querySelector("#attachment_file_name").innerText = file.name;
-            attachment.querySelector("#attachment_file_size").innerText = file.size + " bytes";
-            let appended;
-            attachment.querySelector(".attach-link-btn").onclick = () => copyTextToClipboard(file_url);
-            attachment.querySelector(".attach-remove-btn").onclick = () => attachment.remove();
-            file_handler.style.display = "none";
-            attachment.append(file_handler);
-            window.upload_attachment_list.appendChild(attachment);
-        }
-        window.add_attachment_btn.onclick = () => {
-            const file_handler = document.createElement("input");
-            file_handler.type = "file";
-            file_handler.click();
-            file_handler.onchange = () => add_attachment(file_handler.files.item(0), file_handler)
-        };
-        window.upload_btn.onclick = () => {
-            const [thumbnail] = window.thumbnail_file.files
-            var data = new FormData();
-            if(thumbnail)
-                data.append("thumbnail", thumbnail);
-            data.append("title", window.spell_title.value);
-            data.append("tags", selected_tags.size);
-            var i = 0;
-            for(const tag of selected_tags)
-                data.append("tag" + i++, tag);
-            const same_file_inputs = window.upload_attachment_list.querySelectorAll("input[type=\"file\"][file_id]");
-            data.append("oattachs", same_file_inputs.length);
-            i = 0;
-            for(const file of same_file_inputs)
-                data.append("oattach" + i++, file.getAttribute("file_id"));
-            const file_inputs = window.upload_attachment_list.querySelectorAll("input[type=\"file\"]:not([file_id])");
-            data.append("attachs", file_inputs.length);
-            i = 0;
-            for(const file of file_inputs) {
-                const cur_idx = i++;
-                data.append("attachn" + cur_idx, file.getAttribute("file_url"));
-                data.append("attach" + cur_idx, file.files.item(0));
-            }
-            const notis = window.noti_list.querySelectorAll("li");
-            data.append("notis", notis.length);
-            for(const noti of notis) {
-                const cur_idx = i++;
-                data.append("notimsg" + cur_idx, noti.getAttribute("msg"));
-                data.append("notidate" + cur_idx, noti.getAttribute("time"));
-                data.append("notiev" + cur_idx, noti.getAttribute("every"));
-            }
-            data.append("category", window.category.value);
-            data.append("data", window.markdown_input.value);
-            window.upload_text.style.color = "#FFF";
-            window.upload_text.innerText = "Uploading...";
-            window.upload_dlg.showModal();
-            window.upload_dlg_close.onclick = () => window.upload_dlg.close();
-            fetch("{% if spell %}{% url 'spezspellz:edit' spell.pk %}{% else %}{% url 'spezspellz:upload' %}{% endif %}", {
+        if(update_tags_tm)
+            clearTimeout(update_tags_tm);
+        update_tags_tm = setTimeout(() => {
+            update_tags_tm = null;
+            fetch("{% url 'spezspellz:tags' %}", {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": "{{ csrf_token }}"
                 },
-                body: data
-            }).then(res => res.text().then(text => {
+                body: JSON.stringify({
+                    "method": "search",
+                    "query": query
+                })
+            }).then(res => {
                 if(res.status != 200)
-                    window.upload_text.style.color = "#F00";
-                if(res.status == 200 && text == "OK") 
-                    window.upload_text.innerText = "Successfully uploaded";
-                else
-                    window.upload_text.innerText = text;
-            })).catch(() => {
-                window.upload_text.style.color = "#F00";
-                window.upload_text.innerText = "Failed to upload.";
-            });
+                    return;
+                res.json().then(json => {
+                    window.tag_search_list.innerHTML = '';
+                    for(const tag of json) {
+                        if(selected_tags.has(tag))
+                            continue;
+                        const li = document.createElement("li");
+                        const btn = document.createElement("button");
+                        btn.classList.add("tag-search-entry");
+                        btn.innerText = tag;
+                        btn.onclick = () => {
+                            li.remove();
+                            add_tag(tag);
+                        };
+                        li.append(btn);
+                        window.tag_search_list.append(li);
+                    }
+                    for(const entry of window.tag_search_list.children) {
+                        const btn = entry.querySelector("button");
+                        entry.style.display = (btn.innerText.toLowerCase().indexOf(query) != -1) ? null : "none";
+                    }
+                });
+            })
+        }, 250); 
+    };
+    window.close_add_tag_dlg.onclick = () => {
+        window.tag_search_list.innerHTML = '';
+        window.add_tag_dlg_search.value = "";
+        window.add_tag_dlg.close();
+    };
+    window.change_thumbnail.onclick = () => {
+        window.thumbnail_file.click();
+    };
+    window.thumbnail_file.onchange = () => {
+        const [file] = window.thumbnail_file.files
+        if (!file)
+            return;
+        window.change_thumbnail.src = URL.createObjectURL(file);
+    };
+    function fallbackCopyTextToClipboard(text) {
+        var text_area = document.createElement("textarea");
+        text_area.value = text;
+        text_area.style.top = "0";
+        text_area.style.left = "0";
+        text_area.style.position = "fixed";
+        document.body.appendChild(text_area);
+        text_area.focus();
+        text_area.select();
+        try {
+            document.execCommand('copy');
+        } catch (_) { }
+        document.body.removeChild(text_area);
+    }
+    function copyTextToClipboard(text) {
+        if (!navigator.clipboard) {
+            fallbackCopyTextToClipboard(text);
+            return;
         }
-    </script>
-</body>
+        navigator.clipboard.writeText(text).then(() => {});
+    }
+    function add_attachment(file, file_handler) {
+        let file_url;
+        if(file_handler == null) {
+            file_handler = document.createElement("input");
+            file_handler.type = "file";
+            file_handler.file = file;
+            file_handler.setAttribute("file_id", file.id);
+            file_url = file.url;
+        } else {
+            file_url = URL.createObjectURL(file);
+        }
+        const attachment = window.attachment_template.content.cloneNode(true).firstElementChild;
+        file_handler.setAttribute("file_url", file_url);
+        attachment.querySelector("#attachment_file_name").innerText = file.name;
+        attachment.querySelector("#attachment_file_size").innerText = file.size + " bytes";
+        let appended;
+        attachment.querySelector(".attach-link-btn").onclick = () => copyTextToClipboard(file_url);
+        attachment.querySelector(".attach-remove-btn").onclick = () => attachment.remove();
+        file_handler.style.display = "none";
+        attachment.append(file_handler);
+        window.upload_attachment_list.appendChild(attachment);
+    }
+    window.add_attachment_btn.onclick = () => {
+        const file_handler = document.createElement("input");
+        file_handler.type = "file";
+        file_handler.click();
+        file_handler.onchange = () => add_attachment(file_handler.files.item(0), file_handler)
+    };
+    window.upload_btn.onclick = () => {
+        const [thumbnail] = window.thumbnail_file.files
+        var data = new FormData();
+        if(thumbnail)
+            data.append("thumbnail", thumbnail);
+        data.append("title", window.spell_title.value);
+        data.append("tags", selected_tags.size);
+        var i = 0;
+        for(const tag of selected_tags)
+            data.append("tag" + i++, tag);
+        const same_file_inputs = window.upload_attachment_list.querySelectorAll("input[type=\"file\"][file_id]");
+        data.append("oattachs", same_file_inputs.length);
+        i = 0;
+        for(const file of same_file_inputs)
+            data.append("oattach" + i++, file.getAttribute("file_id"));
+        const file_inputs = window.upload_attachment_list.querySelectorAll("input[type=\"file\"]:not([file_id])");
+        data.append("attachs", file_inputs.length);
+        i = 0;
+        for(const file of file_inputs) {
+            const cur_idx = i++;
+            data.append("attachn" + cur_idx, file.getAttribute("file_url"));
+            data.append("attach" + cur_idx, file.files.item(0));
+        }
+        const notis = window.noti_list.querySelectorAll("li");
+        data.append("notis", notis.length);
+        for(const noti of notis) {
+            const cur_idx = i++;
+            data.append("notimsg" + cur_idx, noti.getAttribute("msg"));
+            data.append("notidate" + cur_idx, noti.getAttribute("time"));
+            data.append("notiev" + cur_idx, noti.getAttribute("every"));
+        }
+        data.append("category", window.category.value);
+        data.append("data", window.markdown_input.value);
+        window.upload_text.style.color = "#FFF";
+        window.upload_text.innerText = "Uploading...";
+        window.upload_dlg.showModal();
+        window.upload_dlg_close.onclick = () => window.upload_dlg.close();
+        fetch("{% if spell %}{% url 'spezspellz:edit' spell.pk %}{% else %}{% url 'spezspellz:upload' %}{% endif %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: data
+        }).then(res => res.text().then(text => {
+            if(res.status != 200)
+                window.upload_text.style.color = "#F00";
+            if(res.status == 200 && text == "OK") 
+                window.upload_text.innerText = "Successfully uploaded";
+            else
+                window.upload_text.innerText = text;
+        })).catch(() => {
+            window.upload_text.style.color = "#F00";
+            window.upload_text.innerText = "Failed to upload.";
+        });
+    }
+</script>
 {% endblock %}

@@ -156,3 +156,9 @@ class Review(models.Model):
     def __str__(self):
         """Return a review for a spell"""
         return f"Spell: {self.spell}/ User: {self.user}/ Rating: {self.star}"
+class SpellHistoryEntry(models.Model):
+    """An entry in the spell history."""
+
+    user: models.ForeignKey[User] = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, null=False, on_delete=models.CASCADE)
+    time: models.DateTimeField = models.DateTimeField()
