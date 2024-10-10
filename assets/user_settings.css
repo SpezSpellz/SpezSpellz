@@ -84,3 +84,22 @@ input:checked+.slider:before {
 .generic-button:active {
     background-color: #6B6B6B;
 }
+
+.profile-desc {
+    color: #FFFFFF;
+    background-color: #4B4B4B;
+    width: 90%;
+    height: 100px;
+    padding: 0px;
+    margin: 0px 20px 0px 0px;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+td {
+    padding: 5px 0 5px 0;
+}
+
+.switch-td {
+    padding-left: 20px;
+}

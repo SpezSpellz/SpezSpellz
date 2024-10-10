@@ -4,9 +4,17 @@ body {
 h1, h2 {
     color: #FFF;
 }
+a {
+    text-decoration: none;
+}
 .sp-title {
     margin: auto;
     text-align: center;
+}
+.search-form {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
 }
 .search-bar {
     background-color: #3B3B3B;
@@ -14,16 +22,44 @@ h1, h2 {
     font-size: 12pt;
     color: #FFF;
     padding-left: 32px;
-    border-radius: 6px;
-    margin: auto;
-    margin-top: 10px;
-    background-image: url("/assets/search.svg");
-    background-position: 3px, 3px;
-    background-size: 24px;
-    background-repeat: no-repeat;
-    display: block;
+    border-radius: 6px 0 0 6px;
+    margin-left: 12px;
+    margin-right: -1px;
     padding-top: 5px;
     padding-bottom: 5px;
+    background-image: url("/assets/search.svg");
+    background-position: 8px 50%;
+    background-size: 24px;
+    background-repeat: no-repeat;
+}
+.search-button {
+    background-color: #3B3B3B;
+    border: none;
+    color: #FFF;
+    font-size: 12pt;
+    padding: 5px 15px;
+    border-radius: 0 6px 6px 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.search-button:hover {
+    background-color: #555555;
+}
+.filter-button {
+    background-color: #3B3B3B;
+    border: none;
+    color: #FFF;
+    font-size: 12pt;
+    margin-right: 120px;
+    padding: 5px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    position: absolute;
+    right: -100px;
+}
+.filter-button:hover {
+    background-color: #555555;
 }
 .strip-box {
     background-color: #3B3B3B;
@@ -32,7 +68,6 @@ h1, h2 {
     flex-direction: row;
     margin: 10px;
     padding: 5px;
-    
 }
 .spell {
     position: relative;
@@ -55,4 +90,43 @@ h1, h2 {
     height: 100%;
     width: 100%;
     object-fit: contain;
+}
+.all-spell-container {
+    background-color: #3B3B3B;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+}
+.all-spell {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    background-color: #1C1C1C;
+    border-radius: 6px;
+    padding: 5px;
+}
+.all-spell-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-right: 10px;
+}
+.all-spell-title {
+    color: #FFF;
+    font-size: 16pt;
+    margin: 0;
+}
+.all-spell-category {
+    color: #AAA;
+    font-size: 12pt;
+    margin: 2px 0;
+}
+.all-spell-creator {
+    color: #979797;
+    font-size: 11pt;
+    margin: 2px 0;
+}
+.all-spell-data {
+    color: #dcdcdc;
+    font-size: 12pt;
 }
