@@ -447,7 +447,7 @@ class SpellPage(View, RPCView):
         if user.is_authenticated:
             bookmark = get_or_none(Bookmark, user=user, spell=spell)
         review = Review.objects.filter(spell=spell).all()
-        my_review = Review.objects.filter(user=user, spell=spell).first()
+        my_review = get_or_none(Review, user=user, spell=spell)
         average_star = spell.calc_avg_stars() or 5.0
         average_star_round = float(round(average_star * 2) / 2)
         with transaction.atomic():

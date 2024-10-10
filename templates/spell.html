@@ -143,7 +143,7 @@
     <div id="reviews_tab">
         <div style="padding: 5px;">
             <div id="rate_stars" style="display: flex;">
-                <h2 style="margin: 0;margin-bottom: 8px;margin-right: 8px;">Leave a Review</h2>
+                <h2 style="margin: 0;margin-bottom: 8px;margin-right: 8px;">{% if review %}Update your{% else %}Leave a{% endif %} Review</h2>
                 <div id="rate_stars" style="display: flex;">
                     <img width="24" src="/assets/star.svg"/>
                     <img width="24" src="/assets/star.svg"/>
@@ -153,13 +153,13 @@
                 </div>
             </div>
             <div style="display: flex;justify-items: left;">
-                <textarea id="review_desc" class="review-desc" placeholder="Enter description"></textarea>
+                <textarea id="review_desc" class="review-desc" placeholder="Enter description">{% if review %}{{ review.desc }}{% endif %}</textarea>
                 <input class="btn-like send-btn" style="margin-left: 8px;" width="32" type="image" id="submit_review" src="/assets/send.svg"/>
             </div>
             <script>
                 let mouse_over = 0;
-                let selected_stars = 5;
-                let render_stars = 5;
+                let selected_stars = {% if review %}{{ review.star }} * (5/9){% else %}5{% endif %};
+                let render_stars = selected_stars;
                 const stars = window.rate_stars.querySelectorAll("img");
                 function update_stars() {
                     const floored_stars = ~~render_stars;
@@ -170,6 +170,7 @@
                     for(let j = idx + 1;j < stars.length;++j)
                         stars[j].src = "/assets/empty_star.svg";
                 }
+                update_stars();
                 for(let i = 0;i < stars.length;++i) {
                     stars[i].addEventListener('mouseover', () => mouse_over += 1);
                     stars[i].addEventListener('mouseleave', () => {
@@ -209,6 +210,7 @@
                             window.dlg_header.innerText = "Review Submission";
                             window.dlg_text.innerText = text;
                             window.base_dlg.showModal();
+                            window.base_dlg.addEventListener("close", () => location.reload());
                         });
                     }).catch((res) => {
                         console.log(res.message)
