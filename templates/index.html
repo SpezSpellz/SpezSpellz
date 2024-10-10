@@ -18,4 +18,18 @@
     </div></a>
     {% endfor %}
 </div>
+<h2 style="padding-left: 20px;">All Posts</h2>
+<div class="all-spell-container">
+    {% for spell in all_spells %}
+    <a href="{% url 'spezspellz:spell' spell.pk %}">
+    <div class="all-spell">
+        <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="all-spell-img" alt="{{ spell.title }}"/>
+            <div>
+                <h3 class="all-spell-title">{{ spell.title }}</h3>
+                <p class="all-spell-category">{{ spell.category }}</p>
+                <p class="all-spell-data">{{ spell.title }} {{ spell.truncated_data|slice:":100" }}...</p>
+            </div>
+        </div></a>
+    {% endfor %}
+</div>
 {% endblock %}

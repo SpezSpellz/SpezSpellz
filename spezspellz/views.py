@@ -64,8 +64,13 @@ class HomePage(View):
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Handle GET requests for this view."""
+        all_spells = Spell.objects.all()
+
+        for spell in all_spells:
+            the_index = spell.data.find("is")
+            spell.truncated_data = spell.data[the_index:]
         return render(
-            request, "index.html", {"latest_spells": Spell.objects.all()}
+            request, "index.html", {"latest_spells": Spell.objects.order_by('-id')[:5], "all_spells":all_spells}
         )
 
 
