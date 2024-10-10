@@ -45,6 +45,22 @@ a {
 .search-button:hover {
     background-color: #555555;
 }
+.filter-button {
+    background-color: #3B3B3B;
+    border: none;
+    color: #FFF;
+    font-size: 12pt;
+    margin-right: 120px;
+    padding: 5px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    position: absolute;
+    right: -100px;
+}
+.filter-button:hover {
+    background-color: #555555;
+}
 .strip-box {
     background-color: #3B3B3B;
     border-radius: 10px;
@@ -105,7 +121,12 @@ a {
     font-size: 12pt;
     margin: 2px 0;
 }
+.all-spell-creator {
+    color: #979797;
+    font-size: 11pt;
+    margin: 2px 0;
+}
 .all-spell-data {
-    color: #CCC;
+    color: #dcdcdc;
     font-size: 12pt;
 }

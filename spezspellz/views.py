@@ -86,6 +86,8 @@ def search_spell(request):
     except Spell.DoesNotExist:
         return redirect('spezspellz:home')
 
+def filter_spell(request):
+    return render(request, "filter.html")
 
 class UploadPage(View):
     """Handle the upload page."""
