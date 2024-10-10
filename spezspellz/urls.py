@@ -14,9 +14,8 @@ urlpatterns = [
     path("settings/", views.UserSettingsPage.as_view(), name="usersettings"),
     path("tags/", views.TagsPage.as_view(), name="tags"),
     path("attachment/<int:attachment_id>/", views.attachment_view, name="attachments"),
-    path("spell/<int:spell_id>/", views.spell_detail, name="spell"),
+    path("spell/<int:spell_id>/", views.SpellPage.as_view(), name="spell"),
     path("spell/thumbnail/<int:spell_id>/", views.thumbnail_view, name="spell_thumbnail"),
     path("profile/", views.profile_view, name="profile"),
-    path("review/<int:spell_id>/", views.review_view, name="review"),
     path("profile/myspell", views.myspell_view, name="myspell"),
 ]

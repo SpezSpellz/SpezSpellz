@@ -1,55 +1,72 @@
 {% extends "base.html" %}
 {% block Title %}Profile - {{ user.username }}{% endblock %}
 
-{% block Content %}
-<body>
-  <link rel="stylesheet" href="/assets/profile.css">
-  <h1>Profile of {{ user.username }}</h1>
+{% block BeforeBody %}
+<link rel="stylesheet" href="/assets/profile.css">
+{% endblock %}
+{% block Body %}
+<h1>Profile of {{ user.username }}</h1>
 
-  <h2>Your Spells</h2>
-  <ul>
+<h2>Your Spells</h2>
+<ul>
+  {% if spells %}
     {% for spell in spells %}
     <li>
-      <a href="{% url 'spezspellz:spell' spell.pk %}">{{ spell.title }}</a>
+      <a href="{% url 'spezspellz:spell' spell.pk %}" style="padding-left: 60px; text-decoration: none">{{ spell.title }}</a>
+      <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
     </li>
-    {% empty %}
-      <li>You have no spells.</li>
     {% endfor %}
-  </ul>
-
-  <h2>Your Bookmarks</h2>
-
-  <ul>
-    {% for bookmark in bookmarks %}
-    <li bookmark_spell="{{ bookmark.spell.pk }}">
-      <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" style="padding-left:60px;">{{ bookmark.spell.title }}</a>
-      <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="btn-like bookmark" width="32" src="/assets/bookmark_remove.svg"/>
+    <li>
+      <a href="{% url 'spezspellz:myspell' %}" style="text-decoration: none">View all</a>
     </li>
-    {% empty %}
-      <li>You have no bookmarks.</li>
-    {% endfor %}
-  </ul>
-  <script>
-    window.bookmark_spell = (spell) => {
-        fetch("{% url 'spezspellz:usersettings' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
-            body: JSON.stringify({
-                method: "bookmark",
-                spell_id: spell
-            })
-        }).then(res => {
-            if(!res.ok)
-                return Promise.reject();
-            return res.text()
-        }).then(text => {
-            if(text != "Unbookmarked")
-              return;
-            document.querySelector("[bookmark_spell=\"" + spell + "\"]").remove();
-        })
-    }
+  {% else %}
+    <li>You have no spells.</li>
+  {% endif %}
+
+</ul>
+
+<h2>Your Bookmarks</h2>
+
+<ul>
+  {% for bookmark in bookmarks %}
+  <li bookmark_spell="{{ bookmark.spell.pk }}">
+    <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" style="padding-left:60px;">{{ bookmark.spell.title }}</a>
+    <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="btn-like bookmark" width="32" src="/assets/bookmark_remove.svg"/>
+  </li>
+  {% empty %}
+    <li>You have no bookmarks.</li>
+  {% endfor %}
+</ul>
+<h2>Spell History</h2>
+<ul>
+  {% for spell in history %}
+  <li>
+    <a href="{% url 'spezspellz:spell' spell.spell.pk %}">{{ spell.spell.title }}</a>
+  </li>
+  {% empty %}
+    <li>You have no spells.</li>
+  {% endfor %}
+</ul>
+<script>
+  window.bookmark_spell = (spell) => {
+      fetch("{% url 'spezspellz:usersettings' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({
+              method: "bookmark",
+              spell_id: spell
+          })
+      }).then(res => {
+          if(!res.ok)
+              return Promise.reject();
+          return res.text()
+      }).then(text => {
+          if(text != "Unbookmarked")
+            return;
+          document.querySelector("[bookmark_spell=\"" + spell + "\"]").remove();
+      })
+  }
 </script>
-</body>
 {% endblock %}

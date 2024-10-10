@@ -26,7 +26,7 @@ Before installing the SpezSpellz app, make sure you have the following software 
    - `$ git clone https://github.com/SpezSpellz/SpezSpellz.git`
 
 2. Navigate to the project directory:
-   - `$ cd SpezSpellz
+   - `$ cd SpezSpellz`
 
 3. Create and activate a virtual environment:
    - `$ python -m venv .venv`

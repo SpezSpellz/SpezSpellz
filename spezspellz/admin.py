@@ -70,7 +70,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class ReviewAdmin(admin.ModelAdmin):
-    """For configuring reviews"""
+    """For configuring reviews."""
 
     list_display = ["spell", "user", "star"]
 

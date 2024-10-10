@@ -1,160 +1,266 @@
 {% extends "base.html" %}
 
 {% block Title %}Spell#{{ spell.id }} - SpezSpellz{% endblock %}
-{% block Content %}
-    <link rel="stylesheet" href="/assets/spell.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <div>
-        <a href="{% url 'spezspellz:home' %} " class="btn-like">
-            <img width="32" src="/assets/home.svg"/>
-        </a>
-    </div>
-    <div class="spell-title">
-        <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img">
-        <text>
-            <h1>{{ spell.title }}</h1>
-            <h3 style="color: #FFFFFF">by: {{ spell.creator.username }}</h3>
-        </text>
-    </div>
-    <input id="bookmark" type="image" class="btn-like" style="margin-left: 5%;" width="32" src="/assets/bookmark_{% if bookmark %}remove{% else %}add{% endif %}.svg"/>
-    <br>
+{% block BeforeBody %}
+<link rel="stylesheet" href="/assets/spell.css">
+{% endblock %}
+{% block Body %}
+<dialog id="base_dlg" style="border: none;background-color: #3B3B3B;border-radius: 10px;">
+    <h1 id="dlg_header"></h1>
+    <p id="dlg_text" style="color: #FFF;"></p>
+    <button class="btn-like" style="display: block;margin: auto;padding: 10px;font-size: 12pt;" onclick="window.base_dlg.close()">Close</button>
+</dialog>
+<div class="spell-title">
+    <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img">
+    <text>
+        <h1>{{ spell.title }}</h1>
+        <h3 style="color: #FFF;">by: {{ spell.creator.username }}</h3>
+        <h3 style="color: #FFF;">{{ avg_star }} stars</h3>
+    </text>
+</div>
+<div style="display: flex;flex-direction: row;margin-left: calc(5% - 8px);">
+{% if not user.is_authenticated %}
+<a href="{% url 'login' %}?next={% url 'spezspellz:spell' spell.pk %}">
+{% endif %}
+<input id="bookmark" type="image" class="btn-like" style="margin: 0;margin-left: 8px" width="32" src="/assets/bookmark_{% if bookmark %}remove{% else %}add{% endif %}.svg"/>
+{% if not user.is_authenticated %}
+</a>
+{% endif %}
+{% if user == spell.creator %}
+<a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like" style="margin: 0;margin-left: 8px">
+    <img width="32" src="/assets/edit.svg"/>
+</a>
+{% endif %}
+</div>
+<br>
 <textarea id="x_data" style="display: none;">
 {{ spell.data }}
 </textarea>
-    <div id="detail" class="spell">
+<div id="detail" class="spell">
 
-    </div>
-    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" integrity="sha512-jB0TkTBeQC9ZSkBqDhdmfTv1qdfbWpGE72yJ/01Srq6hEzZIz2xkz1e57p9ai7IeHMwEG7HpzG6NdptChif5Pg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.2/marked.min.js" integrity="sha512-bXyBT2/sYjZg1D7ykDS6eJSE4DFDVPJHvbRAfdfYKr6IusrCz7wAmSm36vz9G8zMob25Rvqu90vft3JI71ygcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="module">
-        window.detail.innerHTML = DOMPurify.sanitize(marked.parse(window.x_data.value));
-        window.bookmark.onclick = () => {
-            fetch("{% url 'spezspellz:usersettings' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: JSON.stringify({
-                    method: "bookmark",
-                    spell_id: parseInt("{{ spell.pk }}")
-                })
-            }).then(res => {
-                if(!res.ok)
-                    return Promise.reject();
-                return res.text()
-            }).then(text => {
-                window.bookmark.src = "/assets/bookmark_" + ((text == "Bookmarked") ? "remove" : "add") + ".svg";
+</div>
+<script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" integrity="sha512-jB0TkTBeQC9ZSkBqDhdmfTv1qdfbWpGE72yJ/01Srq6hEzZIz2xkz1e57p9ai7IeHMwEG7HpzG6NdptChif5Pg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.2/marked.min.js" integrity="sha512-bXyBT2/sYjZg1D7ykDS6eJSE4DFDVPJHvbRAfdfYKr6IusrCz7wAmSm36vz9G8zMob25Rvqu90vft3JI71ygcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="module">
+    window.detail.innerHTML = DOMPurify.sanitize(marked.parse(window.x_data.value));
+</script>
+{% if user.is_authenticated %}
+<script>
+    window.bookmark.onclick = () => {
+        fetch("{% url 'spezspellz:usersettings' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                method: "bookmark",
+                spell_id: parseInt("{{ spell.pk }}")
             })
-        }
-    </script>
-    <br><br>
+        }).then(res => {
+            if(!res.ok)
+                return Promise.reject();
+            return res.text()
+        }).then(text => {
+            window.bookmark.src = "/assets/bookmark_" + ((text == "Bookmarked") ? "remove" : "add") + ".svg";
+        })
+    };
+</script>
+{% endif %}
+<br>
 
-    {% if not review %}
-        <div class="spell">
-            <h1>Your Review</h1>
-
-            <form action="{% url 'spezspellz:review' spell.pk %}" method="post">
-                {% csrf_token %}
-                <h2>Star</h2>
-                <div class="container">
-                    <div class="skills">
-                        <div class="rating">
-                            <input type="radio" name="star" class="star" value="5" required>
-                            <input type="radio" name="star" class="star" value="4.5">
-                            <input type="radio" name="star" class="star" value="4">
-                            <input type="radio" name="star" class="star" value="3.5">
-                            <input type="radio" name="star" class="star" value="3">
-                            <input type="radio" name="star" class="star" value="2.5">
-                            <input type="radio" name="star" class="star" value="2">
-                            <input type="radio" name="star" class="star" value="1.5">
-                            <input type="radio" name="star" class="star" value="1">
-                            <input type="radio" name="star" class="star" value="0.5">
-                        </div>
-                    </div>
+{#{% if not review %}#}
+{#    <div class="spell">#}
+{#        <h1>Your Review</h1>#}
+{##}
+{#        <form action="{% url 'spezspellz:review' spell.pk %}" method="post">#}
+{#            {% csrf_token %}#}
+{#            <h2>Star</h2>#}
+{#            <div class="container">#}
+{#                <div class="skills">#}
+{#                    <div class="rating">#}
+{#                        <input type="radio" name="star" class="star" value="5" required>#}
+{#                        <input type="radio" name="star" class="star" value="4.5">#}
+{#                        <input type="radio" name="star" class="star" value="4">#}
+{#                        <input type="radio" name="star" class="star" value="3.5">#}
+{#                        <input type="radio" name="star" class="star" value="3">#}
+{#                        <input type="radio" name="star" class="star" value="2.5">#}
+{#                        <input type="radio" name="star" class="star" value="2">#}
+{#                        <input type="radio" name="star" class="star" value="1.5">#}
+{#                        <input type="radio" name="star" class="star" value="1">#}
+{#                        <input type="radio" name="star" class="star" value="0.5">#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{##}
+{#            <br><br>#}
+{##}
+{#            <label for="description">Description: </label>#}
+{#            <br><br>#}
+{#            <textarea id="description" name="description" class="reviewDesc"></textarea>#}
+{#            <br><br><br>#}
+{##}
+{#            {% if user.is_authenticated %}#}
+{#            <input type="submit" value="Submit" class="submitButton">#}
+{#            {% else %}#}
+{#            <a href="{% url 'login' %}?next={% url 'spezspellz:spell' spell.pk %}" class="loginButton">Login to Submit</a>#}
+{#            {% endif %}#}
+{##}
+{#        </form>#}
+{#    </div>#}
+{#    <br><br>#}
+{#{% else %}#}
+{#    <div class="spell">#}
+{#        <h1>Your Review</h1>#}
+{#            <div class="container">#}
+{#                <div class="skills">#}
+{#                    <div class="rating">#}
+{#                        {% for star in star_list %}#}
+{#                            {% if review.star == star %}#}
+{#                                <input type="radio" name="star" class="star" value="{{ star }}" disabled checked>#}
+{#                            {% else %}#}
+{#                                <input type="radio" name="star" class="star" value="{{ star }}" disabled>#}
+{#                            {% endif %}#}
+{#                        {% endfor %}#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        <p>{{ review.review_desc }}</p>#}
+{#    </div>#}
+{#{% endif %}#}
+<br><br>
+<template id="review_reply_template">
+    <div style="margin-top: 8px;margin-left: 50px;display: flex;justify-items: left;">
+        <textarea c_text class="review-desc" placeholder="Enter reply"></textarea>
+        <input c_send class="btn-like send-btn" style="margin-left: 8px;" width="32" type="image" src="/assets/send.svg"/>
+    </div>
+</template>
+<div class="spell">
+    <div style="display: flex;justify-content: space-evenly;">
+        <button id="reviews_btn" style="font-size: 28pt;background-color: transparent;border-style: none;color: #FFF;cursor: pointer;" onclick="window.comments_tab.hidden = true;window.reviews_tab.hidden = false;window.comments_btn.style.color = '#777';window.reviews_btn.style.color = '#FFF';">Reviews</button>
+        <button id="comments_btn" style="font-size: 28pt;background-color: transparent;border-style: none;color: #777;cursor: pointer;" onclick="window.reviews_tab.hidden = true;window.comments_tab.hidden = false;window.comments_btn.style.color = '#FFF';window.reviews_btn.style.color = '#777';">Comments</button>
+    </div>
+    <hr>
+    <div id="reviews_tab">
+        <div style="padding: 5px;">
+            <div id="rate_stars" style="display: flex;">
+                <h2 style="margin: 0;margin-bottom: 8px;margin-right: 8px;">{% if review %}Update your{% else %}Leave a{% endif %} Review</h2>
+                <div id="rate_stars" style="display: flex;">
+                    <img width="24" src="/assets/star.svg"/>
+                    <img width="24" src="/assets/star.svg"/>
+                    <img width="24" src="/assets/star.svg"/>
+                    <img width="24" src="/assets/star.svg"/>
+                    <img width="24" src="/assets/star.svg"/>
                 </div>
-
-                <br><br>
-
-                <label for="description">Description: </label>
-                <br><br>
-                <textarea id="description" name="description" class="reviewDesc"></textarea>
-                <br><br><br>
-
-                {% if user.is_authenticated %}
-                <input type="submit" value="Submit" class="submitButton">
-                {% else %}
-                <a href="{% url 'login' %}?next={% url 'spezspellz:spell' spell.pk %}" class="loginButton">Login to Submit</a>
-                {% endif %}
-
-            </form>
+            </div>
+            <div style="display: flex;justify-items: left;">
+                <textarea id="review_desc" class="review-desc" placeholder="Enter description">{% if review %}{{ review.desc }}{% endif %}</textarea>
+                <input class="btn-like send-btn" style="margin-left: 8px;" width="32" type="image" id="submit_review" src="/assets/send.svg"/>
+            </div>
+            <script>
+                let mouse_over = 0;
+                let selected_stars = {% if review %}{{ review.star }} * (5/9){% else %}5{% endif %};
+                let render_stars = selected_stars;
+                const stars = window.rate_stars.querySelectorAll("img");
+                function update_stars() {
+                    const floored_stars = ~~render_stars;
+                    const idx = (floored_stars == render_stars) ? (floored_stars - 1) : floored_stars;
+                    stars[idx].src = (floored_stars == render_stars) ? "/assets/star.svg" : "/assets/half_star.svg";
+                    for(let j = 0;j < idx;++j)
+                        stars[j].src = "/assets/star.svg";
+                    for(let j = idx + 1;j < stars.length;++j)
+                        stars[j].src = "/assets/empty_star.svg";
+                }
+                update_stars();
+                for(let i = 0;i < stars.length;++i) {
+                    stars[i].addEventListener('mouseover', () => mouse_over += 1);
+                    stars[i].addEventListener('mouseleave', () => {
+                        mouse_over -= 1;
+                        if(mouse_over == 0) {
+                            setTimeout(() => {
+                                if(mouse_over == 0) {
+                                    render_stars = selected_stars;
+                                    update_stars();
+                                }
+                            }, 20);
+                        }
+                    });
+                    stars[i].addEventListener('click', () => selected_stars = render_stars);
+                    stars[i].addEventListener('mousemove', (e) => {
+                        const tar = e.target.getBoundingClientRect();
+                        const posX = e.clientX - tar.left;
+                        render_stars = i + ((posX > (tar.right - tar.left)/2) ? 1 : .5);
+                        update_stars();
+                    });
+                }
+                window.submit_review.onclick = () => {
+                    fetch("{% url 'spezspellz:spell' spell.pk %}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: JSON.stringify({
+                            method: "review",
+                            desc: window.review_desc.value,
+                            stars: ~~(selected_stars * 9 / 5)
+                        })
+                    }).then(res => {
+                        if(!res.ok)
+                            return res.text().then(msg => Promise.reject(msg));
+                        return res.text().then(text => {
+                            window.dlg_header.innerText = "Review Submission";
+                            window.dlg_text.innerText = text;
+                            window.base_dlg.showModal();
+                            window.base_dlg.addEventListener("close", () => location.reload());
+                        });
+                    }).catch((res) => {
+                        console.log(res.message)
+                        window.dlg_header.innerText = "Review Submission Error";
+                        window.dlg_text.innerText = res;
+                        window.base_dlg.showModal();
+                    });
+                };
+                window.addReviewReplyWindow = (btn, review) => {
+                    const clone = window.review_reply_template.content.cloneNode(true).firstElementChild;
+                    const text = clone.querySelector("[c_text]");
+                    btn.style.display = "none";
+                    review.firstElementChild.after(clone);
+                }
+            </script>
         </div>
-        <br><br>
-    {% else %}
-        <div class="spell">
-            <h1>Your Review</h1>
-                <div class="container">
-                    <div class="skills">
-                        <div class="rating">
+        {% for review in review_list %}
+            <div>
+                <div class="review-entry">
+                    <div style="display: flex">
+                        <h2 style="margin: 0;margin-right: 16px;">{{ review.user }}</h2>
+                        <div style="display: flex;">
                             {% for star in star_list %}
-                                {% if review.star == star %}
-                                    <input type="radio" name="star" class="star" value="{{ star }}" disabled checked>
+                                {% if review.star > star %}
+                                <img width="24" src="/assets/star.svg"/>
+                                {% elif review.star >= star %}
+                                <img width="24" src="/assets/half_star.svg"/>
                                 {% else %}
-                                    <input type="radio" name="star" class="star" value="{{ star }}" disabled>
+                                <img width="24" src="/assets/empty_star.svg"/>
                                 {% endif %}
                             {% endfor %}
                         </div>
                     </div>
-                </div>
-            <p>{{ review.review_desc }}</p>
-        </div>
-    {% endif %}
-    <br><br>
-
-    <div class="spell">
-        <h1>User Reviews</h1>
-        <h2>{{ avg_star }} stars</h2>
-        <div class="container">
-            <div class="skills">
-                <div class="read">
-                    <div class="rating">
-                        {% for star in star_list %}
-                            {% if avg_star_round == star %}
-                                <input type="radio" name="star2" class="star" value="{{ star }}" disabled checked>
-                            {% else %}
-                                <input type="radio" name="star2" class="star" value="{{ star }}" disabled>
-                            {% endif %}
-                        {% endfor %}
+                    <div style="display: flex">
+                        <p>{{ review.desc }}</p>
+                        <input onclick="window.addReviewReplyWindow(this, this.parentElement.parentElement.parentElement)" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
                     </div>
                 </div>
+                <!-- <div class="review-entry" style="margin-left: 50px;">
+                    <h3 style="margin: 0;margin-right: 16px;">Review Commenter A</h3>
+                    <p>Nah this shit trash tf u talkin bout /\/j993r</p>
+                </div> -->
             </div>
         </div>
-        <hr>
-        {% for review in review_list %}
-        <div class="container">
-            <div style="font-size:20px;">
-            [Profile Picture] <span><strong>{{ review.user }}</strong></span> [Date]
-            </div>
-            <div class="skills" style="padding: 0 0 0 60px; margin-top: -5px;">
-                <div class="read">
-                    <div class="rating">
-                    {% for star in star_list %}
-                        {% if review.star == star %}
-                            <input type="radio" name="star{{review.id}}" class="star" value="{{ star }}" disabled checked>
-                        {% else %}
-                            <input type="radio" name="star{{review.id}}" class="star" value="{{ star }}" disabled>
-                        {% endif %}
-                    {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <p> {{ review.review_desc }}</p>
-        <br>
-        <hr>
         {% empty %}
         <h2>There are no reviews on this spell yet.</h2>
         {% endfor %}
     </div>
+    <div id="comments_tab" hidden>
+    </div>
+</div>
+<br><br>
 {% endblock %}

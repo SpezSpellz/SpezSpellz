@@ -29,13 +29,12 @@ class Migration(migrations.Migration):
             field=models.CharField(default='', max_length=400),
         ),
         migrations.CreateModel(
-            name='Review',
+            name='SpellHistoryEntry',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('review_desc', models.CharField(max_length=256, null=True)),
-                ('star', models.FloatField()),
+                ('time', models.DateTimeField()),
                 ('spell', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='spezspellz.spell')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-            ],
-        ),
+            ]
+        )
     ]
