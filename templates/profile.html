@@ -1,25 +1,87 @@
 {% extends "base.html" %}
-{% block title %}Profile{% endblock %}
+{% block Title %}Profile - {{ user.username }}{% endblock %}
 
-{% block content %}
+{% block BeforeBody %}
 <link rel="stylesheet" href="/assets/profile.css">
-  <h1>Profile of {{ user.username }}</h1>
+{% endblock %}
+{% block Body %}
+<h1>Profile of {{ user.username }}</h1>
 
-  <h2>Your Spells</h2>
-  <ul>
-    {% for spell in spells %}
-      <li>{{ spell.title }}</li>
-    {% empty %}
-      <li>You have no spells.</li>
-    {% endfor %}
-  </ul>
+<h2>Your Spells</h2>
+<ul>
+  {% for spell in spells %}
+  <li my_spell="{{ spell.pk }}">
+    <a href="{% url 'spezspellz:spell' spell.pk %}" style="padding-left: 60px">{{ spell.title }}</a>
+    <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
+    <a onclick="window.delete_spell({{spell.pk}})" class="btn-like edit-btn"><img width="32" src="/assets/delete.svg"/></a>
+  </li>
+  {% empty %}
+    <li>You have no spells.</li>
+  {% endfor %}
+</ul>
 
-  <h2>Your Bookmarks</h2>
-  <ul>
-    {% for bookmark in bookmarks %}
-      <li>{{ bookmark.spell.title }}</li>
-    {% empty %}
-      <li>You have no bookmarks.</li>
-    {% endfor %}
-  </ul>
+<h2>Your Bookmarks</h2>
+
+<ul>
+  {% for bookmark in bookmarks %}
+  <li bookmark_spell="{{ bookmark.spell.pk }}">
+    <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" style="padding-left:60px;">{{ bookmark.spell.title }}</a>
+    <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="btn-like bookmark" width="32" src="/assets/bookmark_remove.svg"/>
+  </li>
+  {% empty %}
+    <li>You have no bookmarks.</li>
+  {% endfor %}
+</ul>
+<h2>Spell History</h2>
+<ul>
+  {% for spell in history %}
+  <li>
+    <a href="{% url 'spezspellz:spell' spell.spell.pk %}">{{ spell.spell.title }}</a>
+  </li>
+  {% empty %}
+    <li>You have no spells.</li>
+  {% endfor %}
+</ul>
+<script>
+  window.delete_spell = (spell) => {
+    fetch("{% url 'spezspellz:usersettings' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({
+              method: "delete_spell",
+              spell_id: spell
+          })
+      }).then(res => {
+          if(!res.ok)
+              return Promise.reject();
+          return res.text()
+      }).then(text => {
+          if(text != "Spell deleted")
+            return;
+          document.querySelector("[my_spell=\"" + spell + "\"]").remove();
+      })
+  }
+  window.bookmark_spell = (spell) => {
+      fetch("{% url 'spezspellz:usersettings' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({
+              method: "bookmark",
+              spell_id: spell
+          })
+      }).then(res => {
+          if(!res.ok)
+              return Promise.reject();
+          return res.text()
+      }).then(text => {
+          if(text != "Unbookmarked")
+            return;
+          document.querySelector("[bookmark_spell=\"" + spell + "\"]").remove();
+      })
+  }
+</script>
 {% endblock %}

@@ -21,6 +21,18 @@
   }
 },
 {
+  "model": "spezspellz.userinfo",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "user_desc": "I AM THE DEMO, I AM THE FIRST USER EVER CREATED, EVER!!"
+  }
+},
+{
   "model": "spezspellz.spell",
   "pk": 1,
   "fields": {
@@ -228,6 +240,22 @@
   "fields": {
     "spell": 3,
     "file": "content/thankyou.png"
+  }
+},
+{
+  "model": "spezspellz.bookmark",
+  "pk": 2,
+  "fields": {
+    "user": 1,
+    "spell": 2
+  }
+},
+{
+  "model": "spezspellz.bookmark",
+  "pk": 12,
+  "fields": {
+    "user": 1,
+    "spell": 1
   }
 }
 ]

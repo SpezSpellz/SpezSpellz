@@ -1,0 +1,76 @@
+a {
+    text-decoration: none;
+}
+.filter-box {
+    background-color: #3B3B3B;
+    padding: 20px;
+    border-radius: 8px;
+    color: #FFF;
+    margin: 20px;
+    margin-top: 70px;
+}
+.filter-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+.filter-container label {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+.button-container {
+    display: flex;
+    justify-content: space-between;
+}
+.apply-button, .clear-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #555;
+    color: #FFF;
+    transition: background-color 0.3s;
+}
+.apply-button:hover, .clear-button:hover {
+    background-color: #777;
+}
+.results {
+    background-color: #3B3B3B;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+}
+.spell {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    background-color: #1C1C1C;
+    border-radius: 6px;
+    padding: 5px;
+}
+.spell-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-right: 10px;
+}
+.spell-title {
+    color: #FFF;
+    font-size: 16pt;
+    margin: 0;
+}
+.spell-category {
+    color: #AAA;
+    font-size: 12pt;
+    margin: 2px 0;
+}
+.spell-creator {
+    color: #979797;
+    font-size: 11pt;
+    margin: 2px 0;
+}
+.spell-data {
+    color: #dcdcdc;
+    font-size: 12pt;
+}

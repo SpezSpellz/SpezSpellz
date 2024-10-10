@@ -21,6 +21,21 @@ h2 {
     text-align: center;
 }
 
+.button {
+    display: inline-block;
+    margin-left: 5%;
+    margin-top: 1.5%;
+}
+
+.button a {
+    color: #FFFFFF;
+    padding: 1%;
+    background-color: #3B3B3B;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: filter 0.3s ease;
+}
+
 ul {
     list-style-type: none;
     padding: 0;
@@ -28,20 +43,25 @@ ul {
 }
 
 ul li {
+    display: flex;
     background-color: #3B3B3B;
     margin: 10px auto;
-    padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     max-width: 600px;
     text-align: center;
     font-size: 1.2rem;
     color: #FFF;
-    transition: background-color 0.3s;
+    transition: background-color 0.2s;
+}
+
+ul li a {
+    padding: 15px;
+    flex-grow:1;
 }
 
 ul li:hover {
-    background-color: #2B2B2B;
+    background-color: #4B4B4B;
 }
 
 li:empty {
@@ -53,4 +73,31 @@ li:empty {
     margin: 0 auto;
     padding: 20px;
     max-width: 800px;
+}
+
+.bookmark {
+    margin-right: 8px;
+    background-color: #A00000;
+}
+
+.bookmark:hover {
+    background-color: #E00000;
+}
+
+.bookmark:active {
+    background-color: #F00;
+}
+
+.edit-btn {
+    margin-right: 8px;
+    flex: 0 0 36px;
+    background-color: #5B5B5B;
+}
+
+.edit-btn:hover {
+    background-color: #6B6B6B;
+}
+
+.edit-btn:active {
+    background-color: #7B7B7B;
 }
