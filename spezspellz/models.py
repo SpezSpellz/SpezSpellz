@@ -151,6 +151,8 @@ class Review(models.Model):
     def average_star(spell):
         spell_review = Review.objects.filter(spell=spell)
         avg_star = spell_review.aggregate(Avg('star'))['star__avg']
+        if not avg_star:
+            return 0
         return avg_star
 
     def __str__(self):

@@ -13,7 +13,7 @@
         <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img">
         <text>
             <h1>{{ spell.title }}</h1>
-            <h3>by: {{ spell.creator.username }}</h3>
+            <h3 style="color: #FFFFFF">by: {{ spell.creator.username }}</h3>
         </text>
     </div>
     <input id="bookmark" type="image" class="btn-like" style="margin-left: 5%;" width="32" src="/assets/bookmark_{% if bookmark %}remove{% else %}add{% endif %}.svg"/>
