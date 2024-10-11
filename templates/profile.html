@@ -9,14 +9,20 @@
 
 <h2>Your Spells</h2>
 <ul>
-  {% for spell in spells %}
-  <li>
-    <a href="{% url 'spezspellz:spell' spell.pk %}" style="padding-left: 60px">{{ spell.title }}</a>
-    <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
-  </li>
-  {% empty %}
+  {% if spells %}
+    {% for spell in spells %}
+    <li>
+      <a href="{% url 'spezspellz:spell' spell.pk %}" style="padding-left: 60px; text-decoration: none">{{ spell.title }}</a>
+      <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
+    </li>
+    {% endfor %}
+    <li>
+      <a href="{% url 'spezspellz:myspell' %}" style="text-decoration: none">View all</a>
+    </li>
+  {% else %}
     <li>You have no spells.</li>
-  {% endfor %}
+  {% endif %}
+
 </ul>
 
 <h2>Your Bookmarks</h2>

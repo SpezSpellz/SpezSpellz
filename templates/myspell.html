@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block Title %}My Spells{% endblock %}
+{% block Body %}
+<link rel="stylesheet" href="/assets/myspell.css">
+<body>
+    <h1 style="margin: auto; text-align: center">All created spell</h1>
+    <input class="search-bar" placeholder="Search my spell" type="text">
+    <br>
+    {% for spell in spells %}
+        <div my_spell="{{ spell.pk }}" class="spell-container">
+            <div class="spell-info">
+                <img src="{% url 'spezspellz:spell_thumbnail' spell.id %}">
+                <div class="spell-title">{{ spell.title }}</div>
+            </div>
+            <div class="actions">
+                <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like"><img width="32" src="/assets/edit.svg"/></a>
+                <a onclick="window.delete_spell({{ spell.id }})" class="btn-like"><img width="32" src="/assets/delete.svg"/></a>
+            </div>
+        </div>
+    {% endfor %}
+<script>
+    window.delete_spell = (spell) => {
+    fetch("{% url 'spezspellz:usersettings' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({
+              method: "delete_spell",
+              spell_id: spell
+          })
+      }).then(res => {
+          if(!res.ok)
+              return Promise.reject();
+          return res.text()
+      }).then(text => {
+          if(text != "Spell deleted")
+            return;
+          document.querySelector("[my_spell=\"" + spell + "\"]").remove();
+      })
+  }
+</script>
+</body>
+{% endblock %}
