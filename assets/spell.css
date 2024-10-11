@@ -113,3 +113,14 @@ text {
 hr {
     border: 1px solid #FFFFFF
 }
+
+.tag {
+    font-family: monospace;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 20px;
+    margin: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+    display: inline-block;
+}

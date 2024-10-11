@@ -140,8 +140,7 @@
   "pk": 1,
   "fields": {
     "spell": 1,
-    "tag": 1,
-    "rating": 0
+    "tag": 1
   }
 },
 {
@@ -149,8 +148,7 @@
   "pk": 2,
   "fields": {
     "spell": 1,
-    "tag": 2,
-    "rating": 0
+    "tag": 2
   }
 },
 {
@@ -158,8 +156,7 @@
   "pk": 3,
   "fields": {
     "spell": 1,
-    "tag": 3,
-    "rating": 0
+    "tag": 3
   }
 },
 {
@@ -167,8 +164,7 @@
   "pk": 4,
   "fields": {
     "spell": 1,
-    "tag": 4,
-    "rating": 0
+    "tag": 4
   }
 },
 {
@@ -176,8 +172,7 @@
   "pk": 5,
   "fields": {
     "spell": 2,
-    "tag": 1,
-    "rating": 0
+    "tag": 1
   }
 },
 {
@@ -185,8 +180,7 @@
   "pk": 6,
   "fields": {
     "spell": 2,
-    "tag": 2,
-    "rating": 0
+    "tag": 2
   }
 },
 {
@@ -194,8 +188,7 @@
   "pk": 7,
   "fields": {
     "spell": 2,
-    "tag": 3,
-    "rating": 0
+    "tag": 3
   }
 },
 {
@@ -203,8 +196,7 @@
   "pk": 8,
   "fields": {
     "spell": 2,
-    "tag": 5,
-    "rating": 0
+    "tag": 5
   }
 },
 {
@@ -212,8 +204,7 @@
   "pk": 9,
   "fields": {
     "spell": 3,
-    "tag": 9,
-    "rating": 0
+    "tag": 9
   }
 },
 {
@@ -221,8 +212,7 @@
   "pk": 10,
   "fields": {
     "spell": 3,
-    "tag": 10,
-    "rating": 0
+    "tag": 10
   }
 },
 {
@@ -230,8 +220,52 @@
   "pk": 11,
   "fields": {
     "spell": 3,
-    "tag": 8,
-    "rating": 0
+    "tag": 8
+  }
+},
+{
+  "model": "spezspellz.ratetag",
+  "pk": 3,
+  "fields": {
+    "user": 1,
+    "positive": true,
+    "subject": 1
+  }
+},
+{
+  "model": "spezspellz.ratetag",
+  "pk": 4,
+  "fields": {
+    "user": 1,
+    "positive": true,
+    "subject": 2
+  }
+},
+{
+  "model": "spezspellz.ratetag",
+  "pk": 5,
+  "fields": {
+    "user": 1,
+    "positive": true,
+    "subject": 3
+  }
+},
+{
+  "model": "spezspellz.ratetag",
+  "pk": 6,
+  "fields": {
+    "user": 1,
+    "positive": true,
+    "subject": 4
+  }
+},
+{
+  "model": "spezspellz.ratecategory",
+  "pk": 3,
+  "fields": {
+    "user": 1,
+    "positive": true,
+    "subject": 1
   }
 },
 {
@@ -256,6 +290,34 @@
   "fields": {
     "user": 1,
     "spell": 1
+  }
+},
+{
+  "model": "spezspellz.review",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "spell": 1,
+    "desc": "Very nice spell but it's very hot and I almost burned my hand :I",
+    "star": 8
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "spell": 1,
+    "time": "2024-10-11T15:10:13.954Z"
+  }
+},
+{
+  "model": "spezspellz.spellcomment",
+  "pk": 1,
+  "fields": {
+    "spell": 1,
+    "commenter": 1,
+    "text": "When will you post a nuclear bomb spell?\nI really want to nuke a country in the east."
   }
 }
 ]

@@ -54,7 +54,7 @@ class UserInfoAdmin(admin.ModelAdmin):
 class HasTagAdmin(admin.ModelAdmin):
     """For configuring tags."""
 
-    list_display = ["spell", "tag", "rating"]
+    list_display = ["spell", "tag"]
 
 
 class BookmarkAdmin(admin.ModelAdmin):

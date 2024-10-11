@@ -1,14 +1,14 @@
 """This file contains models."""
-from typing import Optional, cast, TypeVar
+from typing import Optional, cast, TypeVar, Any
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Avg
 
-
 ModelClass = TypeVar('ModelClass')
 
 
-def get_or_none(model_class: type[ModelClass], **kwargs) -> Optional[ModelClass]:
+def get_or_none(model_class: type[ModelClass],
+                **kwargs) -> Optional[ModelClass]:
     """Get a model, returns None if not found.
 
     Args:
@@ -18,7 +18,10 @@ def get_or_none(model_class: type[ModelClass], **kwargs) -> Optional[ModelClass]
         model_class | None: The obtained model class or None
     """
     try:
-        return cast(ModelClass, cast(models.Model, model_class).objects.get(**kwargs))
+        return cast(
+            ModelClass,
+            cast(models.Model, model_class).objects.get(**kwargs)
+        )
     except cast(models.Model, model_class).DoesNotExist:
         return None
 
@@ -36,11 +39,19 @@ class Category(models.Model):
 class UserInfo(models.Model):
     """Store the user info."""
 
-    user: models.OneToOneField[User] = models.OneToOneField(User, on_delete=models.CASCADE)
+    user: models.OneToOneField[User] = models.OneToOneField(
+        User, on_delete=models.CASCADE
+    )
     timed_notification: models.BooleanField = models.BooleanField(default=True)
-    review_comment_notification: models.BooleanField = models.BooleanField(default=True)
-    spell_review_notification: models.BooleanField = models.BooleanField(default=True)
-    spell_comment_notification: models.BooleanField = models.BooleanField(default=True)
+    review_comment_notification: models.BooleanField = models.BooleanField(
+        default=True
+    )
+    spell_review_notification: models.BooleanField = models.BooleanField(
+        default=True
+    )
+    spell_comment_notification: models.BooleanField = models.BooleanField(
+        default=True
+    )
     user_desc: models.CharField = models.CharField(default="", max_length=400)
 
     def __str__(self):
@@ -51,16 +62,16 @@ class UserInfo(models.Model):
 class Spell(models.Model):
     """The model that stores spells."""
 
-    creator: models.ForeignKey[User] = models.ForeignKey(User, on_delete=models.CASCADE)
+    creator: models.ForeignKey[User] = models.ForeignKey(
+        User, on_delete=models.CASCADE
+    )
     title: models.CharField = models.CharField(max_length=50)
     data: models.CharField = models.CharField(max_length=4096 * 10)
     thumbnail: models.FileField = models.FileField(
-        upload_to="content",
-        null=True
+        upload_to="content", null=True
     )
     category: models.ForeignKey[Category] = models.ForeignKey(
-        Category, null=True, blank=True,
-        on_delete=models.SET_NULL
+        Category, null=True, blank=True, on_delete=models.SET_NULL
     )
 
     def __str__(self) -> str:
@@ -75,6 +86,11 @@ class Spell(models.Model):
     def calc_avg_stars(self) -> float:
         """Calculate average stars for a spell."""
         return Review.calc_avg_stars(self)
+
+    def calc_category_rating(self) -> int:
+        """Calculate the category rating."""
+        return cast(Any, self).ratecategory_set.filter(positive=True).count(
+        ) - cast(Any, self).ratecategory_set.filter(positive=False).count()
 
 
 class Tag(models.Model):
@@ -91,17 +107,55 @@ class HasTag(models.Model):
     """Whether a spell has a tag and the rating of the tag for that spell."""
 
     spell: models.ForeignKey[Spell] = models.ForeignKey(
-        Spell,
-        null=False,
-        on_delete=models.CASCADE
+        Spell, null=False, on_delete=models.CASCADE
     )
     tag: models.ForeignKey[Tag] = models.ForeignKey(
-        Tag,
-        null=False,
-        on_delete=models.CASCADE
+        Tag, null=False, on_delete=models.CASCADE
     )
-    rating: models.IntegerField = models.IntegerField()
-    # +1 for YES -1 for NO
+
+    def calc_rating(self) -> int:
+        """Calculate the rating."""
+        return cast(Any, self).ratetag_set.filter(
+            positive=True
+        ).count() - cast(Any, self).ratetag_set.filter(positive=False).count()
+
+
+class Rate(models.Model):
+    """When someone rates something."""
+
+    class Meta:
+        """Tell that Rate is abstract."""
+
+        abstract = True
+
+    user: models.ForeignKey[User] = models.ForeignKey(
+        User, null=False, on_delete=models.CASCADE
+    )
+    positive: models.BooleanField = models.BooleanField(default=False)
+
+    @classmethod
+    def calc_rating(cls, **filters) -> int:
+        """Calculate rating."""
+        return cls.objects.filter(
+            positive=True,
+            **filters
+        ).count() - cls.objects.filter(positive=False, **filters).count()
+
+
+class RateTag(Rate):
+    """When someone rates a tag."""
+
+    subject: models.ForeignKey[HasTag] = models.ForeignKey(
+        HasTag, null=False, on_delete=models.CASCADE
+    )
+
+
+class RateCategory(Rate):
+    """When someone rates a category."""
+
+    subject: models.ForeignKey[Spell] = models.ForeignKey(
+        Spell, null=False, on_delete=models.CASCADE
+    )
 
 
 class SpellNotification(models.Model):
@@ -116,26 +170,34 @@ class SpellNotification(models.Model):
         YEAR = "Y"
         SINGLE = "S"
 
-    spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, on_delete=models.CASCADE)
+    spell: models.ForeignKey[Spell] = models.ForeignKey(
+        Spell, on_delete=models.CASCADE
+    )
     datetime: models.DateTimeField = models.DateTimeField()
-    every: models.CharField = models.CharField(max_length=1, choices=EveryType.choices, default=EveryType.SINGLE)
+    every: models.CharField = models.CharField(
+        max_length=1, choices=EveryType.choices, default=EveryType.SINGLE
+    )
     message: models.CharField = models.CharField(max_length=256)
 
 
 class Attachment(models.Model):
     """The attachment for spells."""
 
-    spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, on_delete=models.CASCADE)
-    file: models.FileField = models.FileField(
-        upload_to="content"
+    spell: models.ForeignKey[Spell] = models.ForeignKey(
+        Spell, on_delete=models.CASCADE
     )
+    file: models.FileField = models.FileField(upload_to="content")
 
 
 class Bookmark(models.Model):
     """Collection of spell that a user had saved as bookmark."""
 
-    user: models.ForeignKey[User] = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
-    spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, null=False, on_delete=models.CASCADE)
+    user: models.ForeignKey[User] = models.ForeignKey(
+        User, null=False, on_delete=models.CASCADE
+    )
+    spell: models.ForeignKey[Spell] = models.ForeignKey(
+        Spell, null=False, on_delete=models.CASCADE
+    )
 
     def __str__(self):
         """Return bookmark as a string."""
@@ -145,8 +207,12 @@ class Bookmark(models.Model):
 class Review(models.Model):
     """Collection of reviews for spells."""
 
-    user: models.ForeignKey[User] = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
-    spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, null=False, on_delete=models.CASCADE)
+    user: models.ForeignKey[User] = models.ForeignKey(
+        User, null=False, on_delete=models.CASCADE
+    )
+    spell: models.ForeignKey[Spell] = models.ForeignKey(
+        Spell, null=False, on_delete=models.CASCADE
+    )
     desc: models.CharField = models.CharField(max_length=256, null=True)
     # Lowest 0 star highest 9 star
     star: models.SmallIntegerField = models.SmallIntegerField()
@@ -168,30 +234,46 @@ class Review(models.Model):
 class SpellHistoryEntry(models.Model):
     """An entry in the spell history."""
 
-    user: models.ForeignKey[User] = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
-    spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, null=False, on_delete=models.CASCADE)
+    user: models.ForeignKey[User] = models.ForeignKey(
+        User, null=False, on_delete=models.CASCADE
+    )
+    spell: models.ForeignKey[Spell] = models.ForeignKey(
+        Spell, null=False, on_delete=models.CASCADE
+    )
     time: models.DateTimeField = models.DateTimeField()
 
 
 class ReviewComment(models.Model):
     """A comment for review."""
 
-    review: models.ForeignKey[Review] = models.ForeignKey(Review, on_delete=models.CASCADE)
-    commenter: models.ForeignKey[User] = models.ForeignKey(User, on_delete=models.CASCADE)
+    review: models.ForeignKey[Review] = models.ForeignKey(
+        Review, on_delete=models.CASCADE
+    )
+    commenter: models.ForeignKey[User] = models.ForeignKey(
+        User, on_delete=models.CASCADE
+    )
     text: models.CharField = models.CharField(max_length=500)
 
 
 class SpellComment(models.Model):
     """A comment for spell."""
 
-    spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, null=False, on_delete=models.CASCADE)
-    commenter: models.ForeignKey[User] = models.ForeignKey(User, on_delete=models.CASCADE)
+    spell: models.ForeignKey[Spell] = models.ForeignKey(
+        Spell, null=False, on_delete=models.CASCADE
+    )
+    commenter: models.ForeignKey[User] = models.ForeignKey(
+        User, on_delete=models.CASCADE
+    )
     text: models.CharField = models.CharField(max_length=500)
 
 
 class CommentComment(models.Model):
     """A comment for a comment."""
 
-    comment: models.ForeignKey[SpellComment] = models.ForeignKey(SpellComment, on_delete=models.CASCADE)
-    commenter: models.ForeignKey[User] = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment: models.ForeignKey[SpellComment] = models.ForeignKey(
+        SpellComment, on_delete=models.CASCADE
+    )
+    commenter: models.ForeignKey[User] = models.ForeignKey(
+        User, on_delete=models.CASCADE
+    )
     text: models.CharField = models.CharField(max_length=500)

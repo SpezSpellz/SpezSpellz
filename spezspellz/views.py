@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_datetime
 from django.views.generic import CreateView
 from django.db import transaction
-from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark, Review, SpellHistoryEntry, ReviewComment, SpellComment, CommentComment
+from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark, Review, SpellHistoryEntry, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory
 
 
 def safe_cast(t, val, default=None):
@@ -367,23 +367,76 @@ class UserSettingsPage(View, RPCView):
         """Handle GET requests for this view."""
         return render(request, "user_settings.html")
 
-    def rpc_delete_spell(
-        self, request: HttpRequest, spell_id: Any = None
+    def rpc_rate(
+        self,
+        request: HttpRequest,
+        obj_type: str = "tag",
+        obj_id: int = 0,
+        vote: Optional[bool] = None
     ) -> HttpResponseBase:
-        """Delete a spell."""
-        if not request.user.is_authenticated:
+        """Handle upvotes requests."""
+        user = request.user
+        if not user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
-        if not isinstance(spell_id, int):
+        if not isinstance(obj_type, str):
             return HttpResponse(
-                "Parameter `spell_id` must be an integer", status=400
+                "Parameter `obj_type` must be a string", status=400
             )
-        spell = get_or_none(Spell, pk=spell_id)
-        if spell is None:
-            return HttpResponse("Spell not found", status=404)
-        if spell.creator != request.user:
-            return HttpResponse("Forbidden", status=403)
-        spell.delete()
-        return HttpResponse("Spell deleted")
+        if not isinstance(obj_id, int):
+            return HttpResponse("Parameter `id` must be a string", status=400)
+        obj_types = {
+            "tag": (HasTag, RateTag),
+            "category": (Spell, RateCategory),
+        }
+        obj_class, rate_class = obj_types.get(obj_type, (None, None))
+        if obj_class is None or rate_class is None:
+            return HttpResponse("Parameter `obj_type` is invalid", status=400)
+        obj = get_or_none(obj_class, pk=obj_id)
+        if obj is None:
+            return HttpResponse("Object not found", status=404)
+        rate = get_or_none(rate_class, subject=obj, user=user)
+        if rate is None:
+            if vote is None:
+                return HttpResponse(rate_class.calc_rating(subject=obj), status=200)
+            rate = rate_class(user=user, subject=obj)
+        elif vote is None:
+            rate.delete()
+            return HttpResponse(rate_class.calc_rating(subject=obj), status=200)
+        cast(Any, rate).positive = vote
+        rate.save()
+        return HttpResponse(rate_class.calc_rating(subject=obj), status=200)
+
+    def rpc_delete(
+        self,
+        request: HttpRequest,
+        obj_type: str = "review",
+        obj_id: int = 0,
+    ) -> HttpResponseBase:
+        """Handle object deletion requests."""
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        if not isinstance(obj_type, str):
+            return HttpResponse(
+                "Parameter `obj_type` must be a string", status=400
+            )
+        if not isinstance(obj_id, int):
+            return HttpResponse("Parameter `id` must be a string", status=400)
+        obj_types = {
+            "spell": (Spell, "creator"),
+            "review": (Review, "user"),
+            "comment": (SpellComment, "commenter"),
+            "review_comment": (ReviewComment, "commenter"),
+            "comment_comment": (CommentComment, "commenter")
+        }
+        obj_class, user_attr = obj_types.get(obj_type, (None, None))
+        if obj_class is None:
+            return HttpResponse("Parameter `obj_type` is invalid", status=400)
+        obj = get_or_none(obj_class, pk=obj_id, **{cast(str, user_attr): user})
+        if obj is None:
+            return HttpResponse("Object not found", status=404)
+        obj.delete()
+        return HttpResponse("Object deleted", status=200)
 
     def rpc_bookmark(
         self, request: HttpRequest, spell_id: Any = None
@@ -447,6 +500,13 @@ class SpellPage(View, RPCView):
         context["reviews"] = Review.objects.filter(spell=spell).all()
         context["comments"] = cast(Any, spell).spellcomment_set.all()
         context["avg_star"] = spell.calc_avg_stars() or 5.0
+        context["tags"] = ({
+            "rating": has_tag.calc_rating(),
+            "tag": has_tag.tag,
+            "pk": has_tag.pk,
+            "vote": has_tag.ratetag_set.filter(user=user).first() if user.is_authenticated else None
+        } for has_tag in cast(Any, spell).hastag_set.all())
+        context["category_vote"] = cast(Any, spell).ratecategory_set.filter(user=user).first() if user.is_authenticated else None
         if user.is_authenticated:
             context["review"] = get_or_none(Review, user=user, spell=spell)
             context["bookmark"] = get_or_none(Bookmark, user=user, spell=spell)
@@ -469,41 +529,6 @@ class SpellPage(View, RPCView):
                     ).delete()
 
         return render(request, "spell.html", context)
-
-    def rpc_delete(
-        self,
-        request: HttpRequest,
-        spell_id: int,
-        obj_type: str = "review",
-        obj_id: int = 0,
-    ) -> HttpResponseBase:
-        """Handle review comment requests."""
-        _ = spell_id
-        user = request.user
-        if not user.is_authenticated:
-            return HttpResponse("Unauthenticated", status=401)
-        if not isinstance(obj_type, str):
-            return HttpResponse(
-                "Parameter `obj_type` must be a string", status=400
-            )
-        if not isinstance(obj_id, int):
-            return HttpResponse(
-                "Parameter `id` must be a string", status=400
-            )
-        obj_types = {
-            "review": (Review, "user"),
-            "comment": (SpellComment, "commenter"),
-            "review_comment": (ReviewComment, "commenter"),
-            "comment_comment": (CommentComment, "commenter")
-        }
-        obj_class, user_attr = obj_types.get(obj_type, (None, None))
-        if obj_class is None:
-            return HttpResponse("Parameter `obj_type` is invalid", status=400)
-        obj = get_or_none(obj_class, pk=obj_id, **{cast(str, user_attr): user})
-        if obj is None:
-            return HttpResponse("Object not found", status=404)
-        obj.delete()
-        return HttpResponse("Object deleted", status=200)
 
     def rpc_comment(
         self,
@@ -553,7 +578,9 @@ class SpellPage(View, RPCView):
         comment = get_or_none(SpellComment, pk=comment_id)
         if comment is None:
             return HttpResponse("Review not found", status=404)
-        CommentComment.objects.create(comment=comment, commenter=user, text=text)
+        CommentComment.objects.create(
+            comment=comment, commenter=user, text=text
+        )
         return HttpResponse("Comment posted", status=200)
 
     def rpc_review_comment(

@@ -20,7 +20,7 @@
       <a href="{% url 'spezspellz:myspell' %}" style="text-decoration: none">View all</a>
     </li>
   {% else %}
-    <li>You have no spells.</li>
+    <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any spells</p></li>
   {% endif %}
 
 </ul>
@@ -34,7 +34,7 @@
     <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="btn-like bookmark" width="32" src="/assets/bookmark_remove.svg"/>
   </li>
   {% empty %}
-    <li>You have no bookmarks.</li>
+    <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any bookmarks</p></li>
   {% endfor %}
 </ul>
 <h2>Spell History</h2>
@@ -44,7 +44,7 @@
     <a href="{% url 'spezspellz:spell' spell.spell.pk %}">{{ spell.spell.title }}</a>
   </li>
   {% empty %}
-    <li>You have no spells.</li>
+  <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You didn't view any spell</p></li>
   {% endfor %}
 </ul>
 <script>
