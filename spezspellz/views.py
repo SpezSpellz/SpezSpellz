@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_datetime
 from django.views.generic import CreateView
 from django.db import transaction
-from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark, Review, SpellHistoryEntry, ReviewComment
+from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark, Review, SpellHistoryEntry, ReviewComment, SpellComment, CommentComment
 
 
 def safe_cast(t, val, default=None):
@@ -445,6 +445,7 @@ class SpellPage(View, RPCView):
             return redirect("spezspellz:home")
         context: dict = {"spell": spell, "star_range": range(0, 10, 2)}
         context["reviews"] = Review.objects.filter(spell=spell).all()
+        context["comments"] = cast(Any, spell).spellcomment_set.all()
         context["avg_star"] = spell.calc_avg_stars() or 5.0
         if user.is_authenticated:
             context["review"] = get_or_none(Review, user=user, spell=spell)
@@ -468,6 +469,57 @@ class SpellPage(View, RPCView):
                     ).delete()
 
         return render(request, "spell.html", context)
+
+    def rpc_comment(
+        self,
+        request: HttpRequest,
+        spell_id: int,
+        text: str = "",
+    ) -> HttpResponseBase:
+        """Handle review comment requests."""
+        _ = spell_id
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        if not isinstance(text, str):
+            return HttpResponse(
+                "Parameter `text` must be a string", status=400
+            )
+        if len(text) > 500:
+            return HttpResponse("Text too long", status=400)
+        spell = get_or_none(Spell, pk=spell_id)
+        if spell is None:
+            return HttpResponse("Spell not found", status=404)
+        SpellComment.objects.create(spell=spell, commenter=user, text=text)
+        return HttpResponse("Comment posted", status=200)
+
+    def rpc_comment_comment(
+        self,
+        request: HttpRequest,
+        spell_id: int,
+        comment_id: int,
+        text: str = "",
+    ) -> HttpResponseBase:
+        """Handle review comment requests."""
+        _ = spell_id
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        if not isinstance(text, str):
+            return HttpResponse(
+                "Parameter `text` must be a string", status=400
+            )
+        if not isinstance(comment_id, int):
+            return HttpResponse(
+                "Parameter `review_id` must be a string", status=400
+            )
+        if len(text) > 500:
+            return HttpResponse("Text too long", status=400)
+        comment = get_or_none(SpellComment, pk=comment_id)
+        if comment is None:
+            return HttpResponse("Review not found", status=404)
+        CommentComment.objects.create(comment=comment, commenter=user, text=text)
+        return HttpResponse("Comment posted", status=200)
 
     def rpc_review_comment(
         self,

@@ -76,8 +76,8 @@
 </template>
 <div class="spell">
     <div style="display: flex;justify-content: space-evenly;">
-        <button id="reviews_btn" style="font-size: 28pt;background-color: transparent;border-style: none;color: #FFF;cursor: pointer;" onclick="window.comments_tab.hidden = true;window.reviews_tab.hidden = false;window.comments_btn.style.color = '#777';window.reviews_btn.style.color = '#FFF';">Reviews</button>
-        <button id="comments_btn" style="font-size: 28pt;background-color: transparent;border-style: none;color: #777;cursor: pointer;" onclick="window.reviews_tab.hidden = true;window.comments_tab.hidden = false;window.comments_btn.style.color = '#FFF';window.reviews_btn.style.color = '#777';">Comments</button>
+        <button id="reviews_btn" style="font-size: 28pt;background-color: transparent;border-style: none;color: #FFF;cursor: pointer;" onclick="window.show_tab(false)">Reviews</button>
+        <button id="comments_btn" style="font-size: 28pt;background-color: transparent;border-style: none;color: #777;cursor: pointer;" onclick="window.show_tab(true)">Comments</button>
     </div>
     <hr>
     <div id="reviews_tab">
@@ -225,13 +225,110 @@
                 </div>
                 {% endfor %}
             </div>
-        </div>
         {% empty %}
         <h2>There are no reviews on this spell yet.</h2>
         {% endfor %}
     </div>
     <div id="comments_tab" hidden>
+        {% if user.is_authenticated %}
+        <div style="padding: 5px;">
+            <h2 style="margin: 0;margin-bottom: 8px;margin-right: 8px;">Leave a Comment</h2>
+            <div style="display: flex;justify-items: left;">
+                <textarea id="comment_desc" class="review-desc" placeholder="Enter comment"></textarea>
+                <input class="btn-like send-btn" style="margin-left: 8px;" width="32" type="image" id="submit_comment" src="/assets/send.svg"/>
+            </div>
+            <script>
+                window.submit_comment.onclick = () => {
+                    fetch("{% url 'spezspellz:spell' spell.pk %}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: JSON.stringify({
+                            method: "comment",
+                            text: window.comment_desc.value
+                        })
+                    }).then(res => {
+                        if(!res.ok)
+                            return res.text().then(msg => Promise.reject(msg));
+                        return res.text().then(text => location.reload());
+                    }).catch((res) => {
+                        window.dlg_header.innerText = "Review Submission Error";
+                        window.dlg_text.innerText = res;
+                        window.base_dlg.showModal();
+                    });
+                };
+                function send_comment_comment(comment_id, text) {
+                    return fetch("{% url 'spezspellz:spell' spell.pk %}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: JSON.stringify({
+                            method: "comment_comment",
+                            text: text,
+                            comment_id: comment_id
+                        })
+                    }).then(res => {
+                        if(!res.ok)
+                            return res.text().then(msg => Promise.reject(msg));
+                        return res.text();
+                    });
+                }
+                window.addCommentReplyWindow = (btn, comment, comment_id) => {
+                    const clone = window.review_reply_template.content.cloneNode(true).firstElementChild;
+                    const text = clone.querySelector("[c_text]");
+                    btn.style.display = "none";
+                    clone.querySelector("[c_cancel]").onclick = () => {
+                        clone.remove();
+                        btn.style.display = null;
+                    }
+                    clone.querySelector("[c_send]").onclick = () => {
+                        send_comment_comment(comment_id, text.value).then(() => {
+                            clone.remove();
+                            btn.style.display = null;
+                            location.reload();
+                        });
+                    }
+                    comment.firstElementChild.after(clone);
+                }
+            </script>
+        </div>
+        {% endif %}
+        {% for comment in comments %}
+            <div>
+                <div class="review-entry">
+                    <div style="display: flex">
+                        <h2 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h2>
+                    </div>
+                    <div style="display: flex">
+                        <p>{{ comment.text }}</p>
+                        <input onclick="window.addCommentReplyWindow(this, this.parentElement.parentElement.parentElement, {{ comment.pk }})" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
+                    </div>
+                </div>
+                {% for comment_comment in comment.commentcomment_set.all %}
+                <div class="review-entry" style="margin-left: 50px;">
+                    <h3 style="margin: 0;margin-right: 16px;">{{ comment_comment.commenter.username }}</h3>
+                    <p>{{ comment_comment.text }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        {% empty %}
+        <h2>There are no comments on this spell yet.</h2>
+        {% endfor %}
     </div>
+    <script>
+        let show_rn = localStorage.getItem("coms_show") == "T";
+        window.show_tab = (tf) => {
+            window.reviews_tab.hidden = tf;
+            window.comments_tab.hidden = !tf;
+            window.comments_btn.style.color = tf ? '#FFF' : '#777';
+            window.reviews_btn.style.color = (!tf) ? '#FFF' : '#777';
+            localStorage.setItem("coms_show", tf ? "T" : "F");
+        };
+        if(show_rn)
+            window.show_tab(show_rn);
+    </script>
 </div>
 <br><br>
 {% endblock %}

@@ -179,3 +179,19 @@ class ReviewComment(models.Model):
     review: models.ForeignKey[Review] = models.ForeignKey(Review, on_delete=models.CASCADE)
     commenter: models.ForeignKey[User] = models.ForeignKey(User, on_delete=models.CASCADE)
     text: models.CharField = models.CharField(max_length=500)
+
+
+class SpellComment(models.Model):
+    """A comment for spell."""
+
+    spell: models.ForeignKey[Spell] = models.ForeignKey(Spell, null=False, on_delete=models.CASCADE)
+    commenter: models.ForeignKey[User] = models.ForeignKey(User, on_delete=models.CASCADE)
+    text: models.CharField = models.CharField(max_length=500)
+
+
+class CommentComment(models.Model):
+    """A comment for a comment."""
+
+    comment: models.ForeignKey[SpellComment] = models.ForeignKey(SpellComment, on_delete=models.CASCADE)
+    commenter: models.ForeignKey[User] = models.ForeignKey(User, on_delete=models.CASCADE)
+    text: models.CharField = models.CharField(max_length=500)
