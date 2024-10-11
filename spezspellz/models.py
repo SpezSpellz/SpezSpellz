@@ -158,7 +158,7 @@ class Review(models.Model):
         avg_star = spell_review.aggregate(Avg('star'))['star__avg']
         if avg_star is None:
             avg_star = 9
-        return round(avg_star * (5/9), 2)
+        return round(avg_star * .5 + .5, 2)
 
     def __str__(self):
         """Return a review for a spell."""

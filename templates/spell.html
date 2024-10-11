@@ -99,7 +99,7 @@
             </div>
             <script>
                 let mouse_over = 0;
-                let selected_stars = {% if review %}{{ review.star }} * (5/9){% else %}5{% endif %};
+                let selected_stars = {% if review %}{{ review.star }} * .5 + .5{% else %}5{% endif %};
                 let render_stars = selected_stars;
                 const stars = window.rate_stars.querySelectorAll("img");
                 function update_stars() {
@@ -199,29 +199,41 @@
         {% for review in reviews %}
             <div>
                 <div class="review-entry">
-                    <div style="display: flex">
-                        <h2 style="margin: 0;margin-right: 16px;">{{ review.user }}</h2>
-                        <div style="display: flex;">
-                            {% for star in star_range %}
-                                {% if review.star > star %}
-                                <img width="24" src="/assets/star.svg"/>
-                                {% elif review.star >= star %}
-                                <img width="24" src="/assets/half_star.svg"/>
-                                {% else %}
-                                <img width="24" src="/assets/empty_star.svg"/>
-                                {% endif %}
-                            {% endfor %}
+                    <div style="display: flex;justify-content: space-between;">
+                        <div>
+                            <div style="display: flex">
+                                <h2 style="margin: 0;margin-right: 16px;">{{ review.user }}</h2>
+                                <div style="display: flex;">
+                                    {% for star in star_range %}
+                                        {% if review.star > star %}
+                                        <img width="24" src="/assets/star.svg"/>
+                                        {% elif review.star >= star %}
+                                        <img width="24" src="/assets/half_star.svg"/>
+                                        {% else %}
+                                        <img width="24" src="/assets/empty_star.svg"/>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <p>{{ review.desc }}</p>
                         </div>
-                    </div>
-                    <div style="display: flex">
-                        <p>{{ review.desc }}</p>
-                        <input onclick="window.addReviewReplyWindow(this, this.parentElement.parentElement.parentElement, {{ review.pk }})" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
+                        <div style="display: flex;flex-direction: column;justify-content: flex-end;">
+                            {% if review.user == user %}
+                            <input onclick="window.delete_obj('review', {{ review.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
+                            {% endif %}
+                            <input onclick="window.addReviewReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, {{ review.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/reply.svg"/>
+                        </div>
                     </div>
                 </div>
                 {% for comment in review.reviewcomment_set.all %}
                 <div class="review-entry" style="margin-left: 50px;">
                     <h3 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h3>
-                    <p>{{ comment.text }}</p>
+                    <div style="display: flex;justify-content: space-between;">
+                        <p>{{ comment.text }}</p>
+                        {% if comment.commenter == user %}
+                        <input onclick="window.delete_obj('review_comment', {{ comment.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
+                        {% endif %}
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -298,18 +310,28 @@
         {% for comment in comments %}
             <div>
                 <div class="review-entry">
-                    <div style="display: flex">
-                        <h2 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h2>
-                    </div>
-                    <div style="display: flex">
-                        <p>{{ comment.text }}</p>
-                        <input onclick="window.addCommentReplyWindow(this, this.parentElement.parentElement.parentElement, {{ comment.pk }})" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
+                    <div style="display: flex;justify-content: space-between;">
+                        <div style="display: flex;flex-direction: column;">
+                            <h2 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h2>
+                            <p>{{ comment.text }}</p>
+                        </div>
+                        <div style="display: flex;flex-direction: column;justify-content: flex-end;">
+                            {% if comment.commenter == user %}
+                            <input onclick="window.delete_obj('comment', {{ comment.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
+                            {% endif %}
+                            <input onclick="window.addCommentReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, {{ comment.pk }})" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
+                        </div>
                     </div>
                 </div>
                 {% for comment_comment in comment.commentcomment_set.all %}
                 <div class="review-entry" style="margin-left: 50px;">
                     <h3 style="margin: 0;margin-right: 16px;">{{ comment_comment.commenter.username }}</h3>
-                    <p>{{ comment_comment.text }}</p>
+                    <div style="display: flex;justify-content: space-between;">
+                        <p>{{ comment_comment.text }}</p>
+                        {% if comment_comment.commenter == user %}
+                        <input onclick="window.delete_obj('comment_comment', {{ comment_comment.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
+                        {% endif %}
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -318,6 +340,23 @@
         {% endfor %}
     </div>
     <script>
+        window.delete_obj = (type, id) => {
+            fetch("{% url 'spezspellz:spell' spell.pk %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    method: "delete",
+                    obj_type: type,
+                    obj_id: id
+                })
+            }).then(res => {
+                if(!res.ok)
+                    return res.text().then(msg => Promise.reject(msg));
+                return res.text().then(text => location.reload());
+            });
+        };
         let show_rn = localStorage.getItem("coms_show") == "T";
         window.show_tab = (tf) => {
             window.reviews_tab.hidden = tf;

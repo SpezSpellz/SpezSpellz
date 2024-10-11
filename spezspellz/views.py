@@ -470,6 +470,41 @@ class SpellPage(View, RPCView):
 
         return render(request, "spell.html", context)
 
+    def rpc_delete(
+        self,
+        request: HttpRequest,
+        spell_id: int,
+        obj_type: str = "review",
+        obj_id: int = 0,
+    ) -> HttpResponseBase:
+        """Handle review comment requests."""
+        _ = spell_id
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        if not isinstance(obj_type, str):
+            return HttpResponse(
+                "Parameter `obj_type` must be a string", status=400
+            )
+        if not isinstance(obj_id, int):
+            return HttpResponse(
+                "Parameter `id` must be a string", status=400
+            )
+        obj_types = {
+            "review": (Review, "user"),
+            "comment": (SpellComment, "commenter"),
+            "review_comment": (ReviewComment, "commenter"),
+            "comment_comment": (CommentComment, "commenter")
+        }
+        obj_class, user_attr = obj_types.get(obj_type, (None, None))
+        if obj_class is None:
+            return HttpResponse("Parameter `obj_type` is invalid", status=400)
+        obj = get_or_none(obj_class, pk=obj_id, **{cast(str, user_attr): user})
+        if obj is None:
+            return HttpResponse("Object not found", status=404)
+        obj.delete()
+        return HttpResponse("Object deleted", status=200)
+
     def rpc_comment(
         self,
         request: HttpRequest,
@@ -615,4 +650,3 @@ def myspell_view(request: HttpRequest) -> HttpResponseBase:
     user = request.user
     spells = Spell.objects.filter(creator=user)
     return render(request, "myspell.html", {"spells": spells})
-
