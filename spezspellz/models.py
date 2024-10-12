@@ -36,6 +36,7 @@ class UserInfo(models.Model):
     """Store the user info."""
 
     user: models.OneToOneField[User] = models.OneToOneField(User, on_delete=models.CASCADE)
+    private: models.BooleanField = models.BooleanField(default=False)
     timed_notification: models.BooleanField = models.BooleanField(default=True)
     review_comment_notification: models.BooleanField = models.BooleanField(default=True)
     spell_review_notification: models.BooleanField = models.BooleanField(default=True)

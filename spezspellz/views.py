@@ -404,6 +404,7 @@ class UserSettingsPage(View, RPCView):
             re_coms_noti: bool = True,
             sp_re_noti: bool = True,
             sp_coms_noti: bool = True,
+            private: bool = False,
             desc: str = ""
     ) -> HttpResponse:
         """Handle settings update."""
@@ -417,6 +418,7 @@ class UserSettingsPage(View, RPCView):
             user_info.review_comment_notification = bool(re_coms_noti)
             user_info.spell_review_notification = bool(sp_re_noti)
             user_info.spell_comment_notification = bool(sp_coms_noti)
+            user_info.private = bool(private)
             user_info.user_desc = str(desc)
             user_info.save()
         return HttpResponse("OK")
