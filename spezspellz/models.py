@@ -42,6 +42,7 @@ class UserInfo(models.Model):
     user: models.OneToOneField[User] = models.OneToOneField(
         User, on_delete=models.CASCADE
     )
+    private: models.BooleanField = models.BooleanField(default=False)
     timed_notification: models.BooleanField = models.BooleanField(default=True)
     review_comment_notification: models.BooleanField = models.BooleanField(
         default=True
@@ -91,6 +92,11 @@ class Spell(models.Model):
         """Calculate the category rating."""
         return cast(Any, self).ratecategory_set.filter(positive=True).count(
         ) - cast(Any, self).ratecategory_set.filter(positive=False).count()
+
+    @property
+    def summary(self):
+        """Find a possible summary of the spell."""
+        return self.data[(self.data.find("is") or 0):]
 
 
 class Tag(models.Model):

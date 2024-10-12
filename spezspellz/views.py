@@ -64,27 +64,13 @@ class HomePage(View):
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Handle GET requests for this view."""
-        search_query = request.GET.get('search_query', '').strip()
-
-        if search_query:
-            try:
-                spell = Spell.objects.get(title__iexact=search_query)
-                return redirect(f'/spell/{spell.pk}/')
-            except Spell.DoesNotExist:
-                return redirect('spezspellz:home')
-
         all_spells = Spell.objects.all()
-
-        for spell in all_spells:
-            the_index = spell.data.find("is")
-            spell.truncated_data = spell.data[the_index:]
-
         return render(
             request,
             "index.html",
             {
-                "latest_spells": Spell.objects.order_by('-id')[:5],
-                "all_spells": all_spells
+                "latest_spells": all_spells.order_by('-id')[:5],
+                "spells": all_spells
             }
         )
 
@@ -94,30 +80,21 @@ class FilterPage(View):
 
     def get(self, request):
         """Handle GET requests for filter page."""
-        selected_categories = request.GET.getlist('category')
+        selected_category = safe_cast(int, request.GET.get('category'), None)
         selected_tags = request.GET.getlist('tag')
-
-        if not selected_categories and not selected_tags:
-            spells = Spell.objects.all()
-        else:
-            spells = Spell.objects.all()
-
-            if selected_categories:
-                spells = spells.filter(category__name__in=selected_categories)
-
-            if selected_tags:
-                spells = spells.filter(hastag__tag__name__in=selected_tags)
-
-        for spell in spells:
-            the_index = spell.data.find("is")
-            spell.truncated_data = spell.data[the_index:]
-
+        spells = Spell.objects
+        if selected_category:
+            spells = spells.filter(category__pk=selected_category)
+        if selected_tags:
+            spells = spells.filter(hastag__tag__name__in=[safe_cast(str, selected_tag, '') for selected_tag in selected_tags])
+        query = request.GET.get("s")
+        if query:
+            spells = spells.filter(title__icontains=query.strip())
         return render(request, "filter.html", {
             "tags": Tag.objects.all(),
-            "spell_categories": Spell.objects.values('category__name').distinct(),
-            "spells": spells,
-            "selected_categories": selected_categories,
-            "selected_tags": selected_tags,
+            "spell_categories": Category.objects.all(),
+            "spells": spells.all(),
+            "selected_tags": selected_tags
         })
 
 
@@ -522,6 +499,7 @@ class UserSettingsPage(View, RPCView):
             re_coms_noti: bool = True,
             sp_re_noti: bool = True,
             sp_coms_noti: bool = True,
+            private: bool = False,
             desc: str = ""
     ) -> HttpResponse:
         """Handle settings update."""
@@ -535,6 +513,7 @@ class UserSettingsPage(View, RPCView):
             user_info.review_comment_notification = bool(re_coms_noti)
             user_info.spell_review_notification = bool(sp_re_noti)
             user_info.spell_comment_notification = bool(sp_coms_noti)
+            user_info.private = bool(private)
             user_info.user_desc = str(desc)
             user_info.save()
         return HttpResponse("OK")

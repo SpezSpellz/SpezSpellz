@@ -9,53 +9,150 @@ Filter
 {% endblock %}
 
 {% block Body %}
-
-<div class="filter-box">
-    <form method="GET" action="{% url 'spezspellz:filter' %}">
-        <div class="filter-container">
-            <h2 style="color: #FFF;">Categories</h2>
-            {% for category in spell_categories %}
-                <label style="color: #FFF;">
-                    <input type="checkbox" name="category" value="{{ category.category__name }}"
-                        {% if category.category__name in selected_categories %} checked {% endif %}>
-                    {{ category.category__name }}
-                </label>
-            {% endfor %}
-
-            <h2 style="color: #FFF;">Tags</h2>
-            {% for tag in tags %}
-                <label style="color: #FFF;">
-                    <input type="checkbox" name="tag" value="{{ tag.id }}"
-                        {% if tag.id in selected_tags %} checked {% endif %}>
-                    {{ tag.name }}
-                </label>
-            {% endfor %}
+<dialog id="add_tag_dlg" style="height: 400px;width:400px">
+    <h1 class="section dlgheader">Add Tags</h1>
+    <input id="add_tag_dlg_search" class="search-bar" placeholder="Enter tag name" type="text"/>
+    <ul id="tag_search_list" style="list-style: none;margin: 0;padding: 0;max-height: 250px;overflow: scroll;">
+    </ul>
+    <div style="position: absolute;bottom: 15px;left: 0;right: 0;display:flex;flex-direction: row;justify-content: space-evenly;">
+        <button id="close_add_tag_dlg">Close</button>
+    </div>
+</dialog>
+<form method="GET" action="{% url 'spezspellz:filter' %}">
+    <h1 style="margin: auto;text-align: center;">Search</h1>
+    <input class="search-bar" type="text" name="s" placeholder="Cool spells" value="{{ request.GET.s }}"/>
+    <div class="filter-box">
+        <h2 style="margin-top: 0;margin: auto;text-align: center;">Filters</h2>
+        <hr>
+        <div style="display: flex;">
+            <h3 style="margin: 0;margin-right: 8px;" >Category</h3>
+            <select name="category">
+                <option value="">All categories</option>
+                {% for category in spell_categories %}
+                <option value="{{ category.pk }}" {% if request.GET.category == category.pk|slugify %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
         </div>
-
+            <h3 style="margin: 0;">Tags:</h3>
+            <div style="display: inline-block;" id="tag-list">
+            </div>
+            <button type="button" id="add_tag_btn" class="tag tag-add">+</button>
         <div class="button-container">
             <button type="submit" class="apply-button">Apply</button>
             <button type="reset" class="clear-button">Clear</button>
         </div>
-    </form>
-</div>
-    
-    <div class="results">
-        <h2 style="color: #FFF;">Results:</h2>
-        {% if spells %}
-            {% for spell in spells %}
-            <a href="{% url 'spezspellz:spell' spell.pk %}">
-            <div class="spell">
-                <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img" alt="{{ spell.title }}"/>
-                    <div>
-                        <h3 class="spell-title">{{ spell.title }}</h3>
-                        <p class="spell-category">{{ spell.category }}</p>
-                        <p class="spell-creator">{{ spell.creator }}</p>
-                        <p class="spell-data">{{ spell.title }} {{ spell.truncated_data|slice:":100" }}...</p>
-                    </div>
-            </div></a>
-            {% endfor %}
-        {% else %}
-            <p style="color: #FFF;">No spells found.</p>
-        {% endif %}
+        <script>
+            const selected_tags = new Set();
+            const tag_colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'];
+            function hashStr(s) {
+                return s.split("").reduce(function(a, b) {
+                    a = ((a << 5) - a) + b.charCodeAt(0);
+                    return a & a;
+                }, 0);
+            }
+            function add_tag(tag) {
+                const col = tag_colors[hashStr(tag) % tag_colors.length];
+                const div = document.createElement("button");
+                div.classList.add("tag");
+                div.style.backgroundColor = col + "4C";
+                div.style.borderColor = col;
+                const span = document.createElement("span");
+                span.innerText = tag;
+                span.style.color = col;
+                const input = document.createElement("input");
+                input.type = "checkbox";
+                input.name = "tag";
+                input.value = tag;
+                input.hidden = true;
+                input.checked = true;
+                div.append(input);
+                div.append(span);
+                selected_tags.add(tag);
+                document.getElementById("tag-list").append(div);
+                div.onclick = () => {
+                    div.remove();
+                    selected_tags.delete(tag);
+                }
+            }
+            window.add_tag_btn.onclick = () => {
+                update_tags('');
+                window.add_tag_dlg.showModal();
+            };
+            window.close_add_tag_dlg.onclick = () => {
+                window.tag_search_list.innerHTML = '';
+                window.add_tag_dlg_search.value = "";
+                window.add_tag_dlg.close();
+            };
+            function update_tags(query) {
+                fetch("{% url 'spezspellz:tags' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({
+                        "method": "search",
+                        "query": query
+                    })
+                }).then(res => {
+                    if(res.status != 200)
+                        return Promise.reject();
+                    return res.json();
+                }).then(json => {
+                    window.tag_search_list.innerHTML = '';
+                    for(const tag of json) {
+                        if(selected_tags.has(tag))
+                            continue;
+                        const li = document.createElement("li");
+                        const btn = document.createElement("button");
+                        btn.classList.add("tag-search-entry");
+                        btn.innerText = tag;
+                        btn.onclick = () => {
+                            li.remove();
+                            add_tag(tag);
+                        };
+                        li.append(btn);
+                        window.tag_search_list.append(li);
+                    }
+                    for(const entry of window.tag_search_list.children) {
+                        const btn = entry.querySelector("button");
+                        entry.style.display = (btn.innerText.toLowerCase().indexOf(query) != -1) ? null : "none";
+                    }
+                });
+            }
+            var update_tags_tm = null;
+            window.add_tag_dlg_search.onkeyup = () => {
+                const query = window.add_tag_dlg_search.value.toLowerCase();
+                for(const entry of window.tag_search_list.children) {
+                    const btn = entry.querySelector("button");
+                    entry.style.display = (btn.innerText.toLowerCase().indexOf(query) != -1) ? null : "none";
+                }
+                if(update_tags_tm)
+                    clearTimeout(update_tags_tm);
+                update_tags_tm = setTimeout(() => {
+                    update_tags_tm = null;
+                    update_tags(query);
+                }, 250); 
+            };
+        </script>
     </div>
+</form>
+<div class="results">
+    <h2>Results:</h2>
+    {% if spells %}
+        {% for spell in spells %}
+        <a href="{% url 'spezspellz:spell' spell.pk %}">
+        <div class="spell">
+            <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img" alt="{{ spell.title }}"/>
+                <div>
+                    <h3 class="spell-title">{{ spell.title }}</h3>
+                    <p class="spell-category">{{ spell.category }}</p>
+                    <p class="spell-creator">{{ spell.creator }}</p>
+                    <p class="spell-data">{{ spell.title }} {{ spell.summary|slice:":100" }}...</p>
+                </div>
+        </div></a>
+        {% endfor %}
+    {% else %}
+        <p>No spells found.</p>
+    {% endif %}
+</div>
 {% endblock %}
