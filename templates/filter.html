@@ -74,6 +74,9 @@ Filter
                     selected_tags.delete(tag);
                 }
             }
+            {% for selected_tag in selected_tags %}
+            add_tag('{{ selected_tag }}')
+            {% endfor %}
             window.add_tag_btn.onclick = () => {
                 update_tags('');
                 window.add_tag_dlg.showModal();
