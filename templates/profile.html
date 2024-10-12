@@ -9,20 +9,15 @@
 
 <h2>Your Spells</h2>
 <ul>
-  {% if spells %}
-    {% for spell in spells %}
-    <li>
-      <a href="{% url 'spezspellz:spell' spell.pk %}" style="padding-left: 60px; text-decoration: none">{{ spell.title }}</a>
-      <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
-    </li>
-    {% endfor %}
-    <li>
-      <a href="{% url 'spezspellz:myspell' %}" style="text-decoration: none">View all</a>
-    </li>
-  {% else %}
-    <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any spells</p></li>
-  {% endif %}
-
+  {% for spell in spells %}
+  <li my_spell="{{ spell.pk }}">
+    <a href="{% url 'spezspellz:spell' spell.pk %}" style="padding-left: 60px">{{ spell.title }}</a>
+    <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
+    <a onclick="window.delete_spell({{spell.pk}})" class="btn-like edit-btn"><img width="32" src="/assets/delete.svg"/></a>
+  </li>
+  {% empty %}
+  <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any spells</p></li>
+  {% endfor %}
 </ul>
 
 <h2>Your Bookmarks</h2>
@@ -48,6 +43,26 @@
   {% endfor %}
 </ul>
 <script>
+  window.delete_spell = (spell) => {
+    fetch("{% url 'spezspellz:usersettings' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({
+              method: "delete_spell",
+              spell_id: spell
+          })
+      }).then(res => {
+          if(!res.ok)
+              return Promise.reject();
+          return res.text()
+      }).then(text => {
+          if(text != "Spell deleted")
+            return;
+          document.querySelector("[my_spell=\"" + spell + "\"]").remove();
+      })
+  }
   window.bookmark_spell = (spell) => {
       fetch("{% url 'spezspellz:usersettings' %}", {
           method: "POST",

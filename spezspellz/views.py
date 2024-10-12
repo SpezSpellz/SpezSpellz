@@ -16,7 +16,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_datetime
 from django.views.generic import CreateView
 from django.db import transaction
-from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark, Review, SpellHistoryEntry, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory
+from .models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment, UserInfo, Bookmark, \
+    SpellHistoryEntry, Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory
 
 
 def safe_cast(t, val, default=None):
@@ -63,9 +64,61 @@ class HomePage(View):
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Handle GET requests for this view."""
+        search_query = request.GET.get('search_query', '').strip()
+
+        if search_query:
+            try:
+                spell = Spell.objects.get(title__iexact=search_query)
+                return redirect(f'/spell/{spell.pk}/')
+            except Spell.DoesNotExist:
+                return redirect('spezspellz:home')
+
+        all_spells = Spell.objects.all()
+
+        for spell in all_spells:
+            the_index = spell.data.find("is")
+            spell.truncated_data = spell.data[the_index:]
+
         return render(
-            request, "index.html", {"latest_spells": Spell.objects.all()}
+            request,
+            "index.html",
+            {
+                "latest_spells": Spell.objects.order_by('-id')[:5],
+                "all_spells": all_spells
+            }
         )
+
+
+class FilterPage(View):
+    """Handle the filter page."""
+
+    def get(self, request):
+        """Handle GET requests for filter page."""
+        selected_categories = request.GET.getlist('category')
+        selected_tags = request.GET.getlist('tag')
+
+        if not selected_categories and not selected_tags:
+            spells = Spell.objects.all()
+        else:
+            spells = Spell.objects.all()
+
+            if selected_categories:
+                spells = spells.filter(category__name__in=selected_categories)
+
+            if selected_tags:
+                spells = spells.filter(hastag__tag__name__in=selected_tags)
+
+        for spell in spells:
+            the_index = spell.data.find("is")
+            spell.truncated_data = spell.data[the_index:]
+
+        return render(request, "filter.html", {
+            "tags": Tag.objects.all(),
+            "spell_categories": Spell.objects.values('category__name').distinct(),
+            "spells": spells,
+            "selected_categories": selected_categories,
+            "selected_tags": selected_tags,
+        })
 
 
 class UploadPage(View):
@@ -153,7 +206,7 @@ class UploadPage(View):
 
     @staticmethod
     def validate_spellnotification_info(
-        message: Optional[str], period: Optional[str], datetime: Optional[str]
+            message: Optional[str], period: Optional[str], datetime: Optional[str]
     ) -> Optional[dict[str, Any]]:
         """Attempt to parse, validate, and convert the provided arguments to values fit for SpellNotification constructor."""
         if message is None or datetime is None or period is None \
@@ -175,8 +228,8 @@ class UploadPage(View):
 
     @staticmethod
     def make_new_objects(
-        object_type: type[MakeNewObjectsObjectType],
-        infos: Generator[Optional[dict[str, Any]], None, None], **kwargs
+            object_type: type[MakeNewObjectsObjectType],
+            infos: Generator[Optional[dict[str, Any]], None, None], **kwargs
     ) -> list[MakeNewObjectsObjectType]:
         """Construct new objects.
 
@@ -296,7 +349,9 @@ class UploadPage(View):
             for i, to_add in enumerate(attach_to_add):
                 data = data.replace(
                     attach_names[i],
-                    reverse("spezspellz:attachments", args=(to_add.pk, ))
+                    reverse(
+                        "spezspellz:attachments", args=(to_add.pk,)
+                    )
                 )
             spell.data = data
             spell.save()
@@ -311,10 +366,10 @@ class TagsPage(View, RPCView):
         return HttpResponse("Not Implemented", status=404)
 
     def rpc_search(
-        self,
-        _: HttpRequest,
-        query: Optional[str] = None,
-        max_len: int = 50
+            self,
+            _: HttpRequest,
+            query: Optional[str] = None,
+            max_len: int = 50
     ) -> HttpResponseBase:
         """Search for tags that contain the query."""
         if query is None:
@@ -461,13 +516,13 @@ class UserSettingsPage(View, RPCView):
         )
 
     def rpc_update(
-        self,
-        request: HttpRequest,
-        timed_noti: bool = True,
-        re_coms_noti: bool = True,
-        sp_re_noti: bool = True,
-        sp_coms_noti: bool = True,
-        desc: str = ""
+            self,
+            request: HttpRequest,
+            timed_noti: bool = True,
+            re_coms_noti: bool = True,
+            sp_re_noti: bool = True,
+            sp_coms_noti: bool = True,
+            desc: str = ""
     ) -> HttpResponse:
         """Handle settings update."""
         if not request.user.is_authenticated:

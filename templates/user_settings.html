@@ -13,12 +13,12 @@
     <div style="display: inline-block;margin: auto;">
     <h1>User settings for {{ user.username }}</h1>
     <h2>About me</h2>
-    <textarea id="about_me">{{ user.userinfo.user_desc }}</textarea>
+    <textarea id="about_me" class="profile-desc">{{ user.userinfo.user_desc }}</textarea>
     <h2>Notifications</h2>
     <table>
         <tr>
             <td><span>Timed notifications</span></td>
-            <td>
+            <td class="switch-td">
                 <label class="switch">
                     <input id="timed_noti" type="checkbox" {% if user.userinfo.timed_notification %}checked{% endif %}>
                     <span class="slider round"></span>
@@ -27,7 +27,7 @@
         </tr>
         <tr>
             <td><span>Review comments notifications</span></td>
-            <td>
+            <td class="switch-td">
                 <label class="switch">
                     <input id="re_coms_noti" type="checkbox" {% if user.userinfo.review_comment_notification %}checked{% endif %}>
                     <span class="slider round"></span>
@@ -36,7 +36,7 @@
         </tr>
         <tr>
             <td><span>Spell reviews notifications</span></td>
-            <td>
+            <td class="switch-td">
                 <label class="switch">
                     <input id="sp_re_noti" type="checkbox" {% if user.userinfo.spell_review_notification %}checked{% endif %}>
                     <span class="slider round"></span>
@@ -45,7 +45,7 @@
         </tr>
         <tr>
             <td><span>Spell comments notifications</span></td>
-            <td>
+            <td class="switch-td">
                 <label class="switch">
                     <input id="sp_coms_noti" type="checkbox" {% if user.userinfo.spell_comment_notification %}checked{% endif %}>
                     <span class="slider round"></span>
