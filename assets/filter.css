@@ -6,18 +6,7 @@ a {
     padding: 20px;
     border-radius: 8px;
     color: #FFF;
-    margin: 20px;
-    margin-top: 70px;
-}
-.filter-container {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
-}
-.filter-container label {
-    display: flex;
-    align-items: center;
-    margin-right: 20px;
+    margin: 8px;
 }
 .button-container {
     display: flex;
@@ -73,4 +62,112 @@ a {
 .spell-data {
     color: #dcdcdc;
     font-size: 12pt;
+}
+
+h2, label, p, option, select, input {
+    color: #FFF;
+}
+
+option, select {
+    background-color: #4B4B4B;
+}
+
+.search-bar {
+    border-radius: 5px;
+    background-color: #4B4B4B;
+    border: none;
+    font-size: 12pt;
+    color: #FFF;
+    padding-left: 32px;
+    margin: auto;
+    margin-top: 10px;
+    background-image: url("/assets/search.svg");
+    background-position: 3px, 3px;
+    background-size: 24px;
+    background-repeat: no-repeat;
+    display: block;
+    outline: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+select {
+    font-size: 11pt;
+    padding: 5px;
+    border-style: none;
+    border-radius: 5px;
+}
+
+.tag {
+    font-family: monospace;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 20px;
+    margin: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.tag-add {
+    margin: 8px;
+    background-color: rgba(127, 127, 127, 0.3);
+    border-color: #7f7f7f;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+
+.tag-add:hover {
+    background-color: rgba(127, 127, 127, 0.5);
+}
+
+dialog {
+    background-color: #2B2B2B;
+    border-radius: 10px;
+    border-style: none;
+}
+
+dialog h1 {
+    margin: auto;
+    text-align: center;
+}
+
+dialog > div > button {
+    font-size: 12pt;
+    font-weight: bold;
+    width: 100px;
+    background-color: #4B4B4B;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    color: #FFF;
+}
+
+dialog > div > button:hover {
+    background-color: #5B5B5B;
+}
+
+dialog > div > button:active {
+    background-color: #6B6B6B;
+}
+
+.tag-search-entry {
+    border-style: none;
+    color: #FFF;
+    background-color: #3B3B3B;
+    margin: auto;
+    display: block;
+    font-size: 12pt;
+    width: 227px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.tag-search-entry:hover {
+    background-color: #4B4B4B;
+}
+
+.tag-search-entry:active {
+    background-color: #5B5B5B;
 }

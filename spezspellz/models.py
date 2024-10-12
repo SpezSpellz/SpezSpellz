@@ -71,6 +71,11 @@ class Spell(models.Model):
         """Return HasTag objects sorted by rating descending."""
         return self.hastag_set.order_by("-rating")
 
+    @property
+    def summary(self):
+        """Find a possible summary of the spell."""
+        return self.data[(self.data.find("is") or 0):]
+
 
 class Tag(models.Model):
     """The tag."""
