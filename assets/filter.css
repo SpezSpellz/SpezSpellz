@@ -171,3 +171,27 @@ dialog > div > button:active {
 .tag-search-entry:active {
     background-color: #5B5B5B;
 }
+.nav-bar a {
+    display: inline-block;
+    border-width: 1px;
+    border-color: #6B6B6B;
+    border-style: solid;
+    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    cursor: pointer;
+    background-color: #2B2B2B;
+    text-align: center;
+    user-select: none;
+}
+.nav-bar a:hover:not(.cur) {
+    background-color: #4B4B4B;
+}
+.nav-bar a:active:not(.cur) {
+    background-color: #5B5B5B;
+}
+.nav-bar a.cur {
+    border-color: #FFF;
+    cursor: default;
+}
