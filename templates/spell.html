@@ -180,7 +180,7 @@
     </div>
     <hr>
     <div id="reviews_tab">
-        {% if user.is_authenticated %}
+        {% if user.is_authenticated and user != spell.creator %}
         <div style="padding: 5px;">
             <div style="display: flex;">
                 <h2 style="margin: 0;margin-bottom: 8px;margin-right: 8px;">{% if review %}Update your{% else %}Leave a{% endif %} Review</h2>

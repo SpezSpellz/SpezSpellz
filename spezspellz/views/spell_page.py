@@ -163,6 +163,8 @@ class SpellPage(View, RPCView):
         spell = get_or_none(Spell, pk=spell_id)
         if spell is None:
             return HttpResponse("Spell not found", status=404)
+        if spell.creator == user:
+            return HttpResponse("You cannot review your own spell", status=403)
         review = get_or_none(Review, user=user, spell=spell)
         if review is not None:
             review.desc = desc
