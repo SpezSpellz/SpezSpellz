@@ -18,5 +18,6 @@ urlpatterns = [
     path("spell/thumbnail/<int:spell_id>/", views.thumbnail_view, name="spell_thumbnail"),
     path("profile/", views.profile_view, name="profile"),
     path("profile/myspell", views.myspell_view, name="myspell"),
-    path("filter/", views.FilterPage.as_view(), name="filter")
+    path("filter/", views.FilterPage.as_view(), name="filter"),
+    path("avatar/<int:user_id>/", views.profile_picture_view, name="avatar")
 ]

@@ -21,6 +21,9 @@ class UserInfo(models.Model):
         default=True
     )
     user_desc: models.CharField = models.CharField(default="", max_length=400)
+    avatar: models.FileField = models.FileField(
+        upload_to="content", null=True
+    )
 
     def __str__(self):
         """Return user info as string."""

@@ -11,6 +11,7 @@ from .spell_page import SpellPage
 from .thumbnail_view import thumbnail_view
 from .user_settings_page import UserSettingsPage
 from .register_view import RegisterView
+from .profile_picture_view import profile_picture_view
 
 
 __all__ = (
@@ -25,5 +26,6 @@ __all__ = (
     "SpellPage",
     "thumbnail_view",
     "UserSettingsPage",
-    "RegisterView"
+    "RegisterView",
+    "profile_picture_view"
 )

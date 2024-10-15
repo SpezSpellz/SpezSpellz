@@ -14,7 +14,11 @@
     <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img">
     <text>
         <h1>{{ spell.title }}</h1>
-        <h3 style="color: #FFF;">by: {{ spell.creator.username }}</h3>
+        <div style="display: flex;">
+            <h3 style="color: #FFF;margin: 0;">by:</h3>
+            <img style="margin-right: 8px;margin-left: 10px;" src="{% url 'spezspellz:avatar' spell.creator.pk %}" width="24" height="24"/>
+            <h3 style="color: #FFF;margin: 0;">{{ spell.creator.username }}</h3>
+        </div>
         <h3 style="color: #FFF;">{{ avg_star }} stars</h3>
         <div style="display: flex;" state="{% if category_vote is None %}N{% else %}{% if category_vote.positive %}U{% else %}D{% endif %}{% endif %}">
             <h3 style="color: #FFF;margin: 0;margin-right: 8px;">Category: {{ spell.category.name }}</h3>
@@ -297,7 +301,8 @@
                     <div style="display: flex;justify-content: space-between;">
                         <div>
                             <div style="display: flex">
-                                <h2 style="margin: 0;margin-right: 16px;">{{ review.user }}</h2>
+                                <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' review.user.pk %}" width="32" height="32"/>
+                                <h2 style="margin: 0;margin-right: 10px;">{{ review.user }}</h2>
                                 <div style="display: flex;">
                                     {% for star in star_range %}
                                         {% if review.star > star %}
@@ -322,7 +327,10 @@
                 </div>
                 {% for comment in review.reviewcomment_set.all %}
                 <div class="review-entry" style="margin-left: 50px;">
-                    <h3 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h3>
+                    <div style="display: flex">
+                        <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment.commenter.pk %}" width="24" height="24"/>
+                        <h3 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h3>
+                    </div>
                     <div style="display: flex;justify-content: space-between;">
                         <p>{{ comment.text }}</p>
                         {% if comment.commenter == user %}
@@ -407,7 +415,10 @@
                 <div class="review-entry">
                     <div style="display: flex;justify-content: space-between;">
                         <div style="display: flex;flex-direction: column;">
-                            <h2 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h2>
+                            <div style="display: flex;">
+                                <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment.commenter.pk %}" width="32" height="32"/>
+                                <h2 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h2>
+                            </div>
                             <p>{{ comment.text }}</p>
                         </div>
                         <div style="display: flex;flex-direction: column;justify-content: flex-end;">
@@ -420,7 +431,10 @@
                 </div>
                 {% for comment_comment in comment.commentcomment_set.all %}
                 <div class="review-entry" style="margin-left: 50px;">
-                    <h3 style="margin: 0;margin-right: 16px;">{{ comment_comment.commenter.username }}</h3>
+                    <div style="display: flex;">
+                        <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment_comment.commenter.pk %}" width="24" height="24"/>
+                        <h3 style="margin: 0;margin-right: 16px;">{{ comment_comment.commenter.username }}</h3>
+                    </div>
                     <div style="display: flex;justify-content: space-between;">
                         <p>{{ comment_comment.text }}</p>
                         {% if comment_comment.commenter == user %}

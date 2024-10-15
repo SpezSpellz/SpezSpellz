@@ -17,6 +17,20 @@ class UserSettingsPage(View, RPCView):
         """Handle GET requests for this view."""
         return render(request, "user_settings.html")
 
+    def post(self, request: HttpRequest, **kwargs) -> HttpResponseBase:
+        """Handle POST requests for this view."""
+        profile_picture = request.FILES.get("pp")
+        if profile_picture is not None:
+            if not request.user.is_authenticated:
+                return HttpResponse("Unauthenticated", status=401)
+            user_info = request.user.userinfo if hasattr(
+                request.user, "userinfo"
+            ) else UserInfo(user=request.user)
+            user_info.avatar = profile_picture
+            user_info.save()
+            return HttpResponse("Avatar updated")
+        return super().post(request, **kwargs)
+
     def rpc_rate(
         self,
         request: HttpRequest,
