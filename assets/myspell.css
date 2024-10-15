@@ -7,6 +7,11 @@
     padding: 10px;
     border-radius: 10px;
     margin-bottom: 10px;
+    cursor: pointer;
+    border-style: none;
+}
+.spell-container:hover {
+    background-color: #3B3B3B;
 }
 .spell-info {
     display: flex;

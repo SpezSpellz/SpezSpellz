@@ -7,7 +7,12 @@
 {% block Body %}
 <h1>Profile of {{ user.username }}</h1>
 
-<h2>Your Spells</h2>
+<div style="display: flex;justify-content: center;">
+  <h2 style="margin: 0;margin-right: 10px;padding-left: 80px;">Your Spells</h2>
+  <div style="display: flex;flex-direction: column;justify-content: end;">
+    <a href="{% url 'spezspellz:myspell' %}">(View all)</a>
+  </div>
+</div>
 <ul>
   {% for spell in spells %}
   <li my_spell="{{ spell.pk }}">

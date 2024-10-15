@@ -7,16 +7,18 @@
     <input class="search-bar" placeholder="Search my spell" type="text">
     <br>
     {% for spell in spells %}
-        <div my_spell="{{ spell.pk }}" class="spell-container">
-            <div class="spell-info">
-                <img src="{% url 'spezspellz:spell_thumbnail' spell.id %}">
-                <div class="spell-title">{{ spell.title }}</div>
-            </div>
-            <div class="actions">
-                <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like"><img width="32" src="/assets/edit.svg"/></a>
-                <a onclick="window.delete_spell({{ spell.id }})" class="btn-like"><img width="32" src="/assets/delete.svg"/></a>
-            </div>
+    <div style="display: flex;flex-direction: column;">
+    <button onclick="window.location='{% url "spezspellz:spell" spell.pk %}'" my_spell="{{ spell.pk }}" class="spell-container">
+        <div class="spell-info">
+            <img src="{% url 'spezspellz:spell_thumbnail' spell.id %}"/>
+            <span class="spell-title">{{ spell.title }}</span>
         </div>
+        <div class="actions">
+            <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like"><img width="32" src="/assets/edit.svg"/></a>
+            <a onclick="window.delete_spell({{ spell.id }})" class="btn-like"><img width="32" src="/assets/delete.svg"/></a>
+        </div>
+    </button>
+    </div>
     {% endfor %}
 <script>
     window.delete_spell = (spell) => {
