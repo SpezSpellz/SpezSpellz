@@ -34,19 +34,17 @@
         <div style="display: inline-block;">
             {% for tag in tags %}
             <div style="display: inline-block;">
-                <div state="{% if tag.vote is None %}N{% else %}{% if tag.vote.positive %}U{% else %}D{% endif %}{% endif %}" tag="{{ tag.pk }}" style="display: flex;margin: 5px;padding: 5px;background-color: #4B4B4B;border-radius: 10px;">
+                <div state="{% if tag.vote is None %}N{% else %}{% if tag.vote.positive %}U{% else %}D{% endif %}{% endif %}" tag="{{ tag.pk }}" class="tag" style="background-color: rgba(250, 190, 190, 0.298); border-color: rgb(250, 190, 190);">
                     {% if user.is_authenticated %}
-                    <input uv_btn onclick="window.vote_obj(this.parentElement, 'tag', true, {{ tag.pk }})" type="image" src="{% if tag.vote is not None and tag.vote.positive %}/assets/up_filled.svg{% else %}/assets/up_outline.svg{% endif %}"/>
+                    <input uv_btn onclick="window.vote_obj(this.parentElement, 'tag', true, {{ tag.pk }})" type="image" src="{% if tag.vote is not None and tag.vote.positive %}/assets/up_filled.svg{% else %}/assets/up_outline.svg{% endif %}" height="15"/>
                     {% endif %}
                     <span v_rt style="color: #FFF">{{ tag.rating }}</span>
                     {% if user.is_authenticated %}
-                    <input dv_btn onclick="window.vote_obj(this.parentElement, 'tag', false, {{ tag.pk }})" type="image" src="{% if tag.vote is not None and not tag.vote.positive %}/assets/down_filled.svg{% else %}/assets/down_outline.svg{% endif %}"/>
+                    <input dv_btn onclick="window.vote_obj(this.parentElement, 'tag', false, {{ tag.pk }})" type="image" src="{% if tag.vote is not None and not tag.vote.positive %}/assets/down_filled.svg{% else %}/assets/down_outline.svg{% endif %}" height="15"/>
                     {% endif %}
-                    <div class="tag" style="background-color: rgba(250, 190, 190, 0.298); border-color: rgb(250, 190, 190);">
-                        <span style="color: rgb(250, 190, 190);">
-                            {{ tag.tag.name }}
-                        </span>
-                    </div>
+                    <span style="color: rgb(250, 190, 190);">
+                        {{ tag.tag.name }}
+                    </span>
                 </div>
             </div>
             {% endfor %}
