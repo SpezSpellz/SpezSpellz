@@ -37,6 +37,10 @@ a {
     background-color: #1C1C1C;
     border-radius: 6px;
     padding: 5px;
+    transition: background-color 0.1s;
+}
+.spell:hover {
+    background-color: #2C2C2C;
 }
 .spell-img {
     width: 80px;

@@ -1,7 +1,6 @@
 """Contains views for SpezSpellz."""
 from itertools import chain
 from typing import Optional, Generator, TypeVar, Any, cast
-import math
 import json
 import os
 from django.utils import timezone
@@ -101,6 +100,9 @@ class FilterPage(View):
         query = request.GET.get("s")
         if query:
             spells = spells.filter(title__icontains=query.strip())
+        creator = safe_cast(int, request.GET.get("creator"), None)
+        if creator is not None:
+            spells = spells.filter(creator__pk=creator)
         spells = spells.all()
         page = safe_cast(int, request.GET.get("page"), 1)
         spell_count = spells.count()
@@ -307,7 +309,6 @@ class UploadPage(View):
                 self.__class__.validate_tag_info(request.POST.get(f"tag{i}"))
                 for i in range(tags_len)
             ),
-            rating=0,
             spell=spell
         )
         new_spellnotifications = self.__class__.make_new_objects(

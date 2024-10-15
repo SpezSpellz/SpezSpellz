@@ -4,7 +4,11 @@
 <link rel="stylesheet" href="/assets/myspell.css">
 <body>
     <h1 style="margin: auto; text-align: center">All created spell</h1>
-    <input class="search-bar" placeholder="Search my spell" type="text">
+    <form method="GET" action="{% url 'spezspellz:filter' %}">
+        <input name="s" class="search-bar" placeholder="Search my spell" type="text">
+        <input name="creator" value="{{ user.pk }}" hidden/>
+        <button type="submit" hidden></button>
+    </form>
     <br>
     {% for spell in spells %}
     <div style="display: flex;flex-direction: column;">
