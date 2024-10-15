@@ -5,8 +5,9 @@ from django.http import HttpRequest, HttpResponse, HttpResponseBase
 from django.shortcuts import render, redirect
 from django.views import View
 from django.db import transaction
-from spezspellz.models import Spell, get_or_none, Bookmark, \
+from spezspellz.models import Spell, Bookmark, \
     SpellHistoryEntry, Review, ReviewComment, SpellComment, CommentComment
+from spezspellz.utils import get_or_none
 from .rpc_view import RPCView
 
 

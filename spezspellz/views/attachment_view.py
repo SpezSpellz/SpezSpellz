@@ -1,6 +1,7 @@
 """Implements the attachment view."""
 from django.http import HttpRequest, HttpResponse, FileResponse
-from spezspellz.models import get_or_none, Attachment
+from spezspellz.utils import get_or_none
+from spezspellz.models import Attachment
 
 
 def attachment_view(_: HttpRequest, attachment_id: int):

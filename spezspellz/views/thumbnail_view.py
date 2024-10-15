@@ -1,7 +1,8 @@
 """Implements the thumbnail view."""
 from django.http import HttpRequest, FileResponse
 from django.shortcuts import redirect
-from spezspellz.models import Spell, get_or_none
+from spezspellz.models import Spell
+from spezspellz.utils import get_or_none
 
 
 def thumbnail_view(_: HttpRequest, spell_id: int):

@@ -11,8 +11,8 @@ from django.views import View
 from django.urls import reverse
 from django.utils.dateparse import parse_datetime
 from django.db import transaction
-from spezspellz.models import Spell, Tag, Category, get_or_none, HasTag, SpellNotification, Attachment
-from spezspellz.utils import safe_cast
+from spezspellz.models import Spell, Tag, Category, HasTag, SpellNotification, Attachment
+from spezspellz.utils import safe_cast, get_or_none
 
 
 class UploadPage(View):

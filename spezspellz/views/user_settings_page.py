@@ -4,8 +4,9 @@ from django.http import HttpRequest, HttpResponse, HttpResponseBase
 from django.shortcuts import render
 from django.views import View
 from django.db import transaction
-from spezspellz.models import Spell, get_or_none, HasTag, UserInfo, Bookmark, \
+from spezspellz.models import Spell, HasTag, UserInfo, Bookmark, \
     Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory
+from spezspellz.utils import get_or_none
 from .rpc_view import RPCView
 
 
