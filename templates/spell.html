@@ -44,7 +44,7 @@
                         <input dv_btn onclick="window.vote_obj(this.parentElement, 'tag', false, {{ tag.pk }})" type="image" src="{% if tag.vote is not None and not tag.vote.positive %}/assets/down_filled.svg{% else %}/assets/down_outline.svg{% endif %}" height="15"/>
                         {% endif %}
                     </div>
-                    <span style="color: rgb(250, 190, 190);">
+                    <span style="color: rgb(250, 190, 190);margin-right: 4px;">
                         {{ tag.tag.name }}
                     </span>
                 </div>
