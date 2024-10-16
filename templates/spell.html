@@ -256,43 +256,45 @@
                         window.base_dlg.showModal();
                     });
                 };
-                function send_review_comment(review_id, text) {
-                    return fetch("{% url 'spezspellz:spell' spell.pk %}", {
-                        method: "POST",
-                        headers: {
-                            "X-CSRFToken": "{{ csrf_token }}"
-                        },
-                        body: JSON.stringify({
-                            method: "review_comment",
-                            text: text,
-                            review_id: review_id
-                        })
-                    }).then(res => {
-                        if(!res.ok)
-                            return res.text().then(msg => Promise.reject(msg));
-                        return res.text();
-                    });
-                }
-                window.addReviewReplyWindow = (btn, review, review_id) => {
-                    const clone = window.review_reply_template.content.cloneNode(true).firstElementChild;
-                    const text = clone.querySelector("[c_text]");
-                    btn.style.display = "none";
-                    clone.querySelector("[c_cancel]").onclick = () => {
-                        clone.remove();
-                        btn.style.display = null;
-                    }
-                    clone.querySelector("[c_send]").onclick = () => {
-                        send_review_comment(review_id, text.value).then(() => {
-                            clone.remove();
-                            btn.style.display = null;
-                            location.reload();
-                        });
-                    }
-                    review.firstElementChild.after(clone);
-                }
             </script>
         </div>
         {% endif %}
+        <script>
+            function send_review_comment(review_id, text) {
+                return fetch("{% url 'spezspellz:spell' spell.pk %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({
+                        method: "review_comment",
+                        text: text,
+                        review_id: review_id
+                    })
+                }).then(res => {
+                    if(!res.ok)
+                        return res.text().then(msg => Promise.reject(msg));
+                    return res.text();
+                });
+            }
+            window.addReviewReplyWindow = (btn, review, review_id) => {
+                const clone = window.review_reply_template.content.cloneNode(true).firstElementChild;
+                const text = clone.querySelector("[c_text]");
+                btn.style.display = "none";
+                clone.querySelector("[c_cancel]").onclick = () => {
+                    clone.remove();
+                    btn.style.display = null;
+                }
+                clone.querySelector("[c_send]").onclick = () => {
+                    send_review_comment(review_id, text.value).then(() => {
+                        clone.remove();
+                        btn.style.display = null;
+                        location.reload();
+                    });
+                }
+                review.firstElementChild.after(clone);
+            }
+        </script>
         {% for review in reviews %}
             <div>
                 <div class="review-entry">
