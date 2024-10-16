@@ -55,15 +55,16 @@
               "X-CSRFToken": "{{ csrf_token }}"
           },
           body: JSON.stringify({
-              method: "delete_spell",
-              spell_id: spell
+              method: "delete",
+              obj_type: "spell",
+              obj_id: spell
           })
       }).then(res => {
           if(!res.ok)
               return Promise.reject();
           return res.text()
       }).then(text => {
-          if(text != "Spell deleted")
+          if(text != "Object deleted")
             return;
           document.querySelector("[my_spell=\"" + spell + "\"]").remove();
       })
