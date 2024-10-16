@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import redirect
 
+
 @login_required
 def myspell_view(request: HttpRequest) -> HttpResponseBase:
     """View for all created spell by current user."""
