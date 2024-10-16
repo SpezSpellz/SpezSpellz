@@ -21,5 +21,6 @@ urlpatterns = [
     path("profile/myspell", views.myspell_view, name="myspell"),
     path("profile/myspell/<int:user_id>", views.other_spell_view, name="other_spell"),
     path("filter/", views.FilterPage.as_view(), name="filter"),
-    path("avatar/<int:user_id>/", views.profile_picture_view, name="avatar")
+    path("avatar/<int:user_id>/", views.profile_picture_view, name="avatar"),
+    path("notifications/", views.get_notifications, name="notification")
 ]

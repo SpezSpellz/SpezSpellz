@@ -49,4 +49,38 @@
 </body>
 {% block AfterBody %}
 {% endblock %}
+<script>
+    function requestNotificationPermission() {
+        if ("Notification" in window) {
+            if (Notification.permission !== "granted") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        fetchNotifications();
+                    }
+                });
+            } else {
+                fetchNotifications();
+            }
+        } else {
+            alert("This browser does not support desktop notifications.");
+        }
+    }
+
+    function fetchNotifications() {
+        fetch('/notifications/')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(notification => {
+                    new Notification(notification.title, {
+                        body: notification.message,
+                        icon: notification.icon,
+                    });
+                });
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        requestNotificationPermission();
+    });
+</script>
 </html>
