@@ -19,6 +19,9 @@ Filter
     </div>
 </dialog>
 <form method="GET" action="{% url 'spezspellz:filter' %}">
+    {% if request.GET.creator %}
+    <input name="creator" value="{{ request.GET.creator }}" hidden/>
+    {% endif %}
     <input id="page" name="page" value="{{ request.GET.page }}" hidden/>
     <h1 style="margin: auto;text-align: center;">Search</h1>
     <input class="search-bar" type="text" name="s" placeholder="Cool spells" value="{{ request.GET.s }}"/>

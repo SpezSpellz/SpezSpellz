@@ -1,6 +1,6 @@
 """Implement admin stuff."""
 from django.contrib import admin
-from .models import Spell, Tag, HasTag, Category, UserInfo, Bookmark
+from .models import Spell, Tag, HasTag, Category, UserInfo, Bookmark, Review
 
 
 class SpellAdmin(admin.ModelAdmin):
@@ -54,7 +54,7 @@ class UserInfoAdmin(admin.ModelAdmin):
 class HasTagAdmin(admin.ModelAdmin):
     """For configuring tags."""
 
-    list_display = ["spell", "tag", "rating"]
+    list_display = ["spell", "tag"]
 
 
 class BookmarkAdmin(admin.ModelAdmin):
@@ -69,9 +69,16 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ["name"]
 
 
+class ReviewAdmin(admin.ModelAdmin):
+    """For configuring reviews."""
+
+    list_display = ["spell", "user", "star"]
+
+
 admin.site.register(Spell, SpellAdmin)
 admin.site.register(Tag)
 admin.site.register(HasTag, HasTagAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(UserInfo, UserInfoAdmin)
 admin.site.register(Bookmark, BookmarkAdmin)
+admin.site.register(Review, ReviewAdmin)

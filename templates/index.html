@@ -18,6 +18,15 @@
     </div></a>
     {% endfor %}
 </div>
+<h2 style="padding-left: 20px;">Top rated posts</h2>
+<div class="strip-box">
+    {% for spell in top_rated_spells %}
+    <a href="{% url 'spezspellz:spell' spell.pk %}"><div class="spell">
+        <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" "{{ spell.pk }}" class="spell-img"/>
+        <h2 class="spell-title">{{ spell.title }}</h2>
+    </div></a>
+    {% endfor %}
+</div>
 <h2 style="padding-left: 20px;">All Posts</h2>
 <div class="all-spell-container">
     {% for spell in spells %}
