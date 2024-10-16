@@ -16,7 +16,9 @@
         <h1>{{ spell.title }}</h1>
         <div style="display: flex;">
             <h3 style="color: #FFF;margin: 0;">by:</h3>
+            <a href="{% url 'spezspellz:other_profile' spell.creator.pk %}">
             <img style="margin-right: 8px;margin-left: 10px;" src="{% url 'spezspellz:avatar' spell.creator.pk %}" width="24" height="24"/>
+            </a>
             <h3 style="color: #FFF;margin: 0;">{{ spell.creator.username }}</h3>
         </div>
         <h3 style="color: #FFF;">{{ avg_star }} stars</h3>

@@ -12,6 +12,7 @@
 <h1>Profile of {{ other_user.username }}</h1>
 {% endif %}
 
+{% if not other_user.userinfo.get_private %}
 <div style="display: flex;justify-content: center;">
 
   {% if not other_user %}
@@ -124,5 +125,9 @@
       })
   }
 </script>
+{% endif %}
+
+{% else %}
+<h1>This profile is private</h1>
 {% endif %}
 {% endblock %}

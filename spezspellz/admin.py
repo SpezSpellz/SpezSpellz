@@ -17,11 +17,11 @@ class SpellAdmin(admin.ModelAdmin):
             "Spell Information",
             {
                 "fields":
-                [
-                    "title",
-                    "data",
-                    "category"
-                ]
+                    [
+                        "title",
+                        "data",
+                        "category"
+                    ]
             }
         )
     ]
@@ -37,18 +37,33 @@ class UserInfoAdmin(admin.ModelAdmin):
     #     if db_field.name == 'colour':
     #         kwargs['widget'] = ColourChooserWidget
     #     return super(VehicleAdmin, self).formfield_for_dbfield(db_field,
-    #                                                            **kwargs)
+    #                                                                **kwargs)
 
     fieldsets = [
-        ("Settings", {"fields": ["timed_notification",
-                                 "review_comment_notification",
-                                 "spell_review_notification",
-                                 "spell_comment_notification"]}),
+        (None,
+         {
+             "fields": ["user"]
+         }
+         ),
+        ("Settings",
+         {
+             "fields":
+                 [
+                     "timed_notification",
+                     "review_comment_notification",
+                     "spell_review_notification",
+                     "spell_comment_notification",
+                     "private",
+                 ]
+         }
+         ),
 
         ("Information", {"fields": ["user_desc"]})
     ]
 
-    list_display = ["user", "timed_notification", "review_comment_notification", "spell_review_notification", "spell_comment_notification"]
+    list_display = ["user", "timed_notification",
+                    "review_comment_notification", "spell_review_notification",
+                    "spell_comment_notification", "private"]
 
 
 class HasTagAdmin(admin.ModelAdmin):

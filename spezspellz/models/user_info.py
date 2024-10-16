@@ -25,6 +25,10 @@ class UserInfo(models.Model):
         upload_to="content", null=True
     )
 
+    @property
+    def get_private(self):
+        return self.private
+
     def __str__(self):
         """Return user info as string."""
         return f"UserInfo(username={self.user.username})"
