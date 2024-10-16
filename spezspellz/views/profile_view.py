@@ -1,10 +1,11 @@
 """Implements the profile page."""
 from typing import Any, cast
-from django.http import HttpRequest, HttpResponseBase
-from django.shortcuts import render
+from django.http import HttpRequest, HttpResponseBase, HttpResponse
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from spezspellz.models import Spell, Bookmark
 from django.contrib.auth.models import User
+from spezspellz.models import Spell, Bookmark
+from spezspellz.utils import get_or_none
 
 
 @login_required
@@ -27,24 +28,14 @@ def profile_view(request: HttpRequest) -> HttpResponseBase:
 def other_profile_view(request: HttpRequest, user_id: int) -> HttpResponseBase:
     """Handle viewing other people profile page."""
     user = request.user
-    other_user = User.objects.filter(id=user_id).first()
-    spells = Spell.objects.filter(creator=other_user)
-    bookmarks = Bookmark.objects.filter(user=other_user)
-    history = cast(Any, other_user).spellhistoryentry_set.order_by("-time")
-    context = {
-        'user': user,
+    if user.pk == user_id:
+        return redirect("spezspellz:profile")
+    other_user = get_or_none(User, pk=user_id)
+    if other_user is None:
+        return HttpResponse("User not found", status=404)
+    return render(request, 'profile.html', {
         'other_user': other_user,
-        'spells': spells,
-        'bookmarks': bookmarks,
-        'history': history
-    }
-
-    if user.id == other_user.id:
-        context = {
-            'user': user,
-            'spells': spells,
-            'bookmarks': bookmarks,
-            'history': history
-        }
-
-    return render(request, 'profile.html', context)
+        'spells': cast(Any, other_user).spell_set.all(),
+        'bookmarks': cast(Any, other_user).bookmark_set.all(),
+        'history': cast(Any, other_user).spellhistoryentry_set.order_by("-time")
+    })

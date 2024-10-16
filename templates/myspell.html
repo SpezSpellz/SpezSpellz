@@ -10,7 +10,7 @@
     {% endif %}
     <form method="GET" action="{% url 'spezspellz:filter' %}">
         <input name="s" class="search-bar" placeholder="Search my spell" type="text">
-        <input name="creator" value="{{ user.pk }}" hidden/>
+        <input name="creator" value="{% if other_user %}{{ other_user.pk }}{% else %}{{ user.pk }}{% endif %}" hidden/>
         <button type="submit" hidden></button>
     </form>
     <br>

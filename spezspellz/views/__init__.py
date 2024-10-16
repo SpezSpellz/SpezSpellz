@@ -27,5 +27,7 @@ __all__ = (
     "thumbnail_view",
     "UserSettingsPage",
     "RegisterView",
-    "profile_picture_view"
+    "profile_picture_view",
+    "other_profile_view",
+    "other_spell_view"
 )

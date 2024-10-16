@@ -26,7 +26,8 @@ class UserInfo(models.Model):
     )
 
     @property
-    def get_private(self):
+    def is_private(self):
+        """Checks whether user is private."""
         return self.private
 
     def __str__(self):
