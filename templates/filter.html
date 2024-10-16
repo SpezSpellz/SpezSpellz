@@ -1,0 +1,181 @@
+{% extends 'base.html' %} 
+
+{% block Title %}
+Filter
+{% endblock %}
+
+{% block BeforeBody %}
+<link rel="stylesheet" href="/assets/filter.css">
+{% endblock %}
+
+{% block Body %}
+<dialog id="add_tag_dlg" style="height: 400px;width:400px">
+    <h1 class="section dlgheader">Add Tags</h1>
+    <input id="add_tag_dlg_search" class="search-bar" placeholder="Enter tag name" type="text"/>
+    <ul id="tag_search_list" style="list-style: none;margin: 0;padding: 0;max-height: 250px;overflow: scroll;">
+    </ul>
+    <div style="position: absolute;bottom: 15px;left: 0;right: 0;display:flex;flex-direction: row;justify-content: space-evenly;">
+        <button id="close_add_tag_dlg">Close</button>
+    </div>
+</dialog>
+<form method="GET" action="{% url 'spezspellz:filter' %}">
+    <input id="page" name="page" value="{{ request.GET.page }}" hidden/>
+    <h1 style="margin: auto;text-align: center;">Search</h1>
+    <input class="search-bar" type="text" name="s" placeholder="Cool spells" value="{{ request.GET.s }}"/>
+    <div class="filter-box">
+        <h2 style="margin-top: 0;margin: auto;text-align: center;">Filters</h2>
+        <hr>
+        <div style="display: flex;">
+            <h3 style="margin: 0;margin-right: 8px;" >Category</h3>
+            <select name="category">
+                <option value="">All categories</option>
+                {% for category in spell_categories %}
+                <option value="{{ category.pk }}" {% if request.GET.category == category.pk|slugify %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+            <h3 style="margin: 0;">Tags:</h3>
+            <div style="display: inline-block;" id="tag-list">
+            </div>
+            <button type="button" id="add_tag_btn" class="tag tag-add">+</button>
+        <div class="button-container">
+            <button id="submit" type="submit" class="apply-button">Apply</button>
+            <button type="reset" class="clear-button">Clear</button>
+        </div>
+        <script>
+            window.to_page = (page) => {
+                window.page.value = page;
+                window.submit.click();
+            };
+            const selected_tags = new Set();
+            const tag_colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'];
+            function hashStr(s) {
+                return s.split("").reduce(function(a, b) {
+                    a = ((a << 5) - a) + b.charCodeAt(0);
+                    return a & a;
+                }, 0);
+            }
+            function add_tag(tag) {
+                const col = tag_colors[hashStr(tag) % tag_colors.length];
+                const div = document.createElement("button");
+                div.classList.add("tag");
+                div.style.backgroundColor = col + "4C";
+                div.style.borderColor = col;
+                const span = document.createElement("span");
+                span.innerText = tag;
+                span.style.color = col;
+                const input = document.createElement("input");
+                input.type = "checkbox";
+                input.name = "tag";
+                input.value = tag;
+                input.hidden = true;
+                input.checked = true;
+                div.append(input);
+                div.append(span);
+                selected_tags.add(tag);
+                document.getElementById("tag-list").append(div);
+                div.onclick = () => {
+                    div.remove();
+                    selected_tags.delete(tag);
+                }
+            }
+            {% for selected_tag in selected_tags %}
+            add_tag('{{ selected_tag }}')
+            {% endfor %}
+            window.add_tag_btn.onclick = () => {
+                update_tags('');
+                window.add_tag_dlg.showModal();
+            };
+            window.close_add_tag_dlg.onclick = () => {
+                window.tag_search_list.innerHTML = '';
+                window.add_tag_dlg_search.value = "";
+                window.add_tag_dlg.close();
+            };
+            function update_tags(query) {
+                fetch("{% url 'spezspellz:tags' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({
+                        "method": "search",
+                        "query": query
+                    })
+                }).then(res => {
+                    if(res.status != 200)
+                        return Promise.reject();
+                    return res.json();
+                }).then(json => {
+                    window.tag_search_list.innerHTML = '';
+                    for(const tag of json) {
+                        if(selected_tags.has(tag))
+                            continue;
+                        const li = document.createElement("li");
+                        const btn = document.createElement("button");
+                        btn.classList.add("tag-search-entry");
+                        btn.innerText = tag;
+                        btn.onclick = () => {
+                            li.remove();
+                            add_tag(tag);
+                        };
+                        li.append(btn);
+                        window.tag_search_list.append(li);
+                    }
+                    for(const entry of window.tag_search_list.children) {
+                        const btn = entry.querySelector("button");
+                        entry.style.display = (btn.innerText.toLowerCase().indexOf(query) != -1) ? null : "none";
+                    }
+                });
+            }
+            var update_tags_tm = null;
+            window.add_tag_dlg_search.onkeyup = () => {
+                const query = window.add_tag_dlg_search.value.toLowerCase();
+                for(const entry of window.tag_search_list.children) {
+                    const btn = entry.querySelector("button");
+                    entry.style.display = (btn.innerText.toLowerCase().indexOf(query) != -1) ? null : "none";
+                }
+                if(update_tags_tm)
+                    clearTimeout(update_tags_tm);
+                update_tags_tm = setTimeout(() => {
+                    update_tags_tm = null;
+                    update_tags(query);
+                }, 250); 
+            };
+        </script>
+    </div>
+</form>
+<div class="results">
+    <h2>Results:</h2>
+    {% if spells %}
+        {% for spell in spells %}
+        <a href="{% url 'spezspellz:spell' spell.pk %}">
+        <div class="spell">
+            <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img" alt="{{ spell.title }}"/>
+                <div>
+                    <h3 class="spell-title">{{ spell.title }}</h3>
+                    <p class="spell-category">{{ spell.category }}</p>
+                    <p class="spell-creator">{{ spell.creator }}</p>
+                    <p class="spell-data">{{ spell.title }} {{ spell.summary|slice:":100" }}...</p>
+                </div>
+        </div></a>
+        {% endfor %}
+        {% if max_page != 1 %}
+        <div class="nav-bar" style="display: flex;justify-content: center;"><ul>
+            {% if cur_page != 1 %}
+            <a onclick="window.to_page(1)">&lt&lt</a>
+            <a onclick="window.to_page({{ cur_page|add:'-1' }})">&lt</a>
+            {% endif %}
+            {% for page in pages %}
+            <a {% if page == cur_page %}class="cur"{% else %}onclick="window.to_page({{ page }})"{% endif %}>{{ page }}</a>
+            {% endfor %}
+            {% if cur_page != max_page %}
+            <a onclick="window.to_page({{ cur_page|add:1 }})">&gt</a>
+            <a onclick="window.to_page({{ max_page }})">&gt&gt</a>
+            {% endif %}
+        </ul></div>
+        {% endif %}
+    {% else %}
+        <p>No spells found.</p>
+    {% endif %}
+</div>
+{% endblock %}

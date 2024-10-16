@@ -7,6 +7,46 @@
     <title>{% block Title %}{% endblock %}</title>
 </head>
 <link rel="stylesheet" href="/assets/base.css">
-{% block Content %}
+
+<!--Messages go here-->
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li>{% if message.tags %}{% endif %}{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% block BeforeBody %}
+{% endblock %}
+<body>
+{% block Body %}
+{% endblock %}
+    <div class="left-top-btns">
+        {% if request.resolver_match.url_name != 'home' %}
+        <a href="{% url 'spezspellz:home' %} " class="btn-like left-top-btn">
+            <img width="32" src="/assets/home.svg"/>
+        </a>
+        {% endif %}
+        <a href="{% url 'spezspellz:upload' %}" class="btn-like left-top-btn">
+            <img width="32" src="/assets/upload.svg"/>
+        </a>
+    </div>
+    <div class="right-top-btns">
+        {% if request.resolver_match.url_name == 'profile' %}
+        <a href="{% url 'spezspellz:usersettings' %}" class="btn-like right-top-btn"><img width="32" src="/assets/cog.svg"/></a>
+        <form action="{% url 'logout' %}?next={% url 'spezspellz:home' %}" method="POST">
+            {% csrf_token %}
+            <input type="image" alt="Logout" name="submit" width="32" class="btn-like right-top-btn" src="/assets/logout.svg"/>
+        </form>
+        {% else %}
+        {% if user.is_authenticated %}
+        <a href="{% url 'spezspellz:profile' %}" class="btn-like right-top-btn"><img width="32" src="/assets/profile.svg"/></a>
+        {% elif request.resolver_match.url_name != 'login' %}
+        <a href="{% url 'login' %}?next={% url 'spezspellz:home' %}" class="btn-like right-top-btn"><img width="32" src="/assets/login.svg"/></a>
+        {% endif %}
+        {% endif %}
+    </div>
+</body>
+{% block AfterBody %}
 {% endblock %}
 </html>

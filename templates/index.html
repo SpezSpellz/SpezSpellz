@@ -1,29 +1,51 @@
 {% extends 'base.html' %}
 {% block Title %}Home - SpezSpellz{% endblock %}
-{% block Content %}
+{% block BeforeBody %}
 <link rel="stylesheet" href="/assets/index.css">
-<body>
-    <h1 class="sp-title">SpezSpellz</h1>
-    <input class="search-bar" placeholder="Cool spells" type="text"/>
-    <h2 style="padding-left: 20px;">Latest posts</h2>
-    <div class="strip-box">
-        {% for spell in latest_spells %}
-        <a href="{% url 'spezspellz:spell' spell.pk %}"><div class="spell">
-            <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" "{{ spell.pk }}" class="spell-img"/>
-            <h2 class="spell-title">{{ spell.title }}</h2>
+{% endblock %}
+{% block Body %}
+<h1 class="sp-title">SpezSpellz</h1>
+<form style="display: flex;justify-content: center;" method="get" action="{% url 'spezspellz:filter' %}" class="search-form">
+    <input class="search-bar" name="s" placeholder="Cool spells" type="text"/>
+    <button type="submit" class="search-button">Search</button>
+</form>
+<h2 style="padding-left: 20px;">Latest posts</h2>
+<div class="strip-box">
+    {% for spell in latest_spells %}
+    <a href="{% url 'spezspellz:spell' spell.pk %}"><div class="spell">
+        <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" "{{ spell.pk }}" class="spell-img"/>
+        <h2 class="spell-title">{{ spell.title }}</h2>
+    </div></a>
+    {% endfor %}
+</div>
+<h2 style="padding-left: 20px;">All Posts</h2>
+<div class="all-spell-container">
+    {% for spell in spells %}
+    <a href="{% url 'spezspellz:spell' spell.pk %}">
+    <div class="all-spell">
+        <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="all-spell-img" alt="{{ spell.title }}"/>
+            <div>
+                <h3 class="all-spell-title">{{ spell.title }}</h3>
+                <p class="all-spell-category">{{ spell.category }}</p>
+                <p class="all-spell-creator">{{ spell.creator }}</p>
+                <p class="all-spell-data">{{ spell.title }} {{ spell.summary|slice:":100" }}...</p>
+            </div>
         </div></a>
-        {% endfor %}
-    </div>
-    <a href="{% url 'spezspellz:upload' %}" class="btn-like" style="position: absolute;top: 8px;left: 8px;"><img width="32" src="/assets/upload.svg"/></a>
-    <div style="display: flex;position: absolute;top: 8px;right: 0;flex-direction: row;">
-        {% if user.is_authenticated %}
-        <form action="{% url 'logout' %}?next={% url 'spezspellz:home' %}" method="POST">
-            {% csrf_token %}
-            <input type="image" alt="Logout" name="submit" width="32" class="btn-like" style="margin-right: 8px;padding: 5px 20px;" src="/assets/logout.svg"/>
-        </form>
-        {% else %}
-        <a href="{% url 'login' %}?next={% url 'spezspellz:home' %}"><button class="btn-like" style="margin-right: 8px;font-size: 16pt; color: white; padding: 10px 20px;border-style: none;cursor: pointer;">Log in</button></a>
+    {% endfor %}
+    {% if max_page != 1 %}
+    <div class="nav-bar" style="display: flex;justify-content: center;"><ul>
+        {% if cur_page != 1 %}
+        <a href="{% url 'spezspellz:home' %}?page=1">&lt&lt</a>
+        <a href="{% url 'spezspellz:home' %}?page={{ cur_page|add:'-1' }}">&lt</a>
         {% endif %}
-    </div>
-</body>
+        {% for page in pages %}
+        <a {% if page == cur_page %}class="cur"{% else %}href="{% url 'spezspellz:home' %}?page={{ page }}"{% endif %}>{{ page }}</a>
+        {% endfor %}
+        {% if cur_page != max_page %}
+        <a href="{% url 'spezspellz:home' %}?page={{ cur_page|add:1 }}">&gt</a>
+        <a href="{% url 'spezspellz:home' %}?page={{ max_page }}">&gt&gt</a>
+        {% endif %}
+    </ul></div>
+    {% endif %}
+</div>
 {% endblock %}
