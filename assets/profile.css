@@ -101,3 +101,11 @@ li:empty {
 .edit-btn:active {
     background-color: #7B7B7B;
 }
+
+.centered-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
