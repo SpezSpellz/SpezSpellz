@@ -234,3 +234,9 @@ dialog > .dlgheader {
 .attach-remove-btn:hover {
     background-color: #EF0000;
 }
+
+ul:not(#md_preview ul) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
