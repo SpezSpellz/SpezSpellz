@@ -119,7 +119,8 @@
 ## At Higher Levels
 [Insert any changes or enhancements when cast at higher levels.]
 </textarea>
-                <input type="image" src="/assets/preview.svg" width="32px" id="preview_md"></input>
+                <input type="image" src="/assets/preview.svg" width="32px" id="preview_md"/>
+                <input type="image" src="/assets/delete_x.svg" width="32px" id="clear_md"/>
                 <button class="div-box upload-btn" id="upload_btn">{% if extra_data %}Apply Changes{% else %}Upload{% endif %}</button>
             </div>
         </th>
@@ -208,6 +209,10 @@
         }
         add_notification(window.noti_dlg_text.value, time, window.noti_dlg_every.value)
         window.cancel_noti_dlg.click();
+    };
+    window.clear_md.onclick = () => {
+        localStorage.removeItem("upload_draft");
+        window.location = "{% url 'spezspellz:upload' %}";
     };
     window.preview_md.onclick = () => {
         if(!window.markdown_input.style.display) {

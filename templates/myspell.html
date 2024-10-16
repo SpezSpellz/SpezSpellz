@@ -15,19 +15,19 @@
     </form>
     <br>
     {% for spell in spells %}
-    <div style="display: flex;flex-direction: column;">
-    <button onclick="window.location='{% url "spezspellz:spell" spell.pk %}'" my_spell="{{ spell.pk }}" class="spell-container">
-        <div class="spell-info">
-            <img src="{% url 'spezspellz:spell_thumbnail' spell.id %}"/>
-            <span class="spell-title">{{ spell.title }}</span>
-        </div>
+    <div my_spell="{{ spell.pk }}" class="spell-container">
+        <a style="flex: 1" href="{% url 'spezspellz:spell' spell.pk %}">
+            <div class="spell-info">
+                <img src="{% url 'spezspellz:spell_thumbnail' spell.id %}"/>
+                <span class="spell-title">{{ spell.title }}</span>
+            </div>
+        </a>
         {% if not other_user %}
         <div class="actions">
             <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like"><img width="32" src="/assets/edit.svg"/></a>
             <a onclick="window.delete_spell({{ spell.id }})" class="btn-like"><img width="32" src="/assets/delete.svg"/></a>
         </div>
         {% endif %}
-    </button>
     </div>
     {% empty %}
     <br>
@@ -41,15 +41,16 @@
               "X-CSRFToken": "{{ csrf_token }}"
           },
           body: JSON.stringify({
-              method: "delete_spell",
-              spell_id: spell
+              method: "delete",
+              obj_type: "spell",
+              obj_id: spell
           })
       }).then(res => {
           if(!res.ok)
               return Promise.reject();
           return res.text()
       }).then(text => {
-          if(text != "Spell deleted")
+          if(text != "Object deleted")
             return;
           document.querySelector("[my_spell=\"" + spell + "\"]").remove();
       })

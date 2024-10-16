@@ -111,7 +111,7 @@ dialog > .dlgheader {
 }
 
 
-#preview_md {
+#preview_md, #clear_md {
     top: 5px;
     right: 5px;
     position: absolute;
@@ -120,12 +120,16 @@ dialog > .dlgheader {
     border-radius: 5px;
 }
 
-#preview_md:hover {
+#preview_md:hover, #clear_md:hover {
     background-color: #5F5F5F;
 }
 
-#preview_md:active {
+#preview_md:active, #clear_md:active {
     background-color: #6F6F6F;
+}
+
+#clear_md {
+    right: 48px;
 }
 
 #upload_attachment_box {
