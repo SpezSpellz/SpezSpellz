@@ -17,7 +17,9 @@ urlpatterns = [
     path("spell/<int:spell_id>/", views.SpellPage.as_view(), name="spell"),
     path("spell/thumbnail/<int:spell_id>/", views.thumbnail_view, name="spell_thumbnail"),
     path("profile/", views.profile_view, name="profile"),
+    path("profile/<int:user_id>", views.other_profile_view, name="other_profile"),
     path("profile/myspell", views.myspell_view, name="myspell"),
+    path("profile/myspell/<int:user_id>", views.other_spell_view, name="other_spell"),
     path("filter/", views.FilterPage.as_view(), name="filter"),
     path("avatar/<int:user_id>/", views.profile_picture_view, name="avatar")
 ]

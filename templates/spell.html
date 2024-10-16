@@ -414,7 +414,9 @@
                     <div style="display: flex;justify-content: space-between;">
                         <div style="display: flex;flex-direction: column;">
                             <div style="display: flex;">
+                                <a href="{% url 'spezspellz:other_profile' comment.commenter.pk %}">
                                 <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment.commenter.pk %}" width="32" height="32"/>
+                                    </a>
                                 <h2 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h2>
                             </div>
                             <p>{{ comment.text }}</p>
