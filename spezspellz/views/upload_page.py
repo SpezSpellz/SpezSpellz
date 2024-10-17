@@ -11,7 +11,7 @@ from django.views import View
 from django.urls import reverse
 from django.utils.dateparse import parse_datetime
 from django.db import transaction
-from spezspellz.models import Spell, Tag, Category, HasTag, SpellNotification, Attachment
+from spezspellz.models import Spell, Tag, Category, HasTag, SpellNotification, Attachment, Repetition
 from spezspellz.utils import safe_cast, get_or_none
 
 
@@ -104,8 +104,9 @@ class UploadPage(View):
             message: Optional[str], period: Optional[str], datetime: Optional[str]
     ) -> Optional[dict[str, Any]]:
         """Attempt to parse, validate, and convert the provided arguments to values fit for SpellNotification constructor."""
+        period = eval(period)
         if message is None or datetime is None or period is None \
-                or period not in SpellNotification.EveryType.choices:
+                or not isinstance(period, Repetition):
             return None
         try:
             parsed_date = parse_datetime(datetime)

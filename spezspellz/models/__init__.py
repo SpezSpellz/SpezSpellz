@@ -7,7 +7,7 @@ from .has_tag import HasTag
 from .rate import Rate
 from .rate_tag import RateTag
 from .rate_category import RateCategory
-from .spell_notification import SpellNotification
+from .spell_notification import SpellNotification, Repetition
 from .attachment import Attachment
 from .bookmark import Bookmark
 from .review import Review
@@ -33,5 +33,6 @@ __all__ = (
     "SpellHistoryEntry",
     "ReviewComment",
     "SpellComment",
-    "CommentComment"
+    "CommentComment",
+    "Repetition"
 )

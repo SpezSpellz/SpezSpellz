@@ -6,20 +6,22 @@ from spezspellz.models import Bookmark, SpellNotification
 
 @login_required
 def get_notifications(request: HttpRequest) -> JsonResponse:
+    """Return notification data for notifying user."""
     user = request.user
     bookmark = Bookmark.objects.filter(user=user)
-    notifications = SpellNotification.objects.filter(
+    all_notifications = []
+    timed_notifications = SpellNotification.objects.filter(
         datetime__lte=timezone.now(),
         spell__in=bookmark
     )
-    return JsonResponse(
-        [
+    for n in timed_notifications:
+        all_notifications.append(
             {
-                "title": notification.spell.title,
-                "message": notification.message,
-                "icon": f'spell/thumbnail/{notifications.spell.id}/'
+                "title": n.spell.title,
+                "message": n.message,
+                "icon": f'spell/thumbnail/{n.spell.id}/'
             }
-            for notification in notifications
-        ],
-        safe=False
-    )
+        )
+        n.update_datetime()
+        n.save()
+    return JsonResponse(all_notifications)

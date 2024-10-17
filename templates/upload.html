@@ -37,11 +37,11 @@
         <div>
             <span style="font-size: 12pt;">Repetition: </span>
             <select style="width: 150px;font-size: 12pt;" name="noti_every" id="noti_dlg_every">
-                <option value="D">Every Day</option>
-                <option value="W">Every Week</option>
-                <option value="M">Every Month</option>
-                <option value="Y">Every Year</option>
-                <option value="S">Single Event</option>
+                <option value="Repetition.D">Every Day</option>
+                <option value="Repetition.W">Every Week</option>
+                <option value="Repetition.M">Every Month</option>
+                <option value="Repetition.Y">Every Year</option>
+                <option value="Repetition.S">Single Event</option>
             </select>
         </div><br>
         <span id="noti_dlg_err" style="color: #F00;margin: auto;display: none;">Failed to eat shit.</span>
@@ -210,23 +210,23 @@ Feel free to customize the template to fit your spell's unique attributes! Happy
         var text = "";
         const time_str = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
         switch(every) {
-            case "D": {
+            case "Repetition.D": {
                 text = "\nevery day at " + time_str;
                 break;
             }
-            case "W": {
-                text = "\nevery " + ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"][time.getDay()] + " at " + time_str;
+            case "Repetition.W": {
+                text = "\nevery " + ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][time.getDay()] + " at " + time_str;
                 break;
             }
-            case "M": {
+            case "Repetition.M": {
                 text = "\nevery " + time.getDate() + " of every month at " + time_str;
                 break;
             }
-            case "Y": {
+            case "Repetition.Y": {
                 text = "every " + time.getDate() + "/" + time.getMonth() + " at " + time_str + " every year.";
                 break;
             }
-            case "S": {
+            case "Repetition.S": {
                 text = "\non " + time.toLocaleString('en-US', { year: 'numeric', month: 'long', hour: 'numeric', minute: 'numeric', hour12: true });
                 break;
             }

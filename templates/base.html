@@ -67,7 +67,7 @@
     }
 
     function fetchNotifications() {
-        fetch('/notifications/')
+        fetch("{% url 'spezspellz:notification' %}")
             .then(response => response.json())
             .then(data => {
                 data.forEach(notification => {
