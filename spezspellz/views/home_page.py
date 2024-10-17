@@ -2,6 +2,7 @@
 from django.http import HttpRequest, HttpResponseBase
 from django.shortcuts import render
 from django.views import View
+from django.db.models import Avg
 from spezspellz.models import Spell
 from spezspellz.utils import safe_cast
 
@@ -9,6 +10,7 @@ from spezspellz.utils import safe_cast
 class HomePage(View):
     """Handle the home page."""
 
+    SPELLS_PER_STRIP = 5
     SPELLS_PER_PAGE = 15
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
@@ -21,7 +23,8 @@ class HomePage(View):
             request,
             "index.html",
             {
-                "latest_spells": all_spells.order_by('-id')[:5],
+                "latest_spells": all_spells.order_by('-id')[:self.__class__.SPELLS_PER_STRIP],
+                "top_rated_spells": all_spells.annotate(rating=Avg('review__star')).order_by('-rating')[:self.__class__.SPELLS_PER_STRIP],
                 "cur_page": page,
                 "max_page": max_page,
                 "pages": range(max(1, page - 5), min(max_page, page + 5) + 1),

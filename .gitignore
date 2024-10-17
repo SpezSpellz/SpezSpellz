@@ -30,3 +30,6 @@ content/
 
 # Test coverage
 .coverage
+
+# Temp files
+temp/
