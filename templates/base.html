@@ -98,6 +98,7 @@
                     }
                     case 'W': {
                         const cur_year = cur_time.getFullYear();
+                        const cur_month = cur_time.getMonth();
                         const cur_date = cur_time.getDate();
                         const cur_day = cur_time.getDay();
                         const new_date = new Date(date);
@@ -105,7 +106,7 @@
                         new_date.setMonth(cur_month);
                         const new_old_date = new Date(new_date);
                         new_date.setDate(cur_date-cur_day+new_date.getDay())
-                        new_old_date.setDay(cur_date-cur_day-7+new_date.getDay())
+                        new_old_date.setDate(cur_date-cur_day-7+new_date.getDay())
                         if(notifications.last_notified <= new_date && new_date <= cur_time ||
                             notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
                             const n = new Notification(bookmark.title, {
