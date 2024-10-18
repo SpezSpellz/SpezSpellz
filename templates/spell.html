@@ -14,13 +14,11 @@
     <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img">
     <text>
         <h1>{{ spell.title }}</h1>
-        <div style="display: flex;">
+        <a style="display: flex;text-decoration: none;" href="{% url 'spezspellz:other_profile' spell.creator.pk %}">
             <h3 style="color: #FFF;margin: 0;">by:</h3>
-            <a href="{% url 'spezspellz:other_profile' spell.creator.pk %}">
             <img style="margin-right: 8px;margin-left: 10px;" src="{% url 'spezspellz:avatar' spell.creator.pk %}" width="24" height="24"/>
-            </a>
             <h3 style="color: #FFF;margin: 0;">{{ spell.creator.username }}</h3>
-        </div>
+        </a>
         <h3 style="color: #FFF;">{{ avg_star }} stars</h3>
         <div style="display: flex;" state="{% if category_vote is None %}N{% else %}{% if category_vote.positive %}U{% else %}D{% endif %}{% endif %}">
             <h3 style="color: #FFF;margin: 0;margin-right: 8px;">Category: {{ spell.category.name }}</h3>
@@ -305,7 +303,7 @@
                 <div class="review-entry">
                     <div style="display: flex;justify-content: space-between;">
                         <div>
-                            <div style="display: flex">
+                            <a style="display: flex" href="{% url 'spezspellz:other_profile' review.user.pk %}">
                                 <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' review.user.pk %}" width="32" height="32"/>
                                 <h2 style="margin: 0;margin-right: 10px;">{{ review.user }}</h2>
                                 <div style="display: flex;">
@@ -319,7 +317,7 @@
                                         {% endif %}
                                     {% endfor %}
                                 </div>
-                            </div>
+                            </a>
                             <p>{{ review.desc }}</p>
                         </div>
                         <div style="display: flex;flex-direction: column;justify-content: flex-end;">
@@ -332,10 +330,10 @@
                 </div>
                 {% for comment in review.reviewcomment_set.all %}
                 <div class="review-entry" style="margin-left: 50px;">
-                    <div style="display: flex">
+                    <a style="display: flex" href="{% url 'spezspellz:other_profile' comment.commenter.pk %}">
                         <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment.commenter.pk %}" width="24" height="24"/>
                         <h3 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h3>
-                    </div>
+                    </a>
                     <div style="display: flex;justify-content: space-between;">
                         <p>{{ comment.text }}</p>
                         {% if comment.commenter == user %}
@@ -420,12 +418,10 @@
                 <div class="review-entry">
                     <div style="display: flex;justify-content: space-between;">
                         <div style="display: flex;flex-direction: column;">
-                            <div style="display: flex;">
-                                <a href="{% url 'spezspellz:other_profile' comment.commenter.pk %}">
+                            <a style="display: flex;" href="{% url 'spezspellz:other_profile' comment.commenter.pk %}">
                                 <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment.commenter.pk %}" width="32" height="32"/>
-                                    </a>
                                 <h2 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h2>
-                            </div>
+                            </a>
                             <p>{{ comment.text }}</p>
                         </div>
                         <div style="display: flex;flex-direction: column;justify-content: flex-end;">
@@ -438,10 +434,10 @@
                 </div>
                 {% for comment_comment in comment.commentcomment_set.all %}
                 <div class="review-entry" style="margin-left: 50px;">
-                    <div style="display: flex;">
+                    <a style="display: flex;" href="{% url 'spezspellz:other_profile' comment_comment.commenter.pk %}">
                         <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment_comment.commenter.pk %}" width="24" height="24"/>
                         <h3 style="margin: 0;margin-right: 16px;">{{ comment_comment.commenter.username }}</h3>
-                    </div>
+                    </a>
                     <div style="display: flex;justify-content: space-between;">
                         <p>{{ comment_comment.text }}</p>
                         {% if comment_comment.commenter == user %}

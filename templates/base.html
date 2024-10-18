@@ -52,7 +52,7 @@
 <script>
     if ("Notification" in window &&Notification.permission !== "granted")
         Notification.requestPermission().then(() => {});
-
+    {% if user.userinfo.timed_notification %}
     let notifications = {};
     window.refetch_noti = () => {
         fetch("{% url 'spezspellz:usersettings' %}", {
@@ -161,5 +161,6 @@
         }
         notifications.last_notified = cur_time;
     }, 1000);
+    {% endif %}
 </script>
 </html>
