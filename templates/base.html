@@ -50,37 +50,116 @@
 {% block AfterBody %}
 {% endblock %}
 <script>
-    function requestNotificationPermission() {
-        if ("Notification" in window) {
-            if (Notification.permission !== "granted") {
-                Notification.requestPermission().then(permission => {
-                    if (permission === "granted") {
-                        fetchNotifications();
+    if ("Notification" in window &&Notification.permission !== "granted")
+        Notification.requestPermission().then(() => {});
+
+    let notifications = {};
+    window.refetch_noti = () => {
+        fetch("{% url 'spezspellz:usersettings' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                method: "get_noti",
+                time: new Date(Date.now()).toISOString()
+            })
+        }).then(response => response.json())
+            .then(data => notifications = data)
+            .catch(() => {});
+    };
+    window.refetch_noti();
+    setInterval(() => {
+        const cur_time = new Date(Date.now())
+        if(notifications.last_notified == null)
+            notifications.last_notified = new Date(0);
+        for(const bookmark of notifications.bookmarks) {
+            for(const noti of bookmark.notifications) {
+                const date = new Date(noti.time);
+                switch(noti.every) {
+                    case 'D': {
+                        const cur_year = cur_time.getFullYear();
+                        const cur_month = cur_time.getMonth();
+                        const cur_date = cur_time.getDate();
+                        const new_date = new Date(date);
+                        new_date.setFullYear(cur_year);
+                        new_date.setMonth(cur_month);
+                        const new_old_date = new Date(new_date);
+                        new_date.setDate(cur_date);
+                        new_old_date.setDate(cur_date);
+                        if(notifications.last_notified <= new_date && new_date <= cur_time ||
+                            notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
+                            const n = new Notification(bookmark.title, {
+                                body: noti.message,
+                                icon: bookmark.icon
+                            });
+                        }
+                        break;
                     }
-                });
-            } else {
-                fetchNotifications();
+                    case 'W': {
+                        const cur_year = cur_time.getFullYear();
+                        const cur_date = cur_time.getDate();
+                        const cur_day = cur_time.getDay();
+                        const new_date = new Date(date);
+                        new_date.setFullYear(cur_year);
+                        new_date.setMonth(cur_month);
+                        const new_old_date = new Date(new_date);
+                        new_date.setDate(cur_date-cur_day+new_date.getDay())
+                        new_old_date.setDay(cur_date-cur_day-7+new_date.getDay())
+                        if(notifications.last_notified <= new_date && new_date <= cur_time ||
+                            notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
+                            const n = new Notification(bookmark.title, {
+                                body: noti.message,
+                                icon: bookmark.icon
+                            });
+                        }
+                        break;
+                    }
+                    case 'M': {
+                        const cur_year = cur_time.getFullYear();
+                        const cur_month = cur_time.getMonth();
+                        const new_date = new Date(date);
+                        new_date.setFullYear(cur_year);
+                        const new_old_date = new Date(new_date);
+                        new_date.setMonth(cur_month);
+                        new_old_date.setMonth(cur_month - 1);
+                        if(notifications.last_notified <= new_date && new_date <= cur_time ||
+                            notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
+                            const n = new Notification(bookmark.title, {
+                                body: noti.message,
+                                icon: bookmark.icon
+                            });
+                        }
+                        break;
+                    }
+                    case 'Y': {
+                        const cur_year = cur_time.getFullYear();
+                        const new_date = new Date(date);
+                        new_date.setFullYear(cur_year);
+                        const new_old_date = new Date(date);
+                        new_old_date.setFullYear(cur_year - 1);
+                        if(notifications.last_notified <= new_date && new_date <= cur_time ||
+                            notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
+                            const n = new Notification(bookmark.title, {
+                                body: noti.message,
+                                icon: bookmark.icon
+                            });
+                        }
+                        break;
+                    }
+                    case 'S': {
+                        if(notifications.last_notified <= date && date <= cur_time) {
+                            const n = new Notification(bookmark.title, {
+                                body: noti.message,
+                                icon: bookmark.icon
+                            });
+                        }
+                        break;
+                    }
+                }
             }
-        } else {
-            alert("This browser does not support desktop notifications.");
         }
-    }
-
-    function fetchNotifications() {
-        fetch("{% url 'spezspellz:notification' %}")
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(notification => {
-                    new Notification(notification.title, {
-                        body: notification.message,
-                        icon: notification.icon,
-                    });
-                });
-            });
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-        requestNotificationPermission();
-    });
+        notifications.last_notified = cur_time;
+    }, 1000);
 </script>
 </html>

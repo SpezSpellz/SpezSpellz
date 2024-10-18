@@ -160,6 +160,7 @@
         }).then(res => {
             if(!res.ok)
                 return Promise.reject();
+            window.refetch_noti();
             return res.text()
         }).then(text => {
             window.bookmark.src = "/assets/bookmark_" + ((text == "Bookmarked") ? "remove" : "add") + ".svg";

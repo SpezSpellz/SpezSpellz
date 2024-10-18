@@ -1,8 +1,10 @@
 """Implements the user settings page."""
 from typing import Optional, Any, cast
-from django.http import HttpRequest, HttpResponse, HttpResponseBase
+from django.http import HttpRequest, HttpResponse, HttpResponseBase, JsonResponse
 from django.shortcuts import render
+from django.urls import reverse
 from django.views import View
+from django.utils.dateparse import parse_datetime
 from django.db import transaction
 from spezspellz.models import Spell, HasTag, UserInfo, Bookmark, \
     Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory
@@ -61,11 +63,15 @@ class UserSettingsPage(View, RPCView):
         rate = get_or_none(rate_class, subject=obj, user=user)
         if rate is None:
             if vote is None:
-                return HttpResponse(rate_class.calc_rating(subject=obj), status=200)
+                return HttpResponse(
+                    rate_class.calc_rating(subject=obj), status=200
+                )
             rate = rate_class(user=user, subject=obj)
         elif vote is None:
             rate.delete()
-            return HttpResponse(rate_class.calc_rating(subject=obj), status=200)
+            return HttpResponse(
+                rate_class.calc_rating(subject=obj), status=200
+            )
         cast(Any, rate).positive = vote
         rate.save()
         return HttpResponse(rate_class.calc_rating(subject=obj), status=200)
@@ -125,14 +131,14 @@ class UserSettingsPage(View, RPCView):
         )
 
     def rpc_update(
-            self,
-            request: HttpRequest,
-            timed_noti: bool = True,
-            re_coms_noti: bool = True,
-            sp_re_noti: bool = True,
-            sp_coms_noti: bool = True,
-            private: bool = False,
-            desc: str = ""
+        self,
+        request: HttpRequest,
+        timed_noti: bool = True,
+        re_coms_noti: bool = True,
+        sp_re_noti: bool = True,
+        sp_coms_noti: bool = True,
+        private: bool = False,
+        desc: str = ""
     ) -> HttpResponse:
         """Handle settings update."""
         if not request.user.is_authenticated:
@@ -149,3 +155,57 @@ class UserSettingsPage(View, RPCView):
             user_info.user_desc = str(desc)
             user_info.save()
         return HttpResponse("OK")
+
+    def rpc_get_noti(
+        self,
+        request: HttpRequest,
+        time: Optional[str] = None
+    ) -> HttpResponseBase:
+        """Return notification data for notifying user."""
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        if not isinstance(time, str):
+            return HttpResponse(
+                "Parameter `time` must be a string", status=400
+            )
+        try:
+            new_datetime = parse_datetime(time)
+            if new_datetime is None:
+                raise ValueError
+        except ValueError:
+            return HttpResponse("Bad parameter `time`", status=400)
+        user_info = user.userinfo if hasattr(user, "userinfo") else UserInfo(
+            user=user
+        )
+        bookmarks: list = []
+        data: dict = {
+            "last_notified":
+            None if user_info.last_notified is None else
+            user_info.last_notified.isoformat(),
+            "bookmarks":
+            bookmarks
+        }
+        user_info.last_notified = new_datetime
+        user_info.save()
+        for bookmark in cast(Any, user).bookmark_set.filter(
+            spell__spellnotification__isnull=False
+        ).all():
+            bookmark_info: dict = {
+                "title":
+                bookmark.spell.title,
+                "icon":
+                reverse(
+                    "spezspellz:spell_thumbnail", args=(bookmark.spell.pk, )
+                ),
+                "notifications": []
+            }
+            for notification in bookmark.spell.spellnotification_set.all():
+                notification_info: dict = {
+                    "message": notification.message,
+                    "time": notification.datetime.isoformat(),
+                    "every": notification.every
+                }
+                bookmark_info["notifications"].append(notification_info)
+            bookmarks.append(bookmark_info)
+        return JsonResponse(data)

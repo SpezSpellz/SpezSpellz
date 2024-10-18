@@ -24,6 +24,7 @@ class UserInfo(models.Model):
     avatar: models.FileField = models.FileField(
         upload_to="content", null=True
     )
+    last_notified: models.DateTimeField = models.DateTimeField(auto_now=True)
 
     @property
     def is_private(self):
