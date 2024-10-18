@@ -60,3 +60,24 @@ h1, h2, li, a {
 dialog::backdrop {
     backdrop-filter: blur(2px);
 }
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #959595;
+    border-radius: 5px;
+}
+  
+::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+* {
+    scrollbar-gutter: stable both-edges;
+}
