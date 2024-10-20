@@ -34,8 +34,8 @@
         <div style="display: inline-block;">
             {% for tag in tags %}
             <div style="display: inline-block;">
-                <div state="{% if tag.vote is None %}N{% else %}{% if tag.vote.positive %}U{% else %}D{% endif %}{% endif %}" tag="{{ tag.pk }}" class="tag" style="background-color: rgba(250, 190, 190, 0.298); border-color: rgb(250, 190, 190);">
-                    <div style="display: flex;margin-right: 4px; margin-left: 3px;">
+                <div class="tag" style="background-color: rgba(250, 190, 190, 0.298); border-color: rgb(250, 190, 190);">
+                    <div state="{% if tag.vote is None %}N{% else %}{% if tag.vote.positive %}U{% else %}D{% endif %}{% endif %}" style="display: flex;margin-right: 4px; margin-left: 3px;">
                         {% if user.is_authenticated %}
                         <input uv_btn onclick="window.vote_obj(this.parentElement, 'tag', true, {{ tag.pk }})" type="image" src="{% if tag.vote is not None and tag.vote.positive %}/assets/up_filled.svg{% else %}/assets/up_outline.svg{% endif %}" height="15"/>
                         {% endif %}
