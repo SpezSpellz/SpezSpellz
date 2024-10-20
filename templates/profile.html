@@ -7,7 +7,12 @@
 {% block Body %}
 <h1>Profile of {{ user.username }}</h1>
 
-<h2>Your Spells</h2>
+<div style="display: flex;justify-content: center;">
+  <h2 style="margin: 0;margin-right: 10px;padding-left: 80px;">Your Spells</h2>
+  <div style="display: flex;flex-direction: column;justify-content: end;">
+    <a href="{% url 'spezspellz:myspell' %}">(View all)</a>
+  </div>
+</div>
 <ul>
   {% for spell in spells %}
   <li my_spell="{{ spell.pk }}">
@@ -16,7 +21,7 @@
     <a onclick="window.delete_spell({{spell.pk}})" class="btn-like edit-btn"><img width="32" src="/assets/delete.svg"/></a>
   </li>
   {% empty %}
-    <li>You have no spells.</li>
+  <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any spells</p></li>
   {% endfor %}
 </ul>
 
@@ -29,7 +34,7 @@
     <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="btn-like bookmark" width="32" src="/assets/bookmark_remove.svg"/>
   </li>
   {% empty %}
-    <li>You have no bookmarks.</li>
+    <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any bookmarks</p></li>
   {% endfor %}
 </ul>
 <h2>Spell History</h2>
@@ -39,7 +44,7 @@
     <a href="{% url 'spezspellz:spell' spell.spell.pk %}">{{ spell.spell.title }}</a>
   </li>
   {% empty %}
-    <li>You have no spells.</li>
+  <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You didn't view any spell</p></li>
   {% endfor %}
 </ul>
 <script>
@@ -50,15 +55,16 @@
               "X-CSRFToken": "{{ csrf_token }}"
           },
           body: JSON.stringify({
-              method: "delete_spell",
-              spell_id: spell
+              method: "delete",
+              obj_type: "spell",
+              obj_id: spell
           })
       }).then(res => {
           if(!res.ok)
               return Promise.reject();
           return res.text()
       }).then(text => {
-          if(text != "Spell deleted")
+          if(text != "Object deleted")
             return;
           document.querySelector("[my_spell=\"" + spell + "\"]").remove();
       })

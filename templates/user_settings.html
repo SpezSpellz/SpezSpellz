@@ -5,13 +5,16 @@
 {% endblock %}
 {% block Body %}
 <dialog id="popup_dlg">
-    <h1 style="text-align: center;margin: auto;margin-top: 0px;">Apply changes</h1>
+    <h1 id="popup_title" style="text-align: center;margin: auto;margin-top: 0px;">Apply changes</h1>
     <p id="popup_msg"></p>
     <button id="close_popup" class="generic-button" style="display: block;margin: auto;">Close</button>
 </dialog>
 <div style="display: flex;flex-direction: column;">
     <div style="display: inline-block;margin: auto;">
     <h1>User settings for {{ user.username }}</h1>
+    <h2>Avatar</h2>
+    <input id="upload_avatar_btn" type="image" width="128" src="{% url 'spezspellz:avatar' user.pk %}"/>
+    <input id="upload_avatar_input" accept="image/png, image/jpeg" name="pp" type="file" hidden/>
     <h2>About me</h2>
     <textarea id="about_me" class="profile-desc">{{ user.userinfo.user_desc }}</textarea>
     <h2>Privacy</h2>
@@ -69,14 +72,15 @@
     </div>
 </div>
 <script>
-    function display_generic_failure() {
+    function display_generic_failure(msg = null) {
         window.popup_msg.style.color = "#F00";
-        window.popup_msg.innerText = "Failed to apply changes.";
+        window.popup_msg.innerText = msg || "Failed to apply changes";
     }
     window.close_popup.onclick = () => window.popup_dlg.close();
     window.apply_changes.onclick = () => {
+        window.popup_title.innerText = "Apply changes";
         window.popup_msg.style.color = "#FFF";
-        window.popup_msg.innerText = "Applying changes, please wait."
+        window.popup_msg.innerText = "Applying changes, please wait"
         window.popup_dlg.showModal();
         fetch("{% url 'spezspellz:usersettings' %}", {
             method: "POST",
@@ -101,11 +105,42 @@
                 if(res.status != 200)
                     window.popup_msg.style.color = "#F00";
                 if(res.status == 200 && text == "OK")
-                window.popup_msg.innerText = "Changes applied.";
+                window.popup_msg.innerText = "Changes applied";
                 else
                     window.popup_msg.innerText = text;
             }).catch(() => display_generic_failure());
         }).catch(() => display_generic_failure());
     }
+    window.upload_avatar_btn.onclick = () => window.upload_avatar_input.click();
+    window.upload_avatar_input.onchange = () => {
+        const [file] = window.upload_avatar_input.files
+        if (!file)
+            return;
+        const form_data = new FormData();
+        form_data.set("pp", file);
+        window.popup_title.innerText = "Upload avatar";
+        window.popup_msg.style.color = "#FFF";
+        window.popup_msg.innerText = "Uploading avatar, please wait";
+        window.popup_dlg.showModal();
+        fetch("{% url 'spezspellz:usersettings' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: form_data
+        }).then(res => {
+            if(!res.ok) {
+                display_generic_failure("Failed to upload avatar");
+                return;
+            }
+            res.text().then(text => {
+                window.popup_msg.innerText = text;
+                if(res.status != 200)
+                    window.popup_msg.style.color = "#F00";
+                if(res.status == 200)
+                    window.upload_avatar_btn.src = URL.createObjectURL(file);
+            }).catch(() => display_generic_failure("Failed to upload avatar"));
+        }).catch(() => display_generic_failure("Failed to upload avatar"));
+    };
 </script>
 {% endblock %}

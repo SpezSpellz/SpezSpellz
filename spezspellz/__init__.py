@@ -1,0 +1,1 @@
+"""Makes spezspellz a module."""
