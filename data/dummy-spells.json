@@ -31,7 +31,8 @@
     "spell_review_notification": true,
     "spell_comment_notification": true,
     "user_desc": "I AM THE DEMO, I AM THE FIRST USER EVER CREATED, EVER!!",
-    "avatar": ""
+    "avatar": "",
+    "last_notified": "2024-10-16T04:23:20.445Z"
   }
 },
 {
@@ -45,7 +46,8 @@
     "spell_review_notification": true,
     "spell_comment_notification": true,
     "user_desc": "I'm an edgy private user. Nobody can visit my profile because I hate people.",
-    "avatar": ""
+    "avatar": "",
+    "last_notified": "2024-10-16T04:23:20.445Z"
   }
 },
 {
@@ -59,7 +61,8 @@
     "spell_review_notification": true,
     "spell_comment_notification": true,
     "user_desc": "Hi there! I'm Astrid Moon, a witch with a love for the earthy and mysterious. When I'm not sharing my knowledge, you can find me tending to my garden or brewing potions.",
-    "avatar": "content/AstridMoon.png"
+    "avatar": "content/AstridMoon.png",
+    "last_notified": "2024-10-16T04:23:20.445Z"
   }
 },
 {
@@ -73,7 +76,8 @@
     "spell_review_notification": true,
     "spell_comment_notification": true,
     "user_desc": "Greetings, I'm Eryndor Thorne. I'm on a quest for understanding the mysteries of the universe. If you're looking for someone to share their insights with, I might be your guide.",
-    "avatar": "content/EryndorThorne.png"
+    "avatar": "content/EryndorThorne.png",
+    "last_notified": "2024-10-16T04:23:20.445Z"
   }
 },
 {
@@ -87,7 +91,8 @@
     "spell_review_notification": true,
     "spell_comment_notification": true,
     "user_desc": "Hey there! I'm Luna Nightshade, a witch with a passion for magic and mayhem. If you're looking for someone to shake things up, I might be your person.",
-    "avatar": "content/LunaNightshade.png"
+    "avatar": "content/LunaNightshade.png",
+    "last_notified": "2024-10-16T04:23:20.445Z"
   }
 },
 {
@@ -101,7 +106,8 @@
     "spell_review_notification": true,
     "spell_comment_notification": true,
     "user_desc": "Hello, I'm Rowan Wystan. I've been on this journey for many years, sharing my knowledge with those who seek wisdom. Take a seat by the fire and let's have a chat.",
-    "avatar": "content/RowanWystan.png"
+    "avatar": "content/RowanWystan.png",
+    "last_notified": "2024-10-16T04:23:20.445Z"
   }
 },
 {
@@ -115,7 +121,8 @@
     "spell_review_notification": true,
     "spell_comment_notification": true,
     "user_desc": "Hey, I'm Piper Witchwood! I'm all about spreading magic and positivity wherever I go. Join me on my journey of discovery and let's make some witchy memories!",
-    "avatar": "content/PiperWitchwood.png"
+    "avatar": "content/PiperWitchwood.png",
+    "last_notified": "2024-10-16T04:23:20.445Z"
   }
 },
 {
