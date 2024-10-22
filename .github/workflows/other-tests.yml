@@ -1,4 +1,4 @@
-name: Unit tests
+name: Unit tests others
 run-name: ${{ github.actor }} is testing the project.
 on:
   push:

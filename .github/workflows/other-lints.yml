@@ -1,4 +1,4 @@
-name: Lint
+name: Lint Others
 run-name: ${{ github.actor }} is linting the project.
 on:
   push:
