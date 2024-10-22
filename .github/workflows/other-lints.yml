@@ -1,0 +1,22 @@
+name: Lint
+run-name: ${{ github.actor }} is linting the project.
+on:
+  push:
+    branches-ignore:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Install linters
+        run: pip install flake8 flake8-docstrings mypy ruff
+      - name: Run linters
+        run: python lint.py

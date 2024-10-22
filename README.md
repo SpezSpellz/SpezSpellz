@@ -1,5 +1,5 @@
 ## SpezSpellz: A Django-based web application for sharing spells and rituals.
-[![Lint](https://github.com/SpezSpellz/SpezSpellz/actions/workflows/lints.yml/badge.svg)](https://github.com/SpezSpellz/SpezSpellz/actions/workflows/lints.yml) [![Unit tests](https://github.com/SpezSpellz/SpezSpellz/actions/workflows/tests.yml/badge.svg)](https://github.com/SpezSpellz/SpezSpellz/actions/workflows/tests.yml)  
+[![Lint](https://github.com/SpezSpellz/SpezSpellz/actions/workflows/lints.yml/badge.svg)](https://github.com/SpezSpellz/SpezSpellz/actions/workflows/lints.yml) [![Unit tests](https://github.com/SpezSpellz/SpezSpellz/actions/workflows/tests.yml/badge.svg)](https://github.com/SpezSpellz/SpezSpellz/actions/workflows/tests.yml)  [![Test Coverage](https://img.shields.io/endpoint?logo=onlyoffice&url=https%3A%2F%2Fgist.githubusercontent.com%2FPawat-Sarnchawanakit%2F74324528e3a6e88099627fcb0455dc5b%2Fraw)](https://github.com/SpezSpellz/SpezSpellz/actions/workflows/coverage.yml)
 ### Key Features
 - Spell and rituals Upload - Enable users to upload spells and rituals with details like spell name, description, ingredients, steps, etc.
 - Spell and rituals Search - Allow users to search for spells and rituals based on keywords, categories, or tags.
