@@ -264,7 +264,7 @@ class UserSettingsPage(View, RPCView):
         if not user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
         try:
-            noti_id = int(noti_id)
+            int_noti_id: int = int(noti_id)
         except ValueError:
             return HttpResponse("Parameter `spell_id` must be an integer", status=400)
         if mode not in ["A", "R"]:
@@ -272,16 +272,19 @@ class UserSettingsPage(View, RPCView):
                 "Parameter `mode` accept only 'A' for append or 'R' for remove",
                 status=400
             )
-        noti = get_or_none(SpellNotification, id=noti_id)
+        noti = get_or_none(SpellNotification, id=int_noti_id)
         if noti is None:
-            return HttpResponse(f"Notification not found", status=404)
-        unread = user.userinfo.unread_notifications
+            return HttpResponse("Notification not found", status=404)
+        user_info = user.userinfo if hasattr(user, "userinfo") else UserInfo(
+            user=user
+        )
+        unread = user_info.unread_notifications
         if mode == "A":
-            unread.append(noti_id)
+            unread.append(int_noti_id)
         elif mode == "R":
-            unread.remove(noti_id)
+            unread.remove(int_noti_id)
         unread = unread
-        user.userinfo.save()
+        user_info.save()
         return HttpResponse("UserInfo updated")
 
     def rpc_unread_count(
@@ -292,8 +295,11 @@ class UserSettingsPage(View, RPCView):
         user = request.user
         if not user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
+        user_info = user.userinfo if hasattr(user, "userinfo") else UserInfo(
+            user=user
+        )
         data = {
             "unread_count":
-                user.userinfo.unread_count
+                user_info.unread_count
         }
         return JsonResponse(data)
