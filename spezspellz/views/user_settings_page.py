@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.views import View
 from django.utils.dateparse import parse_datetime
 from django.db import transaction
+from django.contrib.auth.models import User
 from spezspellz.models import Spell, HasTag, UserInfo, Bookmark, \
     Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory, SpellNotification
 from spezspellz.utils import get_or_none
@@ -155,6 +156,47 @@ class UserSettingsPage(View, RPCView):
             user_info.user_desc = str(desc)
             user_info.save()
         return HttpResponse("OK")
+
+    def rpc_up_uname(
+        self,
+        request: HttpRequest,
+        name: str = ""
+    ) -> HttpResponse:
+        """Handle settings update."""
+        if not request.user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        user = cast(User, request.user)
+        if not isinstance(name, str):
+            return HttpResponse("Parameter `name` must be a string", status=400)
+        if not name:
+            return HttpResponse("Username must not be empty", status=400)
+        with transaction.atomic():
+            if get_or_none(User, username=name) is not None:
+                return HttpResponse("A user with that username already exists", status=403)
+            user.username = name
+            user.save()
+        return HttpResponse("Username updated")
+
+    def rpc_up_passwd(
+        self,
+        request: HttpRequest,
+        opasswd: str = "",
+        npasswd: str = ""
+    ) -> HttpResponse:
+        """Handle settings update."""
+        if not request.user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        if not isinstance(opasswd, str):
+            return HttpResponse("Parameter `opasswd` must be a string", status=400)
+        if not isinstance(npasswd, str):
+            return HttpResponse("Parameter `npasswd` must be a string", status=400)
+        if not opasswd or not npasswd:
+            return HttpResponse("Passwords must not be empty", status=400)
+        if not request.user.check_password(opasswd):
+            return HttpResponse("Old password is incorrect", status=400)
+        request.user.set_password(npasswd)
+        request.user.save()
+        return HttpResponse("Password changed")
 
     def rpc_get_noti(
         self,

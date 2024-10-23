@@ -1,0 +1,25 @@
+name: Unit tests others
+run-name: ${{ github.actor }} is testing the project.
+on:
+  push:
+    branches-ignore:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run tests
+        run: |
+              export SECRET_KEY="django-insecure-&+b!t4pt!38n*)4fe=&o6sdwf3+zscn&sty!h4ho-vqca+snd_"
+              export DEBUG=True
+              export ALLOWED_HOSTS=localhost
+              export TIME_ZONE=Asia/Bangkok
+              python ./manage.py test

@@ -1,0 +1,32 @@
+name: Unit tests
+run-name: ${{ github.actor }} is generating test coverage statistics for the project.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Install coverage
+        run: pip install coverage
+      - name: Run tests
+        run: |
+              export SECRET_KEY="django-insecure-&+b!t4pt!38n*)4fe=&o6sdwf3+zscn&sty!h4ho-vqca+snd_"
+              export DEBUG=True
+              export ALLOWED_HOSTS=localhost
+              export TIME_ZONE=Asia/Bangkok
+              coverage run manage.py test
+              COVERAGE_MESSAGE="$(coverage report --omit="*/migrations/*","*/tests/*",manage.py,"config/*" --format=total)"
+              echo "Coverage is $COVERAGE_MESSAGE"
+              curl -L -X PATCH -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $SECRET_GIST_KEY" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/gists/74324528e3a6e88099627fcb0455dc5b -d "{\"files\":{\"Coverage Badges for SpezSpellz\":{\"content\":\"{\\\"schemaVersion\\\": 1, \\\"label\\\": \\\"Test Coverage\\\", \\\"message\\\": \\\"$COVERAGE_MESSAGE%\\\", \\\"color\\\": \\\"green\\\"}\"}}}"
+        env:
+          SECRET_GIST_KEY: ${{ secrets.SECRET_GIST_KEY }}

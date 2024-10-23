@@ -33,3 +33,6 @@ content/
 
 # Temp files
 temp/
+
+# Secrets
+.secrets
