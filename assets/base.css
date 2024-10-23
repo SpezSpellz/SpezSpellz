@@ -4,6 +4,23 @@ body {
 h1, h2, li, a {
     color: #FFFFFF;
 }
+
+.badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: red;
+    color: white;
+    border-radius: 40%;
+    padding: 4px 7px;
+    font-size: 12px;
+    display: none;
+}
+
+#bell_button {
+    position: relative;
+}
+
 .btn-like {
     color: #FFF;
     border-style: none;
@@ -27,7 +44,7 @@ h1, h2, li, a {
 .left-top-btns {
     display: flex;
     position: absolute;
-    top: 8px;
+    top: 12px;
     left: 0;
     flex-direction: row;
 }
@@ -35,7 +52,7 @@ h1, h2, li, a {
 .right-top-btns {
     display: flex;
     position: absolute;
-    top: 8px;
+    top: 12px;
     right: 0;
     flex-direction: row;
 }

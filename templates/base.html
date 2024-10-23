@@ -33,7 +33,10 @@
     </div>
     <div class="right-top-btns">
         {% if request.resolver_match.url_name == 'profile' %}
-        <a class="btn-like right-top-btn"><img width="32" src="/assets/bell.svg"/></a>
+        <div id="bell_button" class="btn-like right-top-btn">
+            <img width="32" src="/assets/bell.svg"/>
+            <span class="badge" id="notif_count">0</span>
+        </div>
         <a href="{% url 'spezspellz:usersettings' %}" class="btn-like right-top-btn"><img width="32" src="/assets/cog.svg"/></a>
         <form action="{% url 'logout' %}?next={% url 'spezspellz:home' %}" method="POST">
             {% csrf_token %}
@@ -41,7 +44,12 @@
         </form>
         {% else %}
         {% if user.is_authenticated %}
-        <a class="btn-like right-top-btn"><img width="32" src="/assets/bell.svg"/></a>
+        {% if request.resolver_match.url_name == 'home' %}
+        <a id="bell_button" class="btn-like right-top-btn">
+            <img width="32" src="/assets/bell.svg"/>
+            <span class="badge" id="notif_count">0</span>
+        </a>
+        {% endif %}
         <a href="{% url 'spezspellz:profile' %}" class="btn-like right-top-btn"><img width="32" src="/assets/profile.svg"/></a>
         {% elif request.resolver_match.url_name != 'login' %}
         <a href="{% url 'login' %}?next={% url 'spezspellz:home' %}" class="btn-like right-top-btn"><img width="32" src="/assets/login.svg"/></a>
@@ -55,7 +63,30 @@
     if ("Notification" in window &&Notification.permission !== "granted")
         Notification.requestPermission().then(() => {});
     {% if user.userinfo.timed_notification %}
+    const badge = window.document.getElementById("notif_count")
     let notifications = {};
+    fetch("{% url 'spezspellz:usersettings' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                method: "unread_count",
+            })
+        }).then(response => response.json())
+            .then(data => {
+                window.update_badge(data.unread_count);
+            }
+    )
+    window.update_badge = (unread_count) => {
+        if (unread_count > 0){
+            badge.innerText = unread_count.toString();
+            badge.style.display = "block";
+        }
+        else {
+           badge.style.display = "none";
+        }
+    }
     window.refetch_noti = () => {
         fetch("{% url 'spezspellz:usersettings' %}", {
             method: "POST",
@@ -70,9 +101,24 @@
             .then(data => notifications = data)
             .catch(() => {});
     };
+    window.update_unread = (noti_id, mode) => {
+        fetch("{% url 'spezspellz:usersettings' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                method: "update_unread",
+                noti_id: noti_id,
+                mode: mode
+            })
+        })
+    }
+
     window.refetch_noti();
     setInterval(() => {
-        const cur_time = new Date(Date.now())
+        const cur_time = new Date(Date.now());
+        let unread_count = parseInt(badge.innerText);
         if(notifications.last_notified == null)
             notifications.last_notified = new Date(0);
         for(const bookmark of notifications.bookmarks) {
@@ -91,6 +137,8 @@
                         new_old_date.setDate(cur_date);
                         if(notifications.last_notified <= new_date && new_date <= cur_time ||
                             notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
+                            window.update_unread(noti.noti_id, "A");
+                            unread_count++;
                             const n = new Notification(bookmark.title, {
                                 body: noti.message,
                                 icon: bookmark.icon
@@ -111,6 +159,8 @@
                         new_old_date.setDate(cur_date-cur_day-7+new_date.getDay())
                         if(notifications.last_notified <= new_date && new_date <= cur_time ||
                             notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
+                            window.update_unread(noti.noti_id, "A");
+                            unread_count++;
                             const n = new Notification(bookmark.title, {
                                 body: noti.message,
                                 icon: bookmark.icon
@@ -128,6 +178,8 @@
                         new_old_date.setMonth(cur_month - 1);
                         if(notifications.last_notified <= new_date && new_date <= cur_time ||
                             notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
+                            window.update_unread(noti.noti_id, "A");
+                            unread_count++;
                             const n = new Notification(bookmark.title, {
                                 body: noti.message,
                                 icon: bookmark.icon
@@ -143,6 +195,8 @@
                         new_old_date.setFullYear(cur_year - 1);
                         if(notifications.last_notified <= new_date && new_date <= cur_time ||
                             notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
+                            window.update_unread(noti.noti_id, "A");
+                            unread_count++;
                             const n = new Notification(bookmark.title, {
                                 body: noti.message,
                                 icon: bookmark.icon
@@ -152,6 +206,8 @@
                     }
                     case 'S': {
                         if(notifications.last_notified <= date && date <= cur_time) {
+                            window.update_unread(noti.noti_id, "A");
+                            unread_count++;
                             const n = new Notification(bookmark.title, {
                                 body: noti.message,
                                 icon: bookmark.icon
@@ -163,6 +219,7 @@
             }
         }
         notifications.last_notified = cur_time;
+        window.update_badge(unread_count);
     }, 1000);
     {% endif %}
 </script>

@@ -7,7 +7,7 @@ from django.views import View
 from django.utils.dateparse import parse_datetime
 from django.db import transaction
 from spezspellz.models import Spell, HasTag, UserInfo, Bookmark, \
-    Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory
+    Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory, SpellNotification
 from spezspellz.utils import get_or_none
 from .rpc_view import RPCView
 
@@ -204,8 +204,54 @@ class UserSettingsPage(View, RPCView):
                 notification_info: dict = {
                     "message": notification.message,
                     "time": notification.datetime.isoformat(),
-                    "every": notification.every
+                    "every": notification.every,
+                    "noti_id": notification.id
                 }
                 bookmark_info["notifications"].append(notification_info)
             bookmarks.append(bookmark_info)
+        return JsonResponse(data)
+
+    def rpc_update_unread(
+            self,
+            request: HttpRequest,
+            noti_id: str,
+            mode: str,
+    ) -> HttpResponseBase:
+        """Update unread_notification attribute of UserInfo."""
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        try:
+            noti_id = int(noti_id)
+        except ValueError:
+            return HttpResponse("Parameter `spell_id` must be an integer", status=400)
+        if mode not in ["A", "R"]:
+            return HttpResponse(
+                "Parameter `mode` accept only 'A' for append or 'R' for remove",
+                status=400
+            )
+        noti = get_or_none(SpellNotification, id=noti_id)
+        if noti is None:
+            return HttpResponse(f"Notification not found", status=404)
+        unread = user.userinfo.unread_notifications
+        if mode == "A":
+            unread.append(noti_id)
+        elif mode == "R":
+            unread.remove(noti_id)
+        unread = unread
+        user.userinfo.save()
+        return HttpResponse("UserInfo updated")
+
+    def rpc_unread_count(
+            self,
+            request: HttpRequest
+    ) -> HttpResponseBase:
+        """Return unread_count property of UserInfo."""
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        data = {
+            "unread_count":
+                user.userinfo.unread_count
+        }
         return JsonResponse(data)

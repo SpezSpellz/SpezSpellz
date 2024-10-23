@@ -25,11 +25,17 @@ class UserInfo(models.Model):
         upload_to="content", null=True
     )
     last_notified: models.DateTimeField = models.DateTimeField(auto_now=True)
+    unread_notifications: models.JSONField = models.JSONField(default=list)
 
     @property
     def is_private(self):
         """Checks whether user is private."""
         return self.private
+
+    @property
+    def unread_count(self):
+        """Return unread notifications count."""
+        return len(self.unread_notifications)
 
     def __str__(self):
         """Return user info as string."""
