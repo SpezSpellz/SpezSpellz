@@ -81,7 +81,7 @@
 <ul>
   {% for spell in history %}
   <li>
-    <a href="{% url 'spezspellz:spell' spell.spell.pk %}">{{ spell.spell.title }}</a>
+    <a bookmark_spell="{{ spell.spell.pk }}" href="{% url 'spezspellz:spell' spell.spell.pk %}">{{ spell.spell.title }}</a>
   </li>
   {% empty %}
   <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You didn't view any spell</p></li>
@@ -107,6 +107,8 @@
           if(text != "Object deleted")
             return;
           document.querySelector("[my_spell=\"" + spell + "\"]").remove();
+          for(const obj of document.querySelectorAll("[bookmark_spell=\"" + spell + "\"]"))
+            obj.remove();
       })
   }
   window.bookmark_spell = (spell) => {
