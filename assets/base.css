@@ -21,6 +21,65 @@ h1, h2, li, a {
     position: relative;
 }
 
+.popup {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: #343434;
+    width: 350px;
+    max-height: 450px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.popup-notif {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    height: 80px;
+    background-color: #1C1C1C;
+    border-radius: 6px;
+    padding: 5px;
+}
+
+.popup-notif:hover {
+    background-color: #292929;
+}
+
+.popup-notif:active {
+    background-color: #303030;
+}
+
+.popup-img {
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+    margin-right: 10px;
+}
+
+.popup-title {
+    color: #FFF;
+    font-size: 18px;
+    margin: 5px;
+}
+
+.popup-message {
+    color: #dcdcdc;
+    font-size: 16px;
+    margin: 5px;
+}
+
+.popup-time {
+    color: #dcdcdc;
+    font-size: 16px;
+    margin: 5px;
+}
+
+
 .btn-like {
     color: #FFF;
     border-style: none;

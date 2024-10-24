@@ -33,10 +33,11 @@
     </div>
     <div class="right-top-btns">
         {% if request.resolver_match.url_name == 'profile' %}
-        <div id="bell_button" class="btn-like right-top-btn">
+        <a id="bell_button" class="btn-like right-top-btn" onclick="popup()">
             <img width="32" src="/assets/bell.svg"/>
-            <span class="badge" id="notif_count">0</span>
-        </div>
+            <span class="badge" id="notif_count"></span>
+        </a>
+        <div id="popup_box" class="popup"></div>
         <a href="{% url 'spezspellz:usersettings' %}" class="btn-like right-top-btn"><img width="32" src="/assets/cog.svg"/></a>
         <form action="{% url 'logout' %}?next={% url 'spezspellz:home' %}" method="POST">
             {% csrf_token %}
@@ -45,10 +46,11 @@
         {% else %}
         {% if user.is_authenticated %}
         {% if request.resolver_match.url_name == 'home' %}
-        <a id="bell_button" class="btn-like right-top-btn">
+        <a id="bell_button" class="btn-like right-top-btn" onclick="popup()">
             <img width="32" src="/assets/bell.svg"/>
-            <span class="badge" id="notif_count">0</span>
+            <span class="badge" id="notif_count"></span>
         </a>
+        <div id="popup_box" class="popup"></div>
         {% endif %}
         <a href="{% url 'spezspellz:profile' %}" class="btn-like right-top-btn"><img width="32" src="/assets/profile.svg"/></a>
         {% elif request.resolver_match.url_name != 'login' %}
@@ -66,16 +68,69 @@
     if (localStorage.getItem("unread_count") == null){
         localStorage.setItem("unread_count", "0");
     }
-    const badge = window.document.getElementById("notif_count")
+    if (localStorage.getItem("noti_array") == null){
+        localStorage.setItem("noti_array", JSON.stringify([]));
+    }
+    const badge = window.document.getElementById("notif_count");
+    const popup_box = window.document.getElementById("popup_box");
     let notifications = {};
     let unread_count = localStorage.getItem("unread_count");
-    window.update_badge = (unread_count) => {
-        if (unread_count > 0){
-            badge.innerText = unread_count.toString();
-            badge.style.display = "block";
+    popup = () => {
+        if (popup_box != null) {
+            if (popup_box.style.display === "block") {
+                popup_box.style.display = "none";
+            } else {
+                popup_box.style.display = "block";
+            }
         }
-        else {
-           badge.style.display = "none";
+    }
+    window.create_li = (noti_id) => {
+        if (popup_box != null) {
+            const noti = JSON.parse(localStorage.getItem(noti_id));
+            const ref = document.createElement("a");
+            ref.href = `/spell/${noti.ref}`
+            const noti_box = document.createElement("div");
+            noti_box.classList.add("popup-notif");
+            const img = document.createElement("img");
+            img.classList.add("popup-img");
+            img.src = noti.icon;
+            const info = document.createElement("div");
+            const title = document.createElement("p");
+            title.classList.add("popup-title");
+            title.innerText = noti.title;
+            const message = document.createElement("p");
+            message.classList.add("popup-message");
+            message.innerText = noti.message;
+            const time = document.createElement("p");
+            time.classList.add("popup-time");
+            time.innerText = new Date(noti.time).toLocaleString(
+                "en-US",
+                {
+                    year: 'numeric',
+                    month: 'long',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    day: 'numeric',
+                    hour12: true
+                }
+            );
+            popup_box.append(ref);
+            ref.append(noti_box);
+            noti_box.append(img);
+            noti_box.append(info);
+            info.append(title);
+            info.append(message);
+            info.append(time);
+        }
+    }
+    window.update_badge = (unread_count) => {
+        if (badge != null) {
+            if (unread_count > 0) {
+                badge.innerText = unread_count.toString();
+                badge.style.display = "block";
+            } else {
+                badge.style.display = "none";
+            }
         }
     }
     window.refetch_noti = () => {
@@ -91,6 +146,28 @@
         }).then(response => response.json())
             .then(data => notifications = data)
             .catch(() => {});
+    }
+    update_storage = (noti, bookmark, cur_time) => {
+        localStorage.setItem(
+            noti.noti_id.toString(),
+            JSON.stringify({
+                "title": bookmark.title,
+                "message": noti.message,
+                "icon": bookmark.icon,
+                "time": cur_time,
+                "ref": noti.spell_id
+            })
+        )
+        let a = JSON.parse(localStorage.getItem("noti_array"));
+        a.push(noti.noti_id);
+        localStorage.setItem("noti_array", JSON.stringify(a));
+        window.create_li(noti.noti_id.toString());
+        unread_count++;
+    }
+    if (JSON.parse(localStorage.getItem("noti_array")).length !== 0){
+        for (const noti_id of JSON.parse(localStorage.getItem("noti_array"))){
+            window.create_li(noti_id.toString());
+        }
     }
     window.refetch_noti();
     window.update_badge(unread_count)
@@ -114,7 +191,7 @@
                         new_old_date.setDate(cur_date);
                         if(notifications.last_notified <= new_date && new_date <= cur_time ||
                             notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
-                            unread_count++;
+                            update_storage(noti, bookmark, cur_time);
                             const n = new Notification(bookmark.title, {
                                 body: noti.message,
                                 icon: bookmark.icon
@@ -135,7 +212,7 @@
                         new_old_date.setDate(cur_date-cur_day-7+new_date.getDay())
                         if(notifications.last_notified <= new_date && new_date <= cur_time ||
                             notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
-                            unread_count++;
+                            update_storage(noti, bookmark, cur_time);
                             const n = new Notification(bookmark.title, {
                                 body: noti.message,
                                 icon: bookmark.icon
@@ -153,7 +230,7 @@
                         new_old_date.setMonth(cur_month - 1);
                         if(notifications.last_notified <= new_date && new_date <= cur_time ||
                             notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
-                            unread_count++;
+                            update_storage(noti, bookmark, cur_time);
                             const n = new Notification(bookmark.title, {
                                 body: noti.message,
                                 icon: bookmark.icon
@@ -169,7 +246,7 @@
                         new_old_date.setFullYear(cur_year - 1);
                         if(notifications.last_notified <= new_date && new_date <= cur_time ||
                             notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
-                            unread_count++;
+                            update_storage(noti, bookmark, cur_time);
                             const n = new Notification(bookmark.title, {
                                 body: noti.message,
                                 icon: bookmark.icon
@@ -179,7 +256,7 @@
                     }
                     case 'S': {
                         if(notifications.last_notified <= date && date <= cur_time) {
-                            unread_count++;
+                            update_storage(noti, bookmark, cur_time);
                             const n = new Notification(bookmark.title, {
                                 body: noti.message,
                                 icon: bookmark.icon

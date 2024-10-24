@@ -8,7 +8,7 @@ from django.utils.dateparse import parse_datetime
 from django.db import transaction
 from django.contrib.auth.models import User
 from spezspellz.models import Spell, HasTag, UserInfo, Bookmark, \
-    Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory, SpellNotification
+    Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory
 from spezspellz.utils import get_or_none
 from .rpc_view import RPCView
 
@@ -247,7 +247,8 @@ class UserSettingsPage(View, RPCView):
                     "message": notification.message,
                     "time": notification.datetime.isoformat(),
                     "every": notification.every,
-                    "noti_id": notification.id
+                    "noti_id": notification.id,
+                    "spell_id": notification.spell.id
                 }
                 bookmark_info["notifications"].append(notification_info)
             bookmarks.append(bookmark_info)
