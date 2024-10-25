@@ -300,7 +300,7 @@
         </script>
         {% for review in reviews %}
             <div>
-                <div class="review-entry">
+                <div class="review-entry" id="review-{{ review.id }}">
                     <div style="display: flex;justify-content: space-between;">
                         <div>
                             <a style="display: flex" href="{% url 'spezspellz:other_profile' review.user.pk %}">
@@ -329,7 +329,7 @@
                     </div>
                 </div>
                 {% for comment in review.reviewcomment_set.all %}
-                <div class="review-entry" style="margin-left: 50px;">
+                <div class="review-entry" style="margin-left: 50px;" id="reviewcomment-{{ comment.id }}">
                     <a style="display: flex" href="{% url 'spezspellz:other_profile' comment.commenter.pk %}">
                         <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment.commenter.pk %}" width="24" height="24"/>
                         <h3 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h3>
@@ -415,7 +415,7 @@
         {% endif %}
         {% for comment in comments %}
             <div>
-                <div class="review-entry">
+                <div class="review-entry" id="comment-{{ comment.id }}">
                     <div style="display: flex;justify-content: space-between;">
                         <div style="display: flex;flex-direction: column;">
                             <a style="display: flex;" href="{% url 'spezspellz:other_profile' comment.commenter.pk %}">
@@ -433,7 +433,7 @@
                     </div>
                 </div>
                 {% for comment_comment in comment.commentcomment_set.all %}
-                <div class="review-entry" style="margin-left: 50px;">
+                <div class="review-entry" style="margin-left: 50px;" id="commentcomment-{{ comment_comment.id }}">
                     <a style="display: flex;" href="{% url 'spezspellz:other_profile' comment_comment.commenter.pk %}">
                         <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment_comment.commenter.pk %}" width="24" height="24"/>
                         <h3 style="margin: 0;margin-right: 16px;">{{ comment_comment.commenter.username }}</h3>
