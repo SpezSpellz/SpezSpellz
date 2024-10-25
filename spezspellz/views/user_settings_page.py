@@ -1,10 +1,8 @@
 """Implements the user settings page."""
 from typing import Optional, Any, cast
-from django.http import HttpRequest, HttpResponse, HttpResponseBase, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseBase
 from django.shortcuts import render
-from django.urls import reverse
 from django.views import View
-from django.utils.dateparse import parse_datetime
 from django.db import transaction
 from django.contrib.auth.models import User
 from spezspellz.models import Spell, HasTag, UserInfo, Bookmark, \
@@ -197,59 +195,3 @@ class UserSettingsPage(View, RPCView):
         request.user.set_password(npasswd)
         request.user.save()
         return HttpResponse("Password changed")
-
-    def rpc_get_noti(
-        self,
-        request: HttpRequest,
-        time: Optional[str] = None
-    ) -> HttpResponseBase:
-        """Return notification data for notifying user."""
-        user = request.user
-        if not user.is_authenticated:
-            return HttpResponse("Unauthenticated", status=401)
-        if not isinstance(time, str):
-            return HttpResponse(
-                "Parameter `time` must be a string", status=400
-            )
-        try:
-            new_datetime = parse_datetime(time)
-            if new_datetime is None:
-                raise ValueError
-        except ValueError:
-            return HttpResponse("Bad parameter `time`", status=400)
-        user_info = user.userinfo if hasattr(user, "userinfo") else UserInfo(
-            user=user
-        )
-        bookmarks: list = []
-        data: dict = {
-            "last_notified":
-            None if user_info.last_notified is None else
-            user_info.last_notified.isoformat(),
-            "bookmarks":
-            bookmarks
-        }
-        user_info.last_notified = new_datetime
-        user_info.save()
-        for bookmark in cast(Any, user).bookmark_set.filter(
-            spell__spellnotification__isnull=False
-        ).all():
-            bookmark_info: dict = {
-                "title":
-                bookmark.spell.title,
-                "icon":
-                reverse(
-                    "spezspellz:spell_thumbnail", args=(bookmark.spell.pk, )
-                ),
-                "notifications": []
-            }
-            for notification in bookmark.spell.spellnotification_set.all():
-                notification_info: dict = {
-                    "message": notification.message,
-                    "time": notification.datetime.isoformat(),
-                    "every": notification.every,
-                    "noti_id": notification.id,
-                    "spell_id": notification.spell.id
-                }
-                bookmark_info["notifications"].append(notification_info)
-            bookmarks.append(bookmark_info)
-        return JsonResponse(data)

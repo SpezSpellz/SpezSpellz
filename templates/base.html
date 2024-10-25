@@ -65,30 +65,25 @@
     if ("Notification" in window &&Notification.permission !== "granted")
         Notification.requestPermission().then(() => {});
     {% if user.userinfo.timed_notification %}
-    if (localStorage.getItem("unread_count") == null){
-        localStorage.setItem("unread_count", "0");
-    }
-    if (localStorage.getItem("noti_array") == null){
-        localStorage.setItem("noti_array", JSON.stringify([]));
-    }
     const badge = window.document.getElementById("notif_count");
     const popup_box = window.document.getElementById("popup_box");
     let notifications = {};
-    let unread_count = localStorage.getItem("unread_count");
+    let unread_count = 0;
     popup = () => {
         if (popup_box != null) {
             if (popup_box.style.display === "block") {
+                popup_box.style.display = "none";
+            } else if (unread_count <= 0){
                 popup_box.style.display = "none";
             } else {
                 popup_box.style.display = "block";
             }
         }
     }
-    window.create_li = (noti_id) => {
+    window.create_li = (noti) => {
         if (popup_box != null) {
-            const noti = JSON.parse(localStorage.getItem(noti_id));
             const ref = document.createElement("a");
-            ref.href = `/spell/${noti.ref}`
+            ref.href = noti.ref
             const noti_box = document.createElement("div");
             noti_box.classList.add("popup-notif");
             const img = document.createElement("img");
@@ -123,6 +118,25 @@
             info.append(time);
         }
     }
+    window.create_notification = (noti) => {
+        fetch("{% url 'spezspellz:notifications' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                method: "create_notification",
+                target_user_id: noti.target,
+                sender_obj_id: noti.spell_id,
+                sender_obj_type: noti.type,
+                body: noti.message,
+                additional: noti.additional,
+                ref: noti.ref
+            })
+        })
+        create_li(noti);
+        unread_count++;
+    }
     window.update_badge = (unread_count) => {
         if (badge != null) {
             if (unread_count > 0) {
@@ -134,7 +148,7 @@
         }
     }
     window.refetch_noti = () => {
-        fetch("{% url 'spezspellz:usersettings' %}", {
+        fetch("{% url 'spezspellz:notifications' %}", {
             method: "POST",
             headers: {
                 "X-CSRFToken": "{{ csrf_token }}"
@@ -147,28 +161,23 @@
             .then(data => notifications = data)
             .catch(() => {});
     }
-    update_storage = (noti, bookmark, cur_time) => {
-        localStorage.setItem(
-            noti.noti_id.toString(),
-            JSON.stringify({
-                "title": bookmark.title,
-                "message": noti.message,
-                "icon": bookmark.icon,
-                "time": cur_time,
-                "ref": noti.spell_id
-            })
-        )
-        let a = JSON.parse(localStorage.getItem("noti_array"));
-        a.push(noti.noti_id);
-        localStorage.setItem("noti_array", JSON.stringify(a));
-        window.create_li(noti.noti_id.toString());
-        unread_count++;
-    }
-    if (JSON.parse(localStorage.getItem("noti_array")).length !== 0){
-        for (const noti_id of JSON.parse(localStorage.getItem("noti_array"))){
-            window.create_li(noti_id.toString());
-        }
-    }
+    fetch("{% url 'spezspellz:notifications' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({
+            method: "get_notifications"
+        })
+    }).then(response => response.json())
+        .then(data => {
+            unread_count = data.count;
+            if (unread_count > 0){
+                for (const noti of data.notifications){
+                    window.create_li(noti);
+                }
+            }
+        }).catch(() => {});
     window.refetch_noti();
     window.update_badge(unread_count)
     setInterval(() => {
@@ -178,6 +187,12 @@
         for(const bookmark of notifications.bookmarks) {
             for(const noti of bookmark.notifications) {
                 const date = new Date(noti.time);
+                noti.target = "{{ user.id }}";
+                noti.type = "spell";
+                noti.additional = "";
+                noti.ref = `spell/${noti.spell_id}`;
+                noti.title = bookmark.title;
+                noti.icon = `spell/thumbnail/${noti.spell_id}/`;
                 switch(noti.every) {
                     case 'D': {
                         const cur_year = cur_time.getFullYear();
@@ -191,7 +206,7 @@
                         new_old_date.setDate(cur_date);
                         if(notifications.last_notified <= new_date && new_date <= cur_time ||
                             notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
-                            update_storage(noti, bookmark, cur_time);
+                            create_notification(noti);
                             const n = new Notification(bookmark.title, {
                                 body: noti.message,
                                 icon: bookmark.icon
@@ -212,7 +227,7 @@
                         new_old_date.setDate(cur_date-cur_day-7+new_date.getDay())
                         if(notifications.last_notified <= new_date && new_date <= cur_time ||
                             notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
-                            update_storage(noti, bookmark, cur_time);
+                            create_notification(noti);
                             const n = new Notification(bookmark.title, {
                                 body: noti.message,
                                 icon: bookmark.icon
@@ -230,7 +245,7 @@
                         new_old_date.setMonth(cur_month - 1);
                         if(notifications.last_notified <= new_date && new_date <= cur_time ||
                             notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
-                            update_storage(noti, bookmark, cur_time);
+                            create_notification(noti);
                             const n = new Notification(bookmark.title, {
                                 body: noti.message,
                                 icon: bookmark.icon
@@ -246,7 +261,7 @@
                         new_old_date.setFullYear(cur_year - 1);
                         if(notifications.last_notified <= new_date && new_date <= cur_time ||
                             notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
-                            update_storage(noti, bookmark, cur_time);
+                            create_notification(noti);
                             const n = new Notification(bookmark.title, {
                                 body: noti.message,
                                 icon: bookmark.icon
@@ -256,7 +271,7 @@
                     }
                     case 'S': {
                         if(notifications.last_notified <= date && date <= cur_time) {
-                            update_storage(noti, bookmark, cur_time);
+                            create_notification(noti);
                             const n = new Notification(bookmark.title, {
                                 body: noti.message,
                                 icon: bookmark.icon
@@ -269,7 +284,6 @@
         }
         notifications.last_notified = cur_time;
         window.update_badge(unread_count);
-        localStorage.setItem("unread_count", unread_count.toString());
     }, 1000);
     {% endif %}
 </script>
