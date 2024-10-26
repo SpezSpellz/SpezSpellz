@@ -133,7 +133,7 @@ class NotificationView(View, RPCView):
         user_info.save()
         for bookmark in cast(Any, user).bookmark_set.filter(
             spell__spellnotification__isnull=False
-        ).all():
+        ).distinct().all():
             bookmark_info: dict = {
                 "title":
                 bookmark.spell.title,
