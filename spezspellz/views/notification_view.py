@@ -134,7 +134,7 @@ class NotificationView(View, RPCView):
         user = request.user
         if not user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
-        user.notification_set.all().update(bell_clicked=True)
+        cast(Any, user).notification_set.all().update(bell_clicked=True)
         return HttpResponse("OK")
 
 
