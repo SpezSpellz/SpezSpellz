@@ -114,11 +114,29 @@ li:empty {
     display: flex;
     flex-direction: row;
     justify-content: left;
-    margin: auto;
-    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    width: 100%;
+    border: 1px solid black;
 }
 
 .normal {
     display: flex;
     text-align: left;
+}
+
+.name {
+    font-size: 50px;
+    font-weight: bold;
+}
+
+.cover-all {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    width: 50%;
+    height: 100vh;
+    border: 1px solid black;
 }
