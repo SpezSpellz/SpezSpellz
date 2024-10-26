@@ -103,9 +103,22 @@ li:empty {
 }
 
 .centered-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.profile-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    margin: auto;
+    width: 50%;
+}
+
+.normal {
+    display: flex;
+    text-align: left;
 }
