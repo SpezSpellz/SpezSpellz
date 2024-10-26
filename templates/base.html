@@ -32,12 +32,32 @@
         </a>
     </div>
     <div class="right-top-btns">
-        {% if request.resolver_match.url_name == 'profile' %}
+        {% if user.is_authenticated %}
         <a id="bell_button" class="btn-like right-top-btn" onclick="popup()">
             <img width="32" src="/assets/bell.svg"/>
-            <span class="badge" id="notif_count"></span>
+            <span class="badge" id="notif_count" {% if badge > 0 %}style="display: block"{% endif %}>{{ badge }}</span>
         </a>
-        <div id="popup_box" class="popup"></div>
+        <div id="popup_box" class="popup">
+        {% if notifications.count > 0 %}
+            {% for noti in notifications %}
+                <a href="{{ noti.ref }}">
+                    <div class="popup-notif">
+                        <img class="popup-img" src="{{ noti.icon }}">
+                        <div>
+                            <p class="popup-title">{{ noti.title }}</p>
+                            {% if noti.additional != "" %}
+                            <p class="popup-additional">{{ noti.additional }}:</p>
+                            {% endif %}
+                            <p class="popup-message">{{ noti.body }}</p>
+                            <p class="popup-time">{{ noti.timestamp|date:"F j, Y \\a\\t g:i A" }}</p>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        {% endif %}
+        </div>
+        {% endif %}
+        {% if request.resolver_match.url_name == 'profile' %}
         <a href="{% url 'spezspellz:usersettings' %}" class="btn-like right-top-btn"><img width="32" src="/assets/cog.svg"/></a>
         <form action="{% url 'logout' %}?next={% url 'spezspellz:home' %}" method="POST">
             {% csrf_token %}
@@ -45,13 +65,6 @@
         </form>
         {% else %}
         {% if user.is_authenticated %}
-        {% if request.resolver_match.url_name == 'home' %}
-        <a id="bell_button" class="btn-like right-top-btn" onclick="popup()">
-            <img width="32" src="/assets/bell.svg"/>
-            <span class="badge" id="notif_count"></span>
-        </a>
-        <div id="popup_box" class="popup"></div>
-        {% endif %}
         <a href="{% url 'spezspellz:profile' %}" class="btn-like right-top-btn"><img width="32" src="/assets/profile.svg"/></a>
         {% elif request.resolver_match.url_name != 'login' %}
         <a href="{% url 'login' %}?next={% url 'spezspellz:home' %}" class="btn-like right-top-btn"><img width="32" src="/assets/login.svg"/></a>
@@ -64,19 +77,35 @@
 <script>
     if ("Notification" in window &&Notification.permission !== "granted")
         Notification.requestPermission().then(() => {});
-    {% if user.userinfo.timed_notification %}
+    {% if user.is_authenticated %}
     const badge = window.document.getElementById("notif_count");
     const popup_box = window.document.getElementById("popup_box");
     let notifications = {};
-    let unread_count = 0;
+    let unread_count = {{ badge }};
+    let noti_count = {{ notifications.count }};
     popup = () => {
         if (popup_box != null) {
             if (popup_box.style.display === "block") {
                 popup_box.style.display = "none";
-            } else if (unread_count <= 0){
+            } else if (noti_count <= 0){
                 popup_box.style.display = "none";
             } else {
                 popup_box.style.display = "block";
+            }
+        }
+        if (badge != null) {
+            if (unread_count > 0) {
+                unread_count = 0;
+                window.update_badge(unread_count);
+                fetch("{% url 'spezspellz:notifications' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({
+                        method: "set_badge_count",
+                    })
+                })
             }
         }
     }
@@ -109,7 +138,7 @@
                     hour12: true
                 }
             );
-            popup_box.append(ref);
+            popup_box.prepend(ref);
             ref.append(noti_box);
             noti_box.append(img);
             noti_box.append(info);
@@ -127,7 +156,7 @@
             body: JSON.stringify({
                 method: "create_notification",
                 target_user_id: noti.target,
-                sender_obj_id: noti.spell_id,
+                sender_obj_id: noti.sender_id,
                 sender_obj_type: noti.type,
                 body: noti.message,
                 additional: noti.additional,
@@ -147,6 +176,8 @@
             }
         }
     }
+    {% endif %}
+    {% if user.userinfo.timed_notification %}
     window.refetch_noti = () => {
         fetch("{% url 'spezspellz:notifications' %}", {
             method: "POST",
@@ -154,32 +185,14 @@
                 "X-CSRFToken": "{{ csrf_token }}"
             },
             body: JSON.stringify({
-                method: "get_noti",
+                method: "get_timed_noti",
                 time: new Date(Date.now()).toISOString()
             })
         }).then(response => response.json())
             .then(data => notifications = data)
             .catch(() => {});
     }
-    fetch("{% url 'spezspellz:notifications' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}"
-        },
-        body: JSON.stringify({
-            method: "get_notifications"
-        })
-    }).then(response => response.json())
-        .then(data => {
-            unread_count = data.count;
-            if (unread_count > 0){
-                for (const noti of data.notifications){
-                    window.create_li(noti);
-                }
-            }
-        }).catch(() => {});
     window.refetch_noti();
-    window.update_badge(unread_count)
     setInterval(() => {
         const cur_time = new Date(Date.now());
         if(notifications.last_notified == null)
@@ -188,6 +201,7 @@
             for(const noti of bookmark.notifications) {
                 const date = new Date(noti.time);
                 noti.target = "{{ user.id }}";
+                noti.sender_id = noti.spell_id
                 noti.type = "spell";
                 noti.additional = "";
                 noti.ref = `spell/${noti.spell_id}`;
