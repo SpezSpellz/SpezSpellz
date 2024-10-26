@@ -34,6 +34,11 @@ class UserInfo(models.Model):
         """Checks whether user is private."""
         return self.private
 
+    @property
+    def unread_badge(self):
+        """Return number of unread notification for badge."""
+        return self.user.notification_set.filter(bell_clicked=False).count
+
     def __str__(self):
         """Return user info as string."""
         return f"UserInfo(username={self.user.username})"

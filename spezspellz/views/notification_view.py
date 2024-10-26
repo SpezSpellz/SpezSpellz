@@ -11,13 +11,12 @@ from .rpc_view import RPCView
 
 
 MAX_NOTIFICATION_COUNT = 50
+MAX_BODY = 256
+MAX_ADDITIONAL = 50
 
 
 class NotificationView(View, RPCView):
     """Get and create Notification objects."""
-
-    MAX_BODY = 256
-    MAX_ADDITIONAL = 50
 
     def rpc_create_notification(
             self,
@@ -58,10 +57,10 @@ class NotificationView(View, RPCView):
         user = get_or_none(User, id=user_id)
         if user is None:
             return HttpResponse("No such user id", status=400)
-        if len(body) > self.MAX_BODY:
-            return HttpResponse(f"Maximum characters for body is {self.MAX_BODY}")
-        if len(additional) > self.MAX_ADDITIONAL:
-            return HttpResponse(f"Maximum characters for additional is {self.MAX_ADDITIONAL}")
+        if len(body) > MAX_BODY:
+            return HttpResponse(f"Maximum characters for body is {MAX_BODY}")
+        if len(additional) > MAX_ADDITIONAL:
+            return HttpResponse(f"Maximum characters for additional is {MAX_ADDITIONAL}")
         notification = Notification.objects.create(
             user=user,
             title=title,
@@ -71,6 +70,11 @@ class NotificationView(View, RPCView):
             ref=ref
         )
         notification.save()
+        notifications = cast(Any, user).notification_set.all().order_by("-timestamp")
+        if notifications.count() > MAX_NOTIFICATION_COUNT:
+            notifications.filter(
+                pk__in=notifications[MAX_NOTIFICATION_COUNT:]
+            ).delete()
         return HttpResponse("OK")
 
     def rpc_get_timed_noti(
@@ -134,21 +138,5 @@ class NotificationView(View, RPCView):
         user = request.user
         if not user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
-        user.notification_set.all().update(bell_clicked=True)
+        cast(Any, user).notification_set.all().update(bell_clicked=True)
         return HttpResponse("OK")
-
-
-def get_notifications(request: HttpRequest) -> dict:
-    """Get all notifications."""
-    user = request.user
-    if not user.is_authenticated:
-        return {"notifications": Notification.objects.filter(id=None), "badge": 0}
-    notifications = cast(Any, user).notification_set.all().order_by("-timestamp")
-    if notifications.count() > MAX_NOTIFICATION_COUNT:
-        notifications.filter(
-            pk__in=notifications[MAX_NOTIFICATION_COUNT:]
-        ).delete()
-    return {
-        "notifications": notifications,
-        "badge": notifications.filter(bell_clicked=False).count()
-    }

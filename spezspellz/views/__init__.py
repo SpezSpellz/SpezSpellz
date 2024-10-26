@@ -12,7 +12,7 @@ from .thumbnail_view import thumbnail_view
 from .user_settings_page import UserSettingsPage
 from .register_view import RegisterView
 from .profile_picture_view import profile_picture_view
-from .notification_view import NotificationView, get_notifications
+from .notification_view import NotificationView
 
 
 __all__ = (
@@ -32,5 +32,4 @@ __all__ = (
     "other_profile_view",
     "other_spell_view",
     "NotificationView",
-    "get_notifications",
 )

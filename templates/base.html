@@ -35,16 +35,16 @@
         {% if user.is_authenticated %}
         <a id="bell_button" class="btn-like right-top-btn" onclick="popup()">
             <img width="32" src="/assets/bell.svg"/>
-            <span class="badge" id="notif_count" {% if badge > 0 %}style="display: block"{% endif %}>{{ badge }}</span>
+            <span class="badge" id="notif_count" {% if user.userinfo.unread_badge > 0 %}style="display: block"{% endif %}>{{ user.userinfo.unread_badge }}</span>
         </a>
         <div id="popup_box" class="popup">
-        {% if notifications.count > 0 %}
-            {% for noti in notifications %}
+        {% if user.notification_set.count > 0 %}
+            {% for noti in user.notification_set.all|dictsortreversed:"timestamp" %}
                 <a href="{{ noti.ref }}">
                     <div class="popup-notif">
                         <img class="popup-img" src="{{ noti.icon }}">
                         <div>
-                            <p class="popup-title">{{ noti.title }}</p>
+                            <h3 class="popup-title">{{ noti.title }}</h3>
                             {% if noti.additional != "" %}
                             <p class="popup-additional">{{ noti.additional }}:</p>
                             {% endif %}
@@ -54,6 +54,8 @@
                     </div>
                 </a>
             {% endfor %}
+        {% else %}
+            <p id="no_noti" style="text-align: center; font-size: 20px; color: #ffffff; display: block">Nothing to notify</p>
         {% endif %}
         </div>
         {% endif %}
@@ -78,16 +80,16 @@
     if ("Notification" in window &&Notification.permission !== "granted")
         Notification.requestPermission().then(() => {});
     {% if user.is_authenticated %}
+    const bell_button = window.document.getElementById("bell_button");
     const badge = window.document.getElementById("notif_count");
     const popup_box = window.document.getElementById("popup_box");
+    const no_noti = window.document.getElementById("no_noti");
     let notifications = {};
-    let unread_count = {{ badge }};
-    let noti_count = {{ notifications.count }};
+    let unread_count = {{ user.userinfo.unread_badge }};
+    let noti_count = {{ user.notification_set.count }};
     popup = () => {
         if (popup_box != null) {
             if (popup_box.style.display === "block") {
-                popup_box.style.display = "none";
-            } else if (noti_count <= 0){
                 popup_box.style.display = "none";
             } else {
                 popup_box.style.display = "block";
@@ -109,7 +111,16 @@
             }
         }
     }
+    document.addEventListener('click', function(event) {
+            if (!bell_button.contains(event.target) &&
+                !popup_box.contains(event.target)) {
+                popup_box.style.display = 'none';
+            }
+        });
     window.create_li = (noti) => {
+        if (no_noti != null) {
+            no_noti.remove();
+        }
         if (popup_box != null) {
             const ref = document.createElement("a");
             ref.href = noti.ref
@@ -143,6 +154,12 @@
             noti_box.append(img);
             noti_box.append(info);
             info.append(title);
+            if (noti.additional !== "") {
+                const additional = document.createElement("p");
+                additional.classList.add("popup-additional")
+                additional.innerText = noti.additional
+                info.append(additional)
+            }
             info.append(message);
             info.append(time);
         }
