@@ -7,9 +7,18 @@
 {% block Body %}
 
 {% if not other_user %}
-<h1>Profile of {{ user.username }}</h1>
+<div id="aboutMe" class="profile-container">
+  <div id="ProfilePic">
+    <input id="upload_avatar_btn" type="image" width="128" src="{% url 'spezspellz:avatar' user.pk %}" disabled/>
+  </div>
+
+  <div id="ProfileInfo">
+    Yeah
+  </div>
+
+</div>
 {% else %}
-<h1>Profile of {{ other_user.username }}</h1>
+
 {% endif %}
 
 {% if not other_user.userinfo.is_private %}

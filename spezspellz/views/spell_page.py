@@ -171,5 +171,5 @@ class SpellPage(View, RPCView):
             review.star = stars
             review.save()
             return HttpResponse("Updated", status=200)
-        Review.objects.create(user=user, spell=spell, star=stars, desc=desc)
-        return HttpResponse("Review posted", status=200)
+        review_pk = Review.objects.create(user=user, spell=spell, star=stars, desc=desc).pk
+        return HttpResponse("Review posted", status=200, headers={"pk": review_pk})

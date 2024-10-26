@@ -70,6 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'spezspellz.views.get_notifications',
             ],
         },
     },
@@ -118,7 +119,6 @@ TIME_ZONE = config("TIME_ZONE", default="UTC", cast=str)
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
