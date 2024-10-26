@@ -151,14 +151,14 @@ Filter
     <h2 style="display: inline;">Results:</h2>
     <form method="GET" action="{% url 'spezspellz:filter' %}" style="display: inline;">
         <select name="sort" onchange="this.form.submit()" style="margin-left: 10px;">
-            <option value="recent" {% if request.GET.sort == "recent" %}selected{% endif %}>Most Recent</option>
-            <option value="oldest" {% if request.GET.sort == "oldest" %}selected{% endif %}>Oldest</option>
-            <option value="most_commented" {% if request.GET.sort == "most_commented" %}selected{% endif %}>Most Commented</option>
-            <option value="least_commented" {% if request.GET.sort == "least_commented" %}selected{% endif %}>Least Commented</option>
-            <option value="most_viewed" {% if request.GET.sort == "most_viewed" %}selected{% endif %}>Most Viewed</option>
-            <option value="least_viewed" {% if request.GET.sort == "least_viewed" %}selected{% endif %}>Least Viewed</option>
-            <option value="most_rated" {% if request.GET.sort == "most_rated" %}selected{% endif %}>Most Rated</option>
-            <option value="least_rated" {% if request.GET.sort == "least_rated" %}selected{% endif %}>Least Rated</option>
+            <option value="recent">Most Recent</option>
+            <option value="oldest">Oldest</option>
+            <option value="most_commented">Most Commented</option>
+            <option value="least_commented">Least Commented</option>
+            <option value="most_viewed">Most Viewed</option>
+            <option value="least_viewed">Least Viewed</option>
+            <option value="most_rated">Most Rated</option>
+            <option value="least_rated">Least Rated</option>
         </select>
     </form>
     {% if spells %}
