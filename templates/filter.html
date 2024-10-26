@@ -148,7 +148,19 @@ Filter
     </div>
 </form>
 <div class="results">
-    <h2>Results:</h2>
+    <h2 style="display: inline;">Results:</h2>
+    <form method="GET" action="{% url 'spezspellz:filter' %}" style="display: inline;">
+        <select name="sort" onchange="this.form.submit()" style="margin-left: 10px;">
+            <option value="recent">Most Recent</option>
+            <option value="oldest">Oldest</option>
+            <option value="most_commented">Most Commented</option>
+            <option value="least_commented">Least Commented</option>
+            <option value="most_viewed">Most Viewed</option>
+            <option value="least_viewed">Least Viewed</option>
+            <option value="most_rated">Most Rated</option>
+            <option value="least_rated">Least Rated</option>
+        </select>
+    </form>
     {% if spells %}
         {% for spell in spells %}
         <a href="{% url 'spezspellz:spell' spell.pk %}">

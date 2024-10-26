@@ -7,133 +7,144 @@
 {% block Body %}
 
 {% if not other_user %}
-<h1>Profile of {{ user.username }}</h1>
-{% else %}
-<h1>Profile of {{ other_user.username }}</h1>
-{% endif %}
+<div class="cover-all">
+  <div id="aboutMe" class="profile-container">
+    <div id="ProfilePic" style="margin: 0 50px 0 0;">
+      <input id="upload_avatar_btn" class="profile-pic" type="image" src="{% url 'spezspellz:avatar' user.pk %}" disabled/>
+    </div>
 
-{% if not other_user.userinfo.is_private %}
-{% if other_user %}
-  <img style="margin: auto;display: block;margin-bottom: 10px;" src="{% url 'spezspellz:avatar' other_user.pk %}" width="128"/>
-  <h2 style="margin: 0;">About me</h2>
-  <p style="margin-left: 300px;margin-right: 300px;text-align: center;">{{ other_user.userinfo.user_desc }}</p>
-{% endif %}
-<div style="display: flex;justify-content: center;">
-  {% if not other_user %}
-  <h2 style="margin: 0;margin-right: 10px;padding-left: 80px;">Your Spells</h2>
-  {% else %}
-  <h2 style="margin: 0;margin-right: 10px;padding-left: 80px;">{{ other_user.username }}'s Spells</h2>
-  {% endif %}
+    <div id="ProfileInfo">
+      <span class="name"> {{ user.username }} </span>
+      <p style="margin-top: 30px;"> {{ user.userinfo.user_desc }} </p>
+    </div>
 
-  <div style="display: flex;flex-direction: column;justify-content: end;">
-    {% if not other_user %}
-    <a href="{% url 'spezspellz:myspell' %}">(View all)</a>
-    {% else %}
-    <a href="{% url 'spezspellz:other_spell' other_user.id %}">(View all)</a>
-    {% endif %}
   </div>
-</div>
-<ul>
-  {% for spell in spells %}
-  <li my_spell="{{ spell.pk }}">
-    {% if not other_user %}
-    <a href="{% url 'spezspellz:spell' spell.pk %}" style="padding-left: 60px">{{ spell.title }}</a>
-    <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
-    <a onclick="window.delete_spell({{spell.pk}})" class="btn-like edit-btn"><img width="32" src="/assets/delete.svg"/></a>
-    {% else %}
-    <a href="{% url 'spezspellz:spell' spell.pk %}">{{ spell.title }}</a>
-    {% endif %}
-  </li>
-  {% empty %}
-
-  {% if not other_user %}
-  <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any spells</p></li>
   {% else %}
-  <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">{{ other_user.username }} doesn't have any spells</p></li>
+
   {% endif %}
 
-  {% endfor %}
-</ul>
-
-{% if not other_user %}
-<h2>Your Bookmarks</h2>
-{% else %}
-<h2>{{ other_user.username }}'s Bookmarks</h2>
-{% endif %}
-
-<ul>
-  {% for bookmark in bookmarks %}
-  <li bookmark_spell="{{ bookmark.spell.pk }}">
+  {% if not other_user.userinfo.is_private %}
+  {% if other_user %}
+    <img style="margin: auto;display: block;margin-bottom: 10px;" src="{% url 'spezspellz:avatar' other_user.pk %}" width="128"/>
+    <h2 style="margin: 0;">About me</h2>
+    <p style="margin-left: 300px;margin-right: 300px;text-align: center;">{{ other_user.userinfo.user_desc }}</p>
+  {% endif %}
+  <div style="display: flex;justify-content: center;">
     {% if not other_user %}
-    <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" style="padding-left:60px;">{{ bookmark.spell.title }}</a>
-    <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="btn-like bookmark" width="32" src="/assets/bookmark_remove.svg"/>
+    <h2 style="margin: 0;margin-right: 10px;padding-left: 80px;">Your Spells</h2>
     {% else %}
-    <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}">{{ bookmark.spell.title }}</a>
+    <h2 style="margin: 0;margin-right: 10px;padding-left: 80px;">{{ other_user.username }}'s Spells</h2>
     {% endif %}
-  </li>
-  {% empty %}
-    <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any bookmarks</p></li>
-  {% endfor %}
-</ul>
 
-{% if not other_user %}
-<h2>Spell History</h2>
-<ul>
-  {% for spell in history %}
-  <li>
-    <a bookmark_spell="{{ spell.spell.pk }}" href="{% url 'spezspellz:spell' spell.spell.pk %}">{{ spell.spell.title }}</a>
-  </li>
-  {% empty %}
-  <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You didn't view any spell</p></li>
-  {% endfor %}
-</ul>
-<script>
-  window.delete_spell = (spell) => {
-    fetch("{% url 'spezspellz:usersettings' %}", {
-          method: "POST",
-          headers: {
-              "X-CSRFToken": "{{ csrf_token }}"
-          },
-          body: JSON.stringify({
-              method: "delete",
-              obj_type: "spell",
-              obj_id: spell
-          })
-      }).then(res => {
-          if(!res.ok)
-              return Promise.reject();
-          return res.text()
-      }).then(text => {
-          if(text != "Object deleted")
-            return;
-          document.querySelector("[my_spell=\"" + spell + "\"]").remove();
-          for(const obj of document.querySelectorAll("[bookmark_spell=\"" + spell + "\"]"))
-            obj.remove();
-      })
-  }
-  window.bookmark_spell = (spell) => {
+    <div style="display: flex;flex-direction: column;justify-content: end;">
+      {% if not other_user %}
+      <a href="{% url 'spezspellz:myspell' %}">(View all)</a>
+      {% else %}
+      <a href="{% url 'spezspellz:other_spell' other_user.id %}">(View all)</a>
+      {% endif %}
+    </div>
+  </div>
+  <ul>
+    {% for spell in spells %}
+    <li my_spell="{{ spell.pk }}">
+      {% if not other_user %}
+      <a href="{% url 'spezspellz:spell' spell.pk %}" style="padding-left: 60px">{{ spell.title }}</a>
+      <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
+      <a onclick="window.delete_spell({{spell.pk}})" class="btn-like edit-btn"><img width="32" src="/assets/delete.svg"/></a>
+      {% else %}
+      <a href="{% url 'spezspellz:spell' spell.pk %}">{{ spell.title }}</a>
+      {% endif %}
+    </li>
+    {% empty %}
+
+    {% if not other_user %}
+    <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any spells</p></li>
+    {% else %}
+    <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">{{ other_user.username }} doesn't have any spells</p></li>
+    {% endif %}
+
+    {% endfor %}
+  </ul>
+
+  {% if not other_user %}
+  <h2>Your Bookmarks</h2>
+  {% else %}
+  <h2>{{ other_user.username }}'s Bookmarks</h2>
+  {% endif %}
+
+  <ul>
+    {% for bookmark in bookmarks %}
+    <li bookmark_spell="{{ bookmark.spell.pk }}">
+      {% if not other_user %}
+      <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" style="padding-left:60px;">{{ bookmark.spell.title }}</a>
+      <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="btn-like bookmark" width="32" src="/assets/bookmark_remove.svg"/>
+      {% else %}
+      <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}">{{ bookmark.spell.title }}</a>
+      {% endif %}
+    </li>
+    {% empty %}
+      <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any bookmarks</p></li>
+    {% endfor %}
+  </ul>
+
+  {% if not other_user %}
+  <h2>Spell History</h2>
+  <ul>
+    {% for spell in history %}
+    <li>
+      <a bookmark_spell="{{ spell.spell.pk }}" href="{% url 'spezspellz:spell' spell.spell.pk %}">{{ spell.spell.title }}</a>
+    </li>
+    {% empty %}
+    <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You didn't view any spell</p></li>
+    {% endfor %}
+  </ul>
+  <script>
+    window.delete_spell = (spell) => {
       fetch("{% url 'spezspellz:usersettings' %}", {
-          method: "POST",
-          headers: {
-              "X-CSRFToken": "{{ csrf_token }}"
-          },
-          body: JSON.stringify({
-              method: "bookmark",
-              spell_id: spell
-          })
-      }).then(res => {
-          if(!res.ok)
-              return Promise.reject();
-          return res.text()
-      }).then(text => {
-          if(text != "Unbookmarked")
-            return;
-          document.querySelector("[bookmark_spell=\"" + spell + "\"]").remove();
-      })
-  }
-</script>
-{% endif %}
-
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                method: "delete",
+                obj_type: "spell",
+                obj_id: spell
+            })
+        }).then(res => {
+            if(!res.ok)
+                return Promise.reject();
+            return res.text()
+        }).then(text => {
+            if(text != "Object deleted")
+              return;
+            document.querySelector("[my_spell=\"" + spell + "\"]").remove();
+            for(const obj of document.querySelectorAll("[bookmark_spell=\"" + spell + "\"]"))
+              obj.remove();
+        })
+    }
+    window.bookmark_spell = (spell) => {
+        fetch("{% url 'spezspellz:usersettings' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                method: "bookmark",
+                spell_id: spell
+            })
+        }).then(res => {
+            if(!res.ok)
+                return Promise.reject();
+            return res.text()
+        }).then(text => {
+            if(text != "Unbookmarked")
+              return;
+            document.querySelector("[bookmark_spell=\"" + spell + "\"]").remove();
+        })
+    }
+  </script>
+  {% endif %}
+</div>
 {% else %}
 <div class="centered-container">
   <img src="/assets/lock.svg" style="width:200px; margin: 100px 0 50px 0;">
