@@ -128,7 +128,7 @@ li:empty {
 }
 
 .name {
-    font-size: 50px;
+    font-size: 40px;
     font-weight: bold;
 }
 
@@ -139,4 +139,9 @@ li:empty {
     width: 50%;
     height: 100vh;
     border: 1px solid black;
+}
+
+.profile-pic {
+    border-radius: 50%;
+    width: 200px;
 }
