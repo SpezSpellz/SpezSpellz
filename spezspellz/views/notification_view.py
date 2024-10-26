@@ -10,40 +10,14 @@ from spezspellz.utils import get_or_none
 from .rpc_view import RPCView
 
 
+MAX_NOTIFICATION_COUNT = 50
+
+
 class NotificationView(View, RPCView):
     """Get and create Notification objects."""
 
-    MAX_NOTIFICATION_COUNT = 50
     MAX_BODY = 256
     MAX_ADDITIONAL = 50
-
-    def rpc_get_notifications(
-            self,
-            request: HttpRequest,
-    ) -> HttpResponseBase:
-        """Get all notifications."""
-        user = request.user
-        if not user.is_authenticated:
-            return HttpResponse("Unauthenticated", status=401)
-        notifications = cast(Any, user).notification_set.all().order_by("-timestamp")
-        if notifications.count() > self.MAX_NOTIFICATION_COUNT:
-            notifications.filter(
-                pk__in=notifications[self.MAX_NOTIFICATION_COUNT:]
-            ).delete()
-        data = {
-            "notifications": [
-                {
-                    "time": notification.timestamp.isoformat(),
-                    "title": notification.title,
-                    "additional": notification.additional,
-                    "message": notification.body,
-                    "icon": notification.icon,
-                    "ref": notification.ref
-                } for notification in notifications
-            ],
-            "count": notifications.count()
-        }
-        return JsonResponse(data)
 
     def rpc_create_notification(
             self,
@@ -99,12 +73,12 @@ class NotificationView(View, RPCView):
         notification.save()
         return HttpResponse("OK")
 
-    def rpc_get_noti(
+    def rpc_get_timed_noti(
         self,
         request: HttpRequest,
         time: Optional[str] = None
     ) -> HttpResponseBase:
-        """Return notification data for notifying user."""
+        """Return timed notification data for notifying user."""
         user = request.user
         if not user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
@@ -154,3 +128,27 @@ class NotificationView(View, RPCView):
                 bookmark_info["notifications"].append(notification_info)
             bookmarks.append(bookmark_info)
         return JsonResponse(data)
+
+    def rpc_set_badge_count(self, request: HttpRequest) -> HttpResponseBase:
+        """Set all bell_clicked attribute to True."""
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        user.notification_set.all().update(bell_clicked=True)
+        return HttpResponse("OK")
+
+
+def get_notifications(request: HttpRequest) -> dict:
+    """Get all notifications."""
+    user = request.user
+    if not user.is_authenticated:
+        return {"notifications": Notification.objects.filter(id=None), "badge": 0}
+    notifications = cast(Any, user).notification_set.all().order_by("-timestamp")
+    if notifications.count() > MAX_NOTIFICATION_COUNT:
+        notifications.filter(
+            pk__in=notifications[MAX_NOTIFICATION_COUNT:]
+        ).delete()
+    return {
+        "notifications": notifications,
+        "badge": notifications.filter(bell_clicked=False).count()
+    }
