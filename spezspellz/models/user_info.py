@@ -1,6 +1,9 @@
 """Implements UserInfo model."""
 from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.auth import get_user_model
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class UserInfo(models.Model):
@@ -34,3 +37,10 @@ class UserInfo(models.Model):
     def __str__(self):
         """Return user info as string."""
         return f"UserInfo(username={self.user.username})"
+
+
+@receiver(post_save, sender=get_user_model())
+def create_user_info(sender, instance, created, raw, **__):
+    """Automagically create user info model for every new user."""
+    if created and not raw:
+        UserInfo.objects.create(user=instance)
