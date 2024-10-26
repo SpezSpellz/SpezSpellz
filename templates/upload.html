@@ -253,7 +253,10 @@ Feel free to customize the template to fit your spell's unique attributes! Happy
         li.append(div);
         noti_list.append(li);
     }
-    window.add_noti_btn.onclick = () => window.add_noti_dlg.showModal();
+    window.add_noti_btn.onclick = () => {
+        window.noti_dlg_every.value = "S";
+        window.add_noti_dlg.showModal();
+    };
     window.ok_noti_dlg.onclick = () => {
         let time = new Date(window.noti_dlg_date_time.value.replace(/-/g,'/').replace('T',' '));
         if(isNaN(time)) {
