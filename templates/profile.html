@@ -32,102 +32,117 @@
   <!-- Everything after profile -->
 
   <div class="spell">
-    <div style="display: flex;justify-content: space-evenly;">
+
+    <div class="header">
       <button id="spell_btn" style="font-size: 28pt;background-color: transparent;border-style: none;color: #FFF;cursor: pointer;" onclick="window.show_tab('1')">Spell</button>
       <button id="bookmark_btn" style="font-size: 28pt;background-color: transparent;border-style: none;color: #777;cursor: pointer;" onclick="window.show_tab('2')">Bookmark</button>
       <button id="history_btn" style="font-size: 28pt;background-color: transparent;border-style: none;color: #777;cursor: pointer;" onclick="window.show_tab('3')">History</button>
     </div>
 
-    <div id="spell_tab">
-      <ul>
-        <!-- Add search bar here -->
-        {% for spell in spells %}
-        <li my_spell="{{ spell.pk }}">
+    <div id="scroll_box" style="margin-top: 20px;">
+
+      <div id="spell_tab">
+
+        <div style="display: flex; margin-left: 92%; margin-bottom: 20px;">
+            {% if not other_user %}
+            <a href="{% url 'spezspellz:myspell' %}">(View all)</a>
+            {% else %}
+            <a href="{% url 'spezspellz:other_spell' other_user.id %}">(View all)</a>
+            {% endif %}
+        </div>
+
+        <ul>
+          <!-- Add search bar here -->
+
+          {% for spell in spells %}
+          <li my_spell="{{ spell.pk }}">
+            {% if not other_user %}
+            <a href="{% url 'spezspellz:spell' spell.pk %}" class="spell-row">
+              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' spell.pk %}">
+              <div class="spell-text-box">
+                <span class="all-spell-title" style="margin-left: 20px;"> {{ spell.title }} </span>
+                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ spell.category }} </span>
+              </div>
+            </a>
+            <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
+            <a onclick="window.delete_spell({{spell.pk}})" class="btn-like edit-btn"><img width="32" src="/assets/delete.svg"/></a>
+            {% else %}
+            <a href="{% url 'spezspellz:spell' spell.pk %}" class="spell-row">
+              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' spell.pk %}">
+              <div class="spell-text-box">
+                <span class="all-spell-title" style="margin-left: 20px;"> {{ spell.title }} </span>
+                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ spell.category }} </span>
+              </div>
+            </a>
+            {% endif %}
+          </li>
+          {% empty %}
+
           {% if not other_user %}
-          <a href="{% url 'spezspellz:spell' spell.pk %}" class="spell-row">
-            <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' spell.pk %}">
-            <div style="display: flex; flex-direction: column;">
-              <span class="all-spell-title" style="margin-left: 20px;"> {{ spell.title }} </span>
-              <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ spell.category }} </span>
-            </div>
-          </a>
-          <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
-          <a onclick="window.delete_spell({{spell.pk}})" class="btn-like edit-btn"><img width="32" src="/assets/delete.svg"/></a>
+          <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any spells</p></li>
           {% else %}
-          <a href="{% url 'spezspellz:spell' spell.pk %}" class="spell-row">
-            <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' spell.pk %}">
-            <div style="display: flex; flex-direction: column;">
-              <span class="all-spell-title" style="margin-left: 20px;"> {{ spell.title }} </span>
-              <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ spell.category }} </span>
-            </div>
-          </a>
+          <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">This user doesn't have any spells</p></li>
           {% endif %}
-        </li>
-        {% empty %}
 
-        {% if not other_user %}
-        <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any spells</p></li>
-        {% else %}
-        <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">This user doesn't have any spells</p></li>
-        {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
 
-        {% endfor %}
-      </ul>
-    </div>
-
-    <div id="bookmark_tab" hidden>
-      <ul>
-        {% for bookmark in bookmarks %}
-        <li bookmark_spell="{{ bookmark.spell.pk }}">
+      <div id="bookmark_tab" hidden>
+        <ul>
+          {% for bookmark in bookmarks %}
+          <li bookmark_spell="{{ bookmark.spell.pk }}">
+            {% if not other_user %}
+            <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" class="spell-row">
+              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' bookmark.spell.pk %}">
+              <div class="spell-text-box">
+                <span class="all-spell-title" style="margin-left: 20px;"> {{ bookmark.spell.title }} </span>
+                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ bookmark.spell.category }} </span>
+              </div>
+            </a>
+            <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="btn-like bookmark" width="32" src="/assets/bookmark_remove.svg"/>
+            {% else %}
+            <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" class="spell-row">
+              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' bookmark.spell.pk %}">
+              <div class="spell-text-box">
+                <span class="all-spell-title" style="margin-left: 20px;"> {{ bookmark.spell.title }} </span>
+                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ bookmark.spell.category }} </span>
+              </div>
+            </a>
+            {% endif %}
+          </li>
+          {% empty %}
           {% if not other_user %}
-          <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" class="spell-row">
-            <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' bookmark.spell.pk %}">
-            <div style="display: flex; flex-direction: column;">
-              <span class="all-spell-title" style="margin-left: 20px;"> {{ bookmark.spell.title }} </span>
-              <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ bookmark.spell.category }} </span>
-            </div>
-          </a>
-          <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="btn-like bookmark" width="32" src="/assets/bookmark_remove.svg"/>
+            <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any bookmarks</p></li>
           {% else %}
-          <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" class="spell-row">
-            <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' bookmark.spell.pk %}">
-            <div style="display: flex; flex-direction: column;">
-              <span class="all-spell-title" style="margin-left: 20px;"> {{ bookmark.spell.title }} </span>
-              <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ bookmark.spell.category }} </span>
-            </div>
-          </a>
+            <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">This user doesn't have any bookmarks</p></li>
           {% endif %}
-        </li>
-        {% empty %}
-        {% if not other_user %}
-          <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any bookmarks</p></li>
-        {% else %}
-          <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">This user doesn't have any bookmarks</p></li>
-        {% endif %}
-        {% endfor %}
-      </ul>
-    </div>
+          {% endfor %}
+        </ul>
+      </div>
 
-    <div id="history_tab">
-      <ul>
-        {% for historyObj in history %}
-        <li>
-          <a href="{% url 'spezspellz:spell' historyObj.spell.pk %}" class="spell-row">
-            <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' historyObj.spell.pk %}">
-            <div style="display: flex; flex-direction: column;">
-              <span class="all-spell-title" style="margin-left: 20px;"> {{ historyObj.spell.title }} </span>
-              <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ historyObj.spell.category }} </span>
-            </div>
-          </a>
-        </li>
-        {% empty %}
-        {% if not other_user %}
-        <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You didn't view any spell</p></li>
-        {% else %}
-        <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">This user didn't view any spell</p></li>
-        {% endif %}
-        {% endfor %}
-      </ul>
+      <div id="history_tab" hidden>
+        <ul>
+          {% for historyObj in history %}
+          <li>
+            <a href="{% url 'spezspellz:spell' historyObj.spell.pk %}" class="spell-row">
+              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' historyObj.spell.pk %}">
+              <div class="spell-text-box">
+                <span class="all-spell-title" style="margin-left: 20px;"> {{ historyObj.spell.title }} </span>
+                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ historyObj.spell.category }} </span>
+              </div>
+              <span style="color: #AAA"> {{ historyObj.time|date:"d/m/Y" }} <br> {{ historyObj.time|date:"H:i A" }} </span>
+            </a>
+          </li>
+          {% empty %}
+          {% if not other_user %}
+          <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You didn't view any spell</p></li>
+          {% else %}
+          <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">This user didn't view any spell</p></li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
     </div>
 
     <script>
