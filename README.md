@@ -71,7 +71,7 @@ Here is what they contain
 |  demo2   | demo_man2 |
 |  demo3   | demo_man3 |
 
-demo2 has private profile.
+demo2 has private profile. <br>
 demo3 doesn't have anything.
 
 **Admin user**
