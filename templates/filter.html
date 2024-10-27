@@ -41,6 +41,18 @@ Filter
             <div style="display: inline-block;" id="tag-list">
             </div>
             <button type="button" id="add_tag_btn" class="tag tag-add">+</button>
+            <br>
+            <select name="sort" onchange="this.form.submit()" style="margin-bottom: 5px;">
+                <option value="recent" {% if request.GET.sort == "recent" %}selected{% endif %}>Most Recent</option>
+                <option value="oldest" {% if request.GET.sort == "oldest" %}selected{% endif %}>Oldest</option>
+                <option value="most_commented" {% if request.GET.sort == "most_commented" %}selected{% endif %}>Most Commented</option>
+                <option value="least_commented" {% if request.GET.sort == "least_commented" %}selected{% endif %}>Least Commented</option>
+                <option value="most_viewed" {% if request.GET.sort == "most_viewed" %}selected{% endif %}>Most Viewed</option>
+                <option value="least_viewed" {% if request.GET.sort == "least_viewed" %}selected{% endif %}>Least Viewed</option>
+                <option value="most_rated" {% if request.GET.sort == "most_rated" %}selected{% endif %}>Most Rated</option>
+                <option value="least_rated" {% if request.GET.sort == "least_rated" %}selected{% endif %}>Least Rated</option>
+            </select>
+            
         <div class="button-container">
             <button id="submit" type="submit" class="apply-button">Apply</button>
             <button type="reset" class="clear-button">Clear</button>
@@ -149,18 +161,6 @@ Filter
 </form>
 <div class="results">
     <h2 style="display: inline;">Results:</h2>
-    <form method="GET" action="{% url 'spezspellz:filter' %}" style="display: inline;">
-        <select name="sort" onchange="this.form.submit()" style="margin-left: 10px;">
-            <option value="recent">Most Recent</option>
-            <option value="oldest">Oldest</option>
-            <option value="most_commented">Most Commented</option>
-            <option value="least_commented">Least Commented</option>
-            <option value="most_viewed">Most Viewed</option>
-            <option value="least_viewed">Least Viewed</option>
-            <option value="most_rated">Most Rated</option>
-            <option value="least_rated">Least Rated</option>
-        </select>
-    </form>
     {% if spells %}
         {% for spell in spells %}
         <a href="{% url 'spezspellz:spell' spell.pk %}">
