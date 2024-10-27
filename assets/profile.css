@@ -45,11 +45,10 @@ ul {
 ul li {
     display: flex;
     background-color: #3B3B3B;
-    margin: 10px auto;
+    margin-top: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    text-align: center;
+    text-align: left;
     font-size: 1.2rem;
     color: #FFF;
     transition: background-color 0.2s;
@@ -147,14 +146,24 @@ li:empty {
 }
 
 .spell {
-    position: relative;
+    position: re    lative;
     display: block;
     background-color: #3B3B3B;
-    margin-left: 5%;
-    margin-right: 5%;
+    margin-top: -50px;
     color: #FFFFFF;
     overflow-wrap: break-word;
     overflow-y: auto;
     padding: 1%;
     border-radius: 20px;
+}
+
+.spell-pic {
+    width: 100px;
+}
+
+.spell-row {
+    display: flex;
+    flex-direction: row;
+    text-decoration: none;
+    border: 1px solid black;
 }
