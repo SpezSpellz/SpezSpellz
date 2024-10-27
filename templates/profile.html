@@ -6,22 +6,27 @@
 {% endblock %}
 {% block Body %}
 
-{% if not other_user %}
 <div class="cover-all">
   <div id="aboutMe" class="profile-container">
     <div id="ProfilePic" style="margin: 0 50px 0 0;">
-      <input id="upload_avatar_btn" class="profile-pic" type="image" src="{% url 'spezspellz:avatar' user.pk %}" disabled/>
+      {% if not other_user %}
+      <img class="profile-pic" src="{% url 'spezspellz:avatar' user.pk %}"/>
+      {% else %}
+      <img class="profile-pic" src="{% url 'spezspellz:avatar' other_user.pk %}"/>
+      {% endif %}
     </div>
 
     <div id="ProfileInfo">
+      {% if not other_user %}
       <span class="name"> {{ user.username }} </span>
       <p style="margin-top: 30px;"> {{ user.userinfo.user_desc }} </p>
+      {% else %}
+      <span class="name"> {{ other_user.username }} </span>
+      <p style="margin-top: 30px;"> {{ other_user.userinfo.user_desc }} </p>
+      {% endif %}
     </div>
 
   </div>
-  {% else %}
-
-  {% endif %}
 
   {% if not other_user.userinfo.is_private %}
   {% if other_user %}
@@ -145,11 +150,11 @@
   </script>
   {% endif %}
 </div>
-{% else %}
-<div class="centered-container">
-  <img src="/assets/lock.svg" style="width:200px; margin: 100px 0 50px 0;">
-  <h1>This profile is private</h1>
-</div>
+  {% else %}
+  <div class="centered-container">
+    <img src="/assets/lock.svg" style="width:200px; margin: 100px 0 50px 0;">
+    <h1>This profile is private</h1>
+  </div>
 
 
 {% endif %}

@@ -145,3 +145,16 @@ li:empty {
     border-radius: 50%;
     width: 200px;
 }
+
+.spell {
+    position: relative;
+    display: block;
+    background-color: #3B3B3B;
+    margin-left: 5%;
+    margin-right: 5%;
+    color: #FFFFFF;
+    overflow-wrap: break-word;
+    overflow-y: auto;
+    padding: 1%;
+    border-radius: 20px;
+}
