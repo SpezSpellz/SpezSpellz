@@ -68,7 +68,7 @@
         {% if not other_user %}
         <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any spells</p></li>
         {% else %}
-        <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">{{ other_user.username }} doesn't have any spells</p></li>
+        <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">This user doesn't have any spells</p></li>
         {% endif %}
 
         {% endfor %}
@@ -99,13 +99,35 @@
           {% endif %}
         </li>
         {% empty %}
+        {% if not other_user %}
           <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any bookmarks</p></li>
+        {% else %}
+          <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">This user doesn't have any bookmarks</p></li>
+        {% endif %}
         {% endfor %}
       </ul>
     </div>
 
     <div id="history_tab">
-
+      <ul>
+        {% for historyObj in history %}
+        <li>
+          <a href="{% url 'spezspellz:spell' historyObj.spell.pk %}" class="spell-row">
+            <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' historyObj.spell.pk %}">
+            <div style="display: flex; flex-direction: column;">
+              <span class="all-spell-title" style="margin-left: 20px;"> {{ historyObj.spell.title }} </span>
+              <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ historyObj.spell.category }} </span>
+            </div>
+          </a>
+        </li>
+        {% empty %}
+        {% if not other_user %}
+        <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You didn't view any spell</p></li>
+        {% else %}
+        <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">This user didn't view any spell</p></li>
+        {% endif %}
+        {% endfor %}
+      </ul>
     </div>
 
     <script>
@@ -154,24 +176,8 @@
     }
     </script>
 
+    <!-- Script for selecting tab -->
     <script>
-        window.delete_obj = (type, id) => {
-            fetch("{% url 'spezspellz:usersettings' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: JSON.stringify({
-                    method: "delete",
-                    obj_type: type,
-                    obj_id: id
-                })
-            }).then(res => {
-                if(!res.ok)
-                    return res.text().then(msg => Promise.reject(msg));
-                return res.text().then(text => location.reload());
-            });
-        };
         let selectedTab = localStorage.getItem("spell_show") || "1";
         window.show_tab = (tabIndex) => {
             window.spell_tab.hidden = false;
