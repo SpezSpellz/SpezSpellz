@@ -69,8 +69,10 @@ Here is what they contain
 |:--------:|:---------:|
 |  demo1   | demo_man1 |
 |  demo2   | demo_man2 |
+|  demo3   | demo_man3 |
 
 demo2 has private profile.
+demo3 doesn't have anything.
 
 **Admin user**
 | Username | Password  |
