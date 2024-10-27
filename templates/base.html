@@ -221,9 +221,9 @@
                 noti.sender_id = noti.spell_id
                 noti.type = "spell";
                 noti.additional = "";
-                noti.ref = `spell/${noti.spell_id}`;
+                noti.ref = `/spell/${noti.spell_id}`;
                 noti.title = bookmark.title;
-                noti.icon = `spell/thumbnail/${noti.spell_id}/`;
+                noti.icon = `/spell/thumbnail/${noti.spell_id}/`;
                 switch(noti.every) {
                     case 'D': {
                         const cur_year = cur_time.getFullYear();
