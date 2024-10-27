@@ -148,7 +148,7 @@ li:empty {
 .spell {
     position: re    lative;
     display: block;
-    background-color: #3B3B3B;
+    background-color: #2B2B2B;
     margin-top: -50px;
     color: #FFFFFF;
     overflow-wrap: break-word;
@@ -166,4 +166,14 @@ li:empty {
     flex-direction: row;
     text-decoration: none;
     border: 1px solid black;
+}
+
+.all-spell-title {
+    color: #FFF;
+    font-size: 16pt;
+    margin: 0;
+}
+.all-spell-category {
+    color: #AAA;
+    font-size: 12pt;
 }
