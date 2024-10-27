@@ -42,15 +42,6 @@
     <div id="scroll_box" style="margin-top: 20px;">
 
       <div id="spell_tab">
-
-        <div style="display: flex; margin-left: 92%; margin-bottom: 20px;">
-            {% if not other_user %}
-            <a href="{% url 'spezspellz:myspell' %}">(View all)</a>
-            {% else %}
-            <a href="{% url 'spezspellz:other_spell' other_user.id %}">(View all)</a>
-            {% endif %}
-        </div>
-
         <ul>
           <!-- Add search bar here -->
 
@@ -86,6 +77,13 @@
 
           {% endfor %}
         </ul>
+        <div style="display: flex; margin: auto;">
+          {% if not other_user %}
+          <a href="{% url 'spezspellz:myspell' %}" class="view-all btn-like" style="text-decoration: none;"> View all </a>
+          {% else %}
+          <a href="{% url 'spezspellz:other_spell' other_user.pk %}" class="view-all btn-like" style="text-decoration: none;"> View all </a>
+          {% endif %}
+        </div>
       </div>
 
       <div id="bookmark_tab" hidden>

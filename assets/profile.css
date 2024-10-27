@@ -199,3 +199,8 @@ li:empty {
     padding: 20px 0 20px 0;
     background-color: #2B2B2B;
 }
+
+.view-all {
+    font-size: 25px;
+    padding: 15px;
+}
