@@ -134,8 +134,8 @@ class SpellPage(View, RPCView):
         review = get_or_none(Review, pk=review_id)
         if review is None:
             return HttpResponse("Review not found", status=404)
-        ReviewComment.objects.create(review=review, commenter=user, text=text)
-        return HttpResponse("Comment posted", status=200)
+        review_pk = ReviewComment.objects.create(review=review, commenter=user, text=text).pk
+        return HttpResponse("Comment posted", status=200, headers={"pk": review_pk})
 
     def rpc_review(
         self,

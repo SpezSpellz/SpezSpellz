@@ -61,20 +61,21 @@ class NotificationView(View, RPCView):
             return HttpResponse(f"Maximum characters for body is {MAX_BODY}")
         if len(additional) > MAX_ADDITIONAL:
             return HttpResponse(f"Maximum characters for additional is {MAX_ADDITIONAL}")
-        notification = Notification.objects.create(
-            user=user,
-            title=title,
-            icon=icon,
-            body=body,
-            additional=additional,
-            ref=ref
-        )
-        notification.save()
-        notifications = cast(Any, user).notification_set.all().order_by("-timestamp")
-        if notifications.count() > MAX_NOTIFICATION_COUNT:
-            notifications.filter(
-                pk__in=notifications[MAX_NOTIFICATION_COUNT:]
-            ).delete()
+        if user != sender:
+            notification = Notification.objects.create(
+                user=user,
+                title=title,
+                icon=icon,
+                body=body,
+                additional=additional,
+                ref=ref
+            )
+            notification.save()
+            notifications = cast(Any, user).notification_set.all().order_by("-timestamp")
+            if notifications.count() > MAX_NOTIFICATION_COUNT:
+                notifications.filter(
+                    pk__in=notifications[MAX_NOTIFICATION_COUNT:]
+                ).delete()
         return HttpResponse("OK")
 
     def rpc_get_timed_noti(

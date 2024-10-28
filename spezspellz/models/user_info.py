@@ -23,6 +23,9 @@ class UserInfo(models.Model):
     spell_comment_notification: models.BooleanField = models.BooleanField(
         default=True
     )
+    comment_reply_notifications: models.BooleanField = models.BooleanField(
+        default=True
+    )
     user_desc: models.CharField = models.CharField(default="", max_length=400)
     avatar: models.FileField = models.FileField(
         upload_to="content", null=True

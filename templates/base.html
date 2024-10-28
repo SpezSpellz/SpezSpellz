@@ -40,7 +40,7 @@
         <div id="popup_box" class="popup">
         {% if user.notification_set.count > 0 %}
             {% for noti in user.notification_set.all|dictsortreversed:"timestamp" %}
-                <a href="{{ noti.ref }}">
+                <a href="{{ noti.ref }}" style="text-decoration: none">
                     <div class="popup-notif">
                         <img class="popup-img" src="{{ noti.icon }}">
                         <div>

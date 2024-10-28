@@ -248,6 +248,18 @@
                         if(!res.ok)
                             return res.text().then(msg => Promise.reject(msg));
                         return res.text().then(text => {
+                            {% if spell.creator.userinfo.spell_review_notification %}
+                            let noti = {}
+                            noti.target = "{{ spell.creator.pk }}";
+                            noti.sender_id = "{{ user.pk }}";
+                            if (noti.target !== noti.sender_id) {
+                                noti.type = "user";
+                                noti.message = window.review_desc.value;
+                                noti.additional = "Review your {{ spell.title }}";
+                                noti.ref = `/spell/{{ spell.pk }}/#review-${res.headers.get("pk")}`;
+                                window.create_notification(noti);
+                            }
+                            {% endif %}
                             window.dlg_header.innerText = "Review Submission";
                             window.dlg_text.innerText = text;
                             window.base_dlg.showModal();
@@ -263,7 +275,7 @@
         </div>
         {% endif %}
         <script>
-            function send_review_comment(review_id, text) {
+            function send_review_comment(review_id, text, reviewer_id) {
                 return fetch("{% url 'spezspellz:spell' spell.pk %}", {
                     method: "POST",
                     headers: {
@@ -277,10 +289,24 @@
                 }).then(res => {
                     if(!res.ok)
                         return res.text().then(msg => Promise.reject(msg));
-                    return res.text();
+                    return res.text()
+                        {% if user.userinfo.review_comment_notification %}
+                        .then(_ => {
+                            let noti = {};
+                            noti.target = reviewer_id;
+                            noti.sender_id = "{{ user.pk }}";
+                            if (noti.target !== noti.sender_id) {
+                                noti.type = "user";
+                                noti.message = text;
+                                noti.additional = "Commented on your review in {{ spell.title }}";
+                                noti.ref = `/spell/{{ spell.pk }}/#reviewcomment-${res.headers.get("pk")}`;
+                                window.create_notification(noti);
+                            }
+                        })
+                    {% endif %};
                 });
             }
-            window.addReviewReplyWindow = (btn, review, review_id) => {
+            window.addReviewReplyWindow = (btn, review, review_id, reviewer_id) => {
                 const clone = window.review_reply_template.content.cloneNode(true).firstElementChild;
                 const text = clone.querySelector("[c_text]");
                 btn.style.display = "none";
@@ -289,7 +315,7 @@
                     btn.style.display = null;
                 }
                 clone.querySelector("[c_send]").onclick = () => {
-                    send_review_comment(review_id, text.value).then(() => {
+                    send_review_comment(review_id, text.value, reviewer_id).then(() => {
                         clone.remove();
                         btn.style.display = null;
                         location.reload();
@@ -303,7 +329,7 @@
                 <div class="review-entry" id="review-{{ review.id }}">
                     <div style="display: flex;justify-content: space-between;">
                         <div>
-                            <a style="display: flex" href="{% url 'spezspellz:other_profile' review.user.pk %}">
+                            <a style="display: flex; text-decoration: none" href="{% url 'spezspellz:other_profile' review.user.pk %}">
                                 <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' review.user.pk %}" width="32" height="32"/>
                                 <h2 style="margin: 0;margin-right: 10px;">{{ review.user }}</h2>
                                 <div style="display: flex;">
@@ -324,13 +350,13 @@
                             {% if review.user == user %}
                             <input onclick="window.delete_obj('review', {{ review.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
                             {% endif %}
-                            <input onclick="window.addReviewReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, {{ review.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/reply.svg"/>
+                            <input onclick="window.addReviewReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, {{ review.pk }}, {{ review.user.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/reply.svg"/>
                         </div>
                     </div>
                 </div>
                 {% for comment in review.reviewcomment_set.all %}
                 <div class="review-entry" style="margin-left: 50px;" id="reviewcomment-{{ comment.id }}">
-                    <a style="display: flex" href="{% url 'spezspellz:other_profile' comment.commenter.pk %}">
+                    <a style="display: flex; text-decoration: none" href="{% url 'spezspellz:other_profile' comment.commenter.pk %}">
                         <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment.commenter.pk %}" width="24" height="24"/>
                         <h3 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h3>
                     </a>
