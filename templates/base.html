@@ -49,7 +49,7 @@
                             <p class="popup-additional">{{ noti.additional }}:</p>
                             {% endif %}
                             <p class="popup-message">{{ noti.body }}</p>
-                            <p class="popup-time">{{ noti.timestamp|date:"F j, Y \\a\\t g:i A" }}</p>
+                            <p class="popup-time">{{ noti.timestamp|date:"d/m/Y \\a\\t g:i A" }}</p>
                         </div>
                     </div>
                 </a>
@@ -138,17 +138,11 @@
             message.innerText = noti.message;
             const time = document.createElement("p");
             time.classList.add("popup-time");
-            time.innerText = new Date(noti.time).toLocaleString(
-                "en-US",
-                {
-                    year: 'numeric',
-                    month: 'long',
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    day: 'numeric',
-                    hour12: true
-                }
-            );
+            const time_obj = new Date(noti.time);
+            time.innerText = `${time_obj.toLocaleString("en-US", {day:"numeric"})}/\
+${time_obj.toLocaleString("en-US", {month:"numeric"})}/\
+${time_obj.toLocaleString("en-US", {year:"numeric"})} at \
+${time_obj.toLocaleString("en-US", {hour:"numeric", minute:"numeric"})}`;
             popup_box.prepend(ref);
             ref.append(noti_box);
             noti_box.append(img);
