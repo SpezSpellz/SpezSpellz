@@ -41,7 +41,7 @@
         {% if user.notification_set.count > 0 %}
             {% for noti in user.notification_set.all|dictsortreversed:"timestamp" %}
                 <a href="{{ noti.ref }}" style="text-decoration: none">
-                    <div class="popup-notif">
+                    <div class="popup-notif" onmouseover="mark_as_read({{ noti.pk }}, this)" style="position: relative">
                         <img class="popup-img" src="{{ noti.icon }}">
                         <div>
                             <h3 class="popup-title">{{ noti.title }}</h3>
@@ -51,6 +51,9 @@
                             <p class="popup-message">{{ noti.body }}</p>
                             <p class="popup-time">{{ noti.timestamp|date:"d/m/Y \\a\\t g:i A" }}</p>
                         </div>
+                        {% if not noti.is_read %}
+                        <span class="badge" id="unread-{{ noti.pk }}" style="display: block">•</span>
+                        {% endif %}
                     </div>
                 </a>
             {% endfor %}
@@ -117,6 +120,23 @@
                 popup_box.style.display = 'none';
             }
         });
+    mark_as_read = (pk, element) => {
+        element.onmouseover = null;
+        const unread_badge = window.document.getElementById(`unread-${pk}`);
+        if (unread_badge !== null){
+            unread_badge.remove();
+        }
+        fetch("{% url 'spezspellz:notifications' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                method: "mark_as_read",
+                unread: pk
+            })
+        })
+    }
     window.create_li = (noti) => {
         if (no_noti != null) {
             no_noti.remove();
@@ -124,13 +144,16 @@
         if (popup_box != null) {
             const ref = document.createElement("a");
             ref.href = noti.ref
+            ref.style.textDecoration = "none";
             const noti_box = document.createElement("div");
             noti_box.classList.add("popup-notif");
+            noti_box.style.position = "relative"
+            noti_box.onmouseover = function() {mark_as_read(noti.pk, noti_box);};
             const img = document.createElement("img");
             img.classList.add("popup-img");
             img.src = noti.icon;
             const info = document.createElement("div");
-            const title = document.createElement("p");
+            const title = document.createElement("h3");
             title.classList.add("popup-title");
             title.innerText = noti.title;
             const message = document.createElement("p");
@@ -143,6 +166,11 @@
 ${time_obj.toLocaleString("en-US", {month:"numeric"})}/\
 ${time_obj.toLocaleString("en-US", {year:"numeric"})} at \
 ${time_obj.toLocaleString("en-US", {hour:"numeric", minute:"numeric"})}`;
+            const span = document.createElement("span");
+            span.classList.add("badge");
+            span.id = `unread-${noti.pk}`
+            span.style.display = "block";
+            span.innerText = "•";
             popup_box.prepend(ref);
             ref.append(noti_box);
             noti_box.append(img);
@@ -156,6 +184,7 @@ ${time_obj.toLocaleString("en-US", {hour:"numeric", minute:"numeric"})}`;
             }
             info.append(message);
             info.append(time);
+            noti_box.append(span);
         }
     }
     window.create_notification = (noti) => {
@@ -173,9 +202,13 @@ ${time_obj.toLocaleString("en-US", {hour:"numeric", minute:"numeric"})}`;
                 additional: noti.additional,
                 ref: noti.ref
             })
-        })
-        create_li(noti);
-        unread_count++;
+        }).then(res => {
+            res.text().then(_ => {
+                noti.pk = res.headers.get("pk");
+                create_li(noti);
+                unread_count++;
+            });
+        });
     }
     window.update_badge = (unread_count) => {
         if (badge != null) {

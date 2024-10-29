@@ -61,22 +61,21 @@ class NotificationView(View, RPCView):
             return HttpResponse(f"Maximum characters for body is {MAX_BODY}")
         if len(additional) > MAX_ADDITIONAL:
             return HttpResponse(f"Maximum characters for additional is {MAX_ADDITIONAL}")
-        if user != sender["user"]:
-            notification = Notification.objects.create(
-                user=user,
-                title=title,
-                icon=icon,
-                body=body,
-                additional=additional,
-                ref=ref
-            )
-            notification.save()
-            notifications = cast(Any, user).notification_set.all().order_by("-timestamp")
-            if notifications.count() > MAX_NOTIFICATION_COUNT:
-                notifications.filter(
-                    pk__in=notifications[MAX_NOTIFICATION_COUNT:]
-                ).delete()
-        return HttpResponse("OK")
+        notification = Notification.objects.create(
+            user=user,
+            title=title,
+            icon=icon,
+            body=body,
+            additional=additional,
+            ref=ref
+        )
+        notification.save()
+        notifications = cast(Any, user).notification_set.all().order_by("-timestamp")
+        if notifications.count() > MAX_NOTIFICATION_COUNT:
+            notifications.filter(
+                pk__in=notifications[MAX_NOTIFICATION_COUNT:]
+            ).delete()
+        return HttpResponse("OK", headers={"pk": notification.pk})
 
     def rpc_get_timed_noti(
         self,
@@ -140,4 +139,19 @@ class NotificationView(View, RPCView):
         if not user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
         cast(Any, user).notification_set.all().update(bell_clicked=True)
+        return HttpResponse("OK")
+
+    def rpc_mark_as_read(self, request: HttpRequest, unread: str) -> HttpResponseBase:
+        """Mark all notifications in unread_list as read."""
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        try:
+            int(unread)
+        except ValueError:
+            return HttpResponse("`unread` must be an integer", status=400)
+        noti = get_or_none(Notification, pk=unread)
+        if noti is not None:
+            noti.is_read = True
+            noti.save()
         return HttpResponse("OK")
