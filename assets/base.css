@@ -11,7 +11,7 @@ h1, h2, li, a {
     right: -8px;
     background-color: red;
     color: white;
-    border-radius: 40%;
+    border-radius: 100%;
     padding: 4px 7px;
     font-size: 12px;
     display: none;

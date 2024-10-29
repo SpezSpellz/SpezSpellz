@@ -52,7 +52,7 @@
                             <p class="popup-time">{{ noti.timestamp|date:"d/m/Y \\a\\t g:i A" }}</p>
                         </div>
                         {% if not noti.is_read %}
-                        <span class="badge" id="unread-{{ noti.pk }}" style="display: block">•</span>
+                        <span class="badge" id="unread-{{ noti.pk }}" style="display: block">New</span>
                         {% endif %}
                     </div>
                 </a>
@@ -170,7 +170,7 @@ ${time_obj.toLocaleString("en-US", {hour:"numeric", minute:"numeric"})}`;
             span.classList.add("badge");
             span.id = `unread-${noti.pk}`
             span.style.display = "block";
-            span.innerText = "•";
+            span.innerText = "New";
             popup_box.prepend(ref);
             ref.append(noti_box);
             noti_box.append(img);
