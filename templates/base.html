@@ -151,7 +151,7 @@ ${time_obj.toLocaleString("en-US", {hour:"numeric", minute:"numeric"})}`;
             if (noti.additional !== "") {
                 const additional = document.createElement("p");
                 additional.classList.add("popup-additional")
-                additional.innerText = noti.additional
+                additional.innerText = `${noti.additional}:`
                 info.append(additional)
             }
             info.append(message);

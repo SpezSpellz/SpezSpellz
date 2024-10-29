@@ -61,7 +61,7 @@ class NotificationView(View, RPCView):
             return HttpResponse(f"Maximum characters for body is {MAX_BODY}")
         if len(additional) > MAX_ADDITIONAL:
             return HttpResponse(f"Maximum characters for additional is {MAX_ADDITIONAL}")
-        if user != sender:
+        if user != sender["user"]:
             notification = Notification.objects.create(
                 user=user,
                 title=title,

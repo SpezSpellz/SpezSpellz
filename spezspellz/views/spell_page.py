@@ -76,8 +76,8 @@ class SpellPage(View, RPCView):
         spell = get_or_none(Spell, pk=spell_id)
         if spell is None:
             return HttpResponse("Spell not found", status=404)
-        SpellComment.objects.create(spell=spell, commenter=user, text=text)
-        return HttpResponse("Comment posted", status=200)
+        comment_pk = SpellComment.objects.create(spell=spell, commenter=user, text=text).pk
+        return HttpResponse("Comment posted", status=200, headers={"pk": comment_pk})
 
     def rpc_comment_comment(
         self,
@@ -104,10 +104,10 @@ class SpellPage(View, RPCView):
         comment = get_or_none(SpellComment, pk=comment_id)
         if comment is None:
             return HttpResponse("Review not found", status=404)
-        CommentComment.objects.create(
+        comment_reply_pk = CommentComment.objects.create(
             comment=comment, commenter=user, text=text
-        )
-        return HttpResponse("Comment posted", status=200)
+        ).pk
+        return HttpResponse("Comment posted", status=200, headers={"pk": comment_reply_pk})
 
     def rpc_review_comment(
         self,

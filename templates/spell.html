@@ -298,12 +298,12 @@
                             if (noti.target !== noti.sender_id) {
                                 noti.type = "user";
                                 noti.message = text;
-                                noti.additional = "Commented on your review in {{ spell.title }}";
+                                noti.additional = "Commented on your review";
                                 noti.ref = `/spell/{{ spell.pk }}/#reviewcomment-${res.headers.get("pk")}`;
                                 window.create_notification(noti);
                             }
                         })
-                    {% endif %};
+                        {% endif %};
                 });
             }
             window.addReviewReplyWindow = (btn, review, review_id, reviewer_id) => {
@@ -395,14 +395,28 @@
                     }).then(res => {
                         if(!res.ok)
                             return res.text().then(msg => Promise.reject(msg));
-                        return res.text().then(text => location.reload());
+                        return res.text().then(_ => {
+                            {% if spell.creator.userinfo.spell_comment_notification %}
+                            let noti = {}
+                            noti.target = "{{ spell.creator.pk }}";
+                            noti.sender_id = "{{ user.pk }}";
+                            if (noti.target !== noti.sender_id) {
+                                noti.type = "user";
+                                noti.message = window.comment_desc.value;
+                                noti.additional = "Commented on your {{ spell.title }}";
+                                noti.ref = `/spell/{{ spell.pk }}/#comment-${res.headers.get("pk")}`;
+                                window.create_notification(noti);
+                            }
+                            {% endif %}
+                            location.reload();
+                        });
                     }).catch((res) => {
                         window.dlg_header.innerText = "Review Submission Error";
                         window.dlg_text.innerText = res;
                         window.base_dlg.showModal();
                     });
                 };
-                function send_comment_comment(comment_id, text) {
+                function send_comment_comment(comment_id, text, commenter_id) {
                     return fetch("{% url 'spezspellz:spell' spell.pk %}", {
                         method: "POST",
                         headers: {
@@ -416,10 +430,24 @@
                     }).then(res => {
                         if(!res.ok)
                             return res.text().then(msg => Promise.reject(msg));
-                        return res.text();
+                        return res.text()
+                        {% if user.userinfo.review_comment_notification %}
+                        .then(_ => {
+                            let noti = {};
+                            noti.target = commenter_id;
+                            noti.sender_id = "{{ user.pk }}";
+                            if (noti.target !== noti.sender_id) {
+                                noti.type = "user";
+                                noti.message = text;
+                                noti.additional = "Replied your comment";
+                                noti.ref = `/spell/{{ spell.pk }}/#commentcomment-${res.headers.get("pk")}`;
+                                window.create_notification(noti);
+                            }
+                        })
+                        {% endif %};
                     });
                 }
-                window.addCommentReplyWindow = (btn, comment, comment_id) => {
+                window.addCommentReplyWindow = (btn, comment, comment_id, commenter_id) => {
                     const clone = window.review_reply_template.content.cloneNode(true).firstElementChild;
                     const text = clone.querySelector("[c_text]");
                     btn.style.display = "none";
@@ -428,7 +456,7 @@
                         btn.style.display = null;
                     }
                     clone.querySelector("[c_send]").onclick = () => {
-                        send_comment_comment(comment_id, text.value).then(() => {
+                        send_comment_comment(comment_id, text.value, commenter_id).then(() => {
                             clone.remove();
                             btn.style.display = null;
                             location.reload();
@@ -444,7 +472,7 @@
                 <div class="review-entry" id="comment-{{ comment.id }}">
                     <div style="display: flex;justify-content: space-between;">
                         <div style="display: flex;flex-direction: column;">
-                            <a style="display: flex;" href="{% url 'spezspellz:other_profile' comment.commenter.pk %}">
+                            <a style="display: flex; text-decoration: none" href="{% url 'spezspellz:other_profile' comment.commenter.pk %}">
                                 <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment.commenter.pk %}" width="32" height="32"/>
                                 <h2 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h2>
                             </a>
@@ -454,13 +482,13 @@
                             {% if comment.commenter == user %}
                             <input onclick="window.delete_obj('comment', {{ comment.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
                             {% endif %}
-                            <input onclick="window.addCommentReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, {{ comment.pk }})" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
+                            <input onclick="window.addCommentReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, {{ comment.pk }}, {{ comment.commenter.pk }})" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
                         </div>
                     </div>
                 </div>
                 {% for comment_comment in comment.commentcomment_set.all %}
                 <div class="review-entry" style="margin-left: 50px;" id="commentcomment-{{ comment_comment.id }}">
-                    <a style="display: flex;" href="{% url 'spezspellz:other_profile' comment_comment.commenter.pk %}">
+                    <a style="display: flex; text-decoration: none" href="{% url 'spezspellz:other_profile' comment_comment.commenter.pk %}">
                         <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment_comment.commenter.pk %}" width="24" height="24"/>
                         <h3 style="margin: 0;margin-right: 16px;">{{ comment_comment.commenter.username }}</h3>
                     </a>
