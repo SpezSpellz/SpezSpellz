@@ -42,4 +42,6 @@ class Spell(models.Model):
     @property
     def summary(self):
         """Find a possible summary of the spell."""
-        return self.data[(self.data.find("is") or 0):]
+        start = self.data.find("is ") or 0
+        end = start + (self.data[start:].find(".") or (len(self.data) - start))
+        return self.data[start:end].replace("#", "")
