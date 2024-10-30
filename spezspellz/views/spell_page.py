@@ -1,8 +1,9 @@
 """Implements the spell detail page."""
 from typing import Any, cast
 from django.utils import timezone
+from django.urls import reverse
 from django.http import HttpRequest, HttpResponse, HttpResponseBase
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect
 from django.views import View
 from django.db import transaction
 from spezspellz.models import Spell, Bookmark, \
@@ -82,7 +83,7 @@ class SpellPage(View, RPCView):
         comment_pk = SpellComment.objects.create(spell=spell, commenter=user, text=text).pk
         Notification.objects.create(
             user=spell.creator,
-            title=user.username,
+            title=cast(Any, user).username,
             icon=reverse("spezspellz:avatar", args=(user.pk,)),
             body=text,
             additional=f"Commented on your {spell.title}",
@@ -124,7 +125,7 @@ class SpellPage(View, RPCView):
         ).pk
         Notification.objects.create(
             user=comment.commenter,
-            title=user.username,
+            title=cast(Any, user).username,
             icon=reverse("spezspellz:avatar", args=(user.pk,)),
             body=text,
             additional="Replied your comment",
@@ -164,7 +165,7 @@ class SpellPage(View, RPCView):
         review_pk = ReviewComment.objects.create(review=review, commenter=user, text=text).pk
         Notification.objects.create(
             user=review.user,
-            title=user.username,
+            title=cast(Any, user).username,
             icon=reverse("spezspellz:avatar", args=(user.pk,)),
             body=text,
             additional="Commented on your review",
@@ -214,7 +215,7 @@ class SpellPage(View, RPCView):
         review_pk = Review.objects.create(user=user, spell=spell, star=stars, desc=desc).pk
         Notification.objects.create(
             user=spell.creator,
-            title=user.username,
+            title=cast(Any, user).username,
             icon=reverse("spezspellz:avatar", args=(user.pk,)),
             body=desc,
             additional=f"Review your {spell.title}",
