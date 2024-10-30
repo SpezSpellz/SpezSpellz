@@ -11,6 +11,9 @@ from spezspellz.utils import get_or_none
 from .rpc_view import RPCView
 
 
+MAX_NOTIFICATION_COUNT = 50
+
+
 class SpellPage(View, RPCView):
     """Handle spell page."""
 
@@ -84,8 +87,13 @@ class SpellPage(View, RPCView):
             body=text,
             additional=f"Commented on your {spell.title}",
             ref=f"/spell/{spell_id}/#comment-{comment_pk}"
-        )
-        return HttpResponse("Comment posted", status=200, headers={"pk": comment_pk})
+        ).save()
+        notifications = cast(Any, spell.creator).notification_set.all().order_by("-timestamp")
+        if notifications.count() > MAX_NOTIFICATION_COUNT:
+            notifications.filter(
+                pk__in=notifications[MAX_NOTIFICATION_COUNT:]
+            ).delete()
+        return HttpResponse("Comment posted", status=200)
 
     def rpc_comment_comment(
         self,
@@ -121,7 +129,12 @@ class SpellPage(View, RPCView):
             body=text,
             additional="Replied your comment",
             ref=f"/spell/{spell_id}/#reply-{comment_reply_pk}"
-        )
+        ).save()
+        notifications = cast(Any, comment.commenter).notification_set.all().order_by("-timestamp")
+        if notifications.count() > MAX_NOTIFICATION_COUNT:
+            notifications.filter(
+                pk__in=notifications[MAX_NOTIFICATION_COUNT:]
+            ).delete()
         return HttpResponse("Comment posted", status=200)
 
     def rpc_review_comment(
@@ -156,7 +169,12 @@ class SpellPage(View, RPCView):
             body=text,
             additional="Commented on your review",
             ref=f"/spell/{spell_id}/#reviewcomment-{review_pk}"
-        )
+        ).save()
+        notifications = cast(Any, review.user).notification_set.all().order_by("-timestamp")
+        if notifications.count() > MAX_NOTIFICATION_COUNT:
+            notifications.filter(
+                pk__in=notifications[MAX_NOTIFICATION_COUNT:]
+            ).delete()
         return HttpResponse("Comment posted", status=200)
 
     def rpc_review(
@@ -202,4 +220,9 @@ class SpellPage(View, RPCView):
             additional=f"Review your {spell.title}",
             ref=f"/spell/{spell_id}/#review-{review_pk}"
         )
+        notifications = cast(Any, spell.creator).notification_set.all().order_by("-timestamp")
+        if notifications.count() > MAX_NOTIFICATION_COUNT:
+            notifications.filter(
+                pk__in=notifications[MAX_NOTIFICATION_COUNT:]
+            ).delete()
         return HttpResponse("Review posted", status=200)
