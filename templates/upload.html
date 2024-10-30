@@ -16,8 +16,8 @@
     <h1 class="section dlgheader">{% if extra_data %}Apply Changes{% else %}Upload{% endif %}</h1>
     <p id="upload_text" style="color: #FFF;"></p>
     <button id="upload_dlg_close">Close</button>
-    <a href="{% url 'spezspellz:home' %}" style="text-decoration: none; margin-left: 5px; font-family: 'Arial'">
-        Back to home
+    <a id="spell_btn" style="text-decoration: none; margin-left: 5px; font-family: 'Arial'; display: none">
+        Go to spell
     </a>
 </dialog>
 <dialog id="add_tag_dlg" style="height: 400px;width:400px">
@@ -522,8 +522,11 @@ Feel free to customize the template to fit your spell's unique attributes! Happy
         }).then(res => res.text().then(text => {
             if(res.status != 200)
                 window.upload_text.style.color = "#F00";
-            if(res.status == 200 && text == "OK") 
+            if(res.status == 200 && text == "OK") {
                 window.upload_text.innerText = "Successfully uploaded";
+                window.spell_btn.href = `/spell/${res.headers.get("pk")}`;
+                window.spell_btn.style.display = "inline";
+            }
             else
                 window.upload_text.innerText = text;
         })).catch(() => {

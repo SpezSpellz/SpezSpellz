@@ -249,4 +249,4 @@ class UploadPage(View):
                 )
             spell.data = data
             spell.save()
-        return HttpResponse("OK", status=200)
+        return HttpResponse("OK", status=200, headers={"pk": spell.pk})
