@@ -77,6 +77,7 @@
 
           {% endfor %}
         </ul>
+        {% if spells|length > 5 %}
         <div style="display: flex; margin: auto;">
           {% if not other_user %}
           <a href="{% url 'spezspellz:myspell' %}" class="view-all btn-like" style="text-decoration: none;"> View all </a>
@@ -84,6 +85,7 @@
           <a href="{% url 'spezspellz:other_spell' other_user.pk %}" class="view-all btn-like" style="text-decoration: none;"> View all </a>
           {% endif %}
         </div>
+        {% endif %}
       </div>
 
       <div id="bookmark_tab" hidden>
