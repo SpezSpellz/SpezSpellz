@@ -248,18 +248,6 @@
                         if(!res.ok)
                             return res.text().then(msg => Promise.reject(msg));
                         return res.text().then(text => {
-                            {% if spell.creator.userinfo.spell_review_notification %}
-                            let noti = {}
-                            noti.target = "{{ spell.creator.pk }}";
-                            noti.sender_id = "{{ user.pk }}";
-                            if (noti.target !== noti.sender_id) {
-                                noti.type = "user";
-                                noti.message = window.review_desc.value;
-                                noti.additional = "Review your {{ spell.title }}";
-                                noti.ref = `/spell/{{ spell.pk }}/#review-${res.headers.get("pk")}`;
-                                window.create_notification(noti);
-                            }
-                            {% endif %}
                             window.dlg_header.innerText = "Review Submission";
                             window.dlg_text.innerText = text;
                             window.base_dlg.showModal();
@@ -275,7 +263,7 @@
         </div>
         {% endif %}
         <script>
-            function send_review_comment(review_id, text, reviewer_id) {
+            function send_review_comment(review_id, text) {
                 return fetch("{% url 'spezspellz:spell' spell.pk %}", {
                     method: "POST",
                     headers: {
@@ -289,24 +277,10 @@
                 }).then(res => {
                     if(!res.ok)
                         return res.text().then(msg => Promise.reject(msg));
-                    return res.text()
-                        {% if user.userinfo.review_comment_notification %}
-                        .then(_ => {
-                            let noti = {};
-                            noti.target = reviewer_id;
-                            noti.sender_id = "{{ user.pk }}";
-                            if (noti.target !== noti.sender_id) {
-                                noti.type = "user";
-                                noti.message = text;
-                                noti.additional = "Commented on your review";
-                                noti.ref = `/spell/{{ spell.pk }}/#reviewcomment-${res.headers.get("pk")}`;
-                                window.create_notification(noti);
-                            }
-                        })
-                        {% endif %};
+                    return res.text();
                 });
             }
-            window.addReviewReplyWindow = (btn, review, review_id, reviewer_id) => {
+            window.addReviewReplyWindow = (btn, review, review_id) => {
                 const clone = window.review_reply_template.content.cloneNode(true).firstElementChild;
                 const text = clone.querySelector("[c_text]");
                 btn.style.display = "none";
@@ -315,7 +289,7 @@
                     btn.style.display = null;
                 }
                 clone.querySelector("[c_send]").onclick = () => {
-                    send_review_comment(review_id, text.value, reviewer_id).then(() => {
+                    send_review_comment(review_id, text.value).then(() => {
                         clone.remove();
                         btn.style.display = null;
                         location.reload();
@@ -350,7 +324,7 @@
                             {% if review.user == user %}
                             <input onclick="window.delete_obj('review', {{ review.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
                             {% endif %}
-                            <input onclick="window.addReviewReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, {{ review.pk }}, {{ review.user.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/reply.svg"/>
+                            <input onclick="window.addReviewReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, {{ review.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/reply.svg"/>
                         </div>
                     </div>
                 </div>
@@ -395,28 +369,14 @@
                     }).then(res => {
                         if(!res.ok)
                             return res.text().then(msg => Promise.reject(msg));
-                        return res.text().then(_ => {
-                            {% if spell.creator.userinfo.spell_comment_notification %}
-                            let noti = {}
-                            noti.target = "{{ spell.creator.pk }}";
-                            noti.sender_id = "{{ user.pk }}";
-                            if (noti.target !== noti.sender_id) {
-                                noti.type = "user";
-                                noti.message = window.comment_desc.value;
-                                noti.additional = "Commented on your {{ spell.title }}";
-                                noti.ref = `/spell/{{ spell.pk }}/#comment-${res.headers.get("pk")}`;
-                                window.create_notification(noti);
-                            }
-                            {% endif %}
-                            location.reload();
-                        });
+                        return res.text().then(_ => {location.reload();});
                     }).catch((res) => {
                         window.dlg_header.innerText = "Review Submission Error";
                         window.dlg_text.innerText = res;
                         window.base_dlg.showModal();
                     });
                 };
-                function send_comment_comment(comment_id, text, commenter_id) {
+                function send_comment_comment(comment_id, text) {
                     return fetch("{% url 'spezspellz:spell' spell.pk %}", {
                         method: "POST",
                         headers: {
@@ -430,24 +390,10 @@
                     }).then(res => {
                         if(!res.ok)
                             return res.text().then(msg => Promise.reject(msg));
-                        return res.text()
-                        {% if user.userinfo.review_comment_notification %}
-                        .then(_ => {
-                            let noti = {};
-                            noti.target = commenter_id;
-                            noti.sender_id = "{{ user.pk }}";
-                            if (noti.target !== noti.sender_id) {
-                                noti.type = "user";
-                                noti.message = text;
-                                noti.additional = "Replied your comment";
-                                noti.ref = `/spell/{{ spell.pk }}/#commentcomment-${res.headers.get("pk")}`;
-                                window.create_notification(noti);
-                            }
-                        })
-                        {% endif %};
+                        return res.text();
                     });
                 }
-                window.addCommentReplyWindow = (btn, comment, comment_id, commenter_id) => {
+                window.addCommentReplyWindow = (btn, comment, comment_id) => {
                     const clone = window.review_reply_template.content.cloneNode(true).firstElementChild;
                     const text = clone.querySelector("[c_text]");
                     btn.style.display = "none";
@@ -456,7 +402,7 @@
                         btn.style.display = null;
                     }
                     clone.querySelector("[c_send]").onclick = () => {
-                        send_comment_comment(comment_id, text.value, commenter_id).then(() => {
+                        send_comment_comment(comment_id, text.value).then(() => {
                             clone.remove();
                             btn.style.display = null;
                             location.reload();
@@ -482,7 +428,7 @@
                             {% if comment.commenter == user %}
                             <input onclick="window.delete_obj('comment', {{ comment.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
                             {% endif %}
-                            <input onclick="window.addCommentReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, {{ comment.pk }}, {{ comment.commenter.pk }})" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
+                            <input onclick="window.addCommentReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, {{ comment.pk }})" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
                         </div>
                     </div>
                 </div>

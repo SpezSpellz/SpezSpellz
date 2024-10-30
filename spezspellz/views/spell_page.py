@@ -2,11 +2,11 @@
 from typing import Any, cast
 from django.utils import timezone
 from django.http import HttpRequest, HttpResponse, HttpResponseBase
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.views import View
 from django.db import transaction
 from spezspellz.models import Spell, Bookmark, \
-    SpellHistoryEntry, Review, ReviewComment, SpellComment, CommentComment
+    SpellHistoryEntry, Review, ReviewComment, SpellComment, CommentComment, Notification
 from spezspellz.utils import get_or_none
 from .rpc_view import RPCView
 
@@ -77,6 +77,14 @@ class SpellPage(View, RPCView):
         if spell is None:
             return HttpResponse("Spell not found", status=404)
         comment_pk = SpellComment.objects.create(spell=spell, commenter=user, text=text).pk
+        Notification.objects.create(
+            user=spell.creator,
+            title=user.username,
+            icon=reverse("spezspellz:avatar", args=(user.pk,)),
+            body=text,
+            additional=f"Commented on your {spell.title}",
+            ref=f"/spell/{spell_id}/#comment-{comment_pk}"
+        )
         return HttpResponse("Comment posted", status=200, headers={"pk": comment_pk})
 
     def rpc_comment_comment(
@@ -87,7 +95,6 @@ class SpellPage(View, RPCView):
         text: str = "",
     ) -> HttpResponseBase:
         """Handle review comment requests."""
-        _ = spell_id
         user = request.user
         if not user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
@@ -107,7 +114,15 @@ class SpellPage(View, RPCView):
         comment_reply_pk = CommentComment.objects.create(
             comment=comment, commenter=user, text=text
         ).pk
-        return HttpResponse("Comment posted", status=200, headers={"pk": comment_reply_pk})
+        Notification.objects.create(
+            user=comment.commenter,
+            title=user.username,
+            icon=reverse("spezspellz:avatar", args=(user.pk,)),
+            body=text,
+            additional="Replied your comment",
+            ref=f"/spell/{spell_id}/#reply-{comment_reply_pk}"
+        )
+        return HttpResponse("Comment posted", status=200)
 
     def rpc_review_comment(
         self,
@@ -117,7 +132,6 @@ class SpellPage(View, RPCView):
         text: str = "",
     ) -> HttpResponseBase:
         """Handle review comment requests."""
-        _ = spell_id
         user = request.user
         if not user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
@@ -135,7 +149,15 @@ class SpellPage(View, RPCView):
         if review is None:
             return HttpResponse("Review not found", status=404)
         review_pk = ReviewComment.objects.create(review=review, commenter=user, text=text).pk
-        return HttpResponse("Comment posted", status=200, headers={"pk": review_pk})
+        Notification.objects.create(
+            user=review.user,
+            title=user.username,
+            icon=reverse("spezspellz:avatar", args=(user.pk,)),
+            body=text,
+            additional="Commented on your review",
+            ref=f"/spell/{spell_id}/#reviewcomment-{review_pk}"
+        )
+        return HttpResponse("Comment posted", status=200)
 
     def rpc_review(
         self,
@@ -172,4 +194,12 @@ class SpellPage(View, RPCView):
             review.save()
             return HttpResponse("Updated", status=200)
         review_pk = Review.objects.create(user=user, spell=spell, star=stars, desc=desc).pk
-        return HttpResponse("Review posted", status=200, headers={"pk": review_pk})
+        Notification.objects.create(
+            user=spell.creator,
+            title=user.username,
+            icon=reverse("spezspellz:avatar", args=(user.pk,)),
+            body=desc,
+            additional=f"Review your {spell.title}",
+            ref=f"/spell/{spell_id}/#review-{review_pk}"
+        )
+        return HttpResponse("Review posted", status=200)
