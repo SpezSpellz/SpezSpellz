@@ -68,6 +68,7 @@ a {
     flex-direction: row;
     margin: 10px;
     padding: 5px;
+    overflow: auto;
 }
 .spell {
     position: relative;
