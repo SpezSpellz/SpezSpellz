@@ -24,6 +24,15 @@ class UploadPage(View):
     # 2MB thumbnail limit
     MAX_THUMBNAIL_SIZE = 2e6
 
+    # Max number of tags per post
+    MAX_TAGS_PER_POST = 30
+
+    # Max number of notifications per post
+    MAX_NOTI_PER_POST = 50
+
+    # Max number of attachments per post
+    MAX_ATTACH_PER_POST = 50
+
     def get(
         self,
         request: HttpRequest,
@@ -160,9 +169,9 @@ class UploadPage(View):
         thumbnail = request.FILES.get("thumbnail")
         if thumbnail is not None and thumbnail.size is not None and thumbnail.size > self.__class__.MAX_THUMBNAIL_SIZE:
             return HttpResponse("Thumbnail too large.", status=400)
-        tags_len = min(30, safe_cast(int, request.POST.get("tags"), 0))
-        noti_len = min(50, safe_cast(int, request.POST.get("notis"), 0))
-        attach_len = min(50, safe_cast(int, request.POST.get("attachs"), 0))
+        tags_len = min(self.__class__.MAX_TAGS_PER_POST, safe_cast(int, request.POST.get("tags"), 0))
+        noti_len = min(self.__class__.MAX_NOTI_PER_POST, safe_cast(int, request.POST.get("notis"), 0))
+        attach_len = min(self.__class__.MAX_ATTACH_PER_POST, safe_cast(int, request.POST.get("attachs"), 0))
         title = request.POST.get("title", "No Title")
         if not title.strip():
             return HttpResponse("Title must not be empty", status=400)
@@ -178,7 +187,7 @@ class UploadPage(View):
                 return HttpResponse("Forbidden", status=403)
             spell = old_spell
             old_attach_len = min(
-                50, safe_cast(int, request.POST.get("oattachs"), 0)
+                self.__class__.MAX_ATTACH_PER_POST, safe_cast(int, request.POST.get("oattachs"), 0)
             )
             old_attachs = []
             for i in range(old_attach_len):

@@ -85,6 +85,7 @@ a {
     margin: 0;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.5);
+    text-overflow: ellipsis;
 }
 .spell-img {
     height: 100%;
