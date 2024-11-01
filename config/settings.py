@@ -82,12 +82,32 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'default': ({
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DBNAME', default='my_database'),
+        'USER': config('DBUSER', default='my_user'),
+        'PASSWORD': config('DBPASSWD', default='1234'),
+        'HOST': config('DBHOST', default='localhost'),
+        'PORT': config('DBPORT', default='25565')
+    } 
+    if config('PROD', default=False, cast=bool) else
+    {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    })
 }
 
+# Storage
+STORAGES = {
+    "default": {
+        "BACKEND": "spezspellz.models.file2model.File2Model"
+        if config('PROD', default=False, cast=bool) else
+        "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
