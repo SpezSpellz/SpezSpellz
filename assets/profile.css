@@ -45,11 +45,10 @@ ul {
 ul li {
     display: flex;
     background-color: #3B3B3B;
-    margin: 10px auto;
+    margin-bottom: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    text-align: center;
+    text-align: left;
     font-size: 1.2rem;
     color: #FFF;
     transition: background-color 0.2s;
@@ -117,9 +116,9 @@ li:empty {
     margin-left: auto;
     margin-right: auto;
     margin-top: 100px;
-    margin-bottom: 100px;
+    margin-bottom: 10px;
     width: 100%;
-    border: 1px solid black;
+    border: 0px solid black;
 }
 
 .normal {
@@ -138,7 +137,7 @@ li:empty {
     margin: auto;
     width: 50%;
     height: 100vh;
-    border: 1px solid black;
+    border: 0px solid black;
 }
 
 .profile-pic {
@@ -149,12 +148,59 @@ li:empty {
 .spell {
     position: relative;
     display: block;
-    background-color: #3B3B3B;
-    margin-left: 5%;
-    margin-right: 5%;
+    background-color: #2B2B2B;
     color: #FFFFFF;
-    overflow-wrap: break-word;
-    overflow-y: auto;
     padding: 1%;
     border-radius: 20px;
+}
+
+.spell-pic {
+    width: 100px;
+}
+
+.spell-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    text-decoration: none;
+    height: 100px;
+    border: 0px solid black;
+}
+
+.all-spell-title {
+    color: #FFF;
+    font-size: 16pt;
+    margin: 0;
+}
+.all-spell-category {
+    color: #AAA;
+    font-size: 12pt;
+}
+
+.spell-text-box {
+    display: flex;
+    flex-direction: column;
+    flex:1;
+}
+
+.overflow {
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    overflow-wrap: break-word;
+    overflow-y: auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-evenly;
+    position: sticky;
+    top:0;
+    padding: 20px 0 20px 0;
+    background-color: #2B2B2B;
+}
+
+.view-all {
+    font-size: 25px;
+    padding: 15px;
 }
