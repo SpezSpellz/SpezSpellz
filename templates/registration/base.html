@@ -1,29 +1,29 @@
 {% extends 'base.html' %}
 {% block Body %}
 <div style="height: 100%;">
-    <div class="bg">
-        <form method="post" class="box">
-            <h1>{% block blk_title %}{% endblock %}</h1>
-            <div style="display: flex;flex-direction: column;">
-                {% csrf_token %}
-                {% block fields %}
-                {% endblock %}
-                {% if form.errors %}
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <p style="color: #F00;margin: auto;text-align: center">{{ error|escape }}</p>
-                        {% endfor %}
-                    {% endfor %}
-                    {% for error in form.non_field_errors %}
-                        <p style="color: #F00;margin: auto;text-align: center">{{ error|escape }}</p>
-                    {% endfor %}
-                {% endif %}
-                <p class="noacc" >{% block other_msg %}{% endblock %} <a href="{% block other_link %}{% endblock %}">{% block other_link_msg %}{% endblock %}</a></p>
-            </div>
-            
-            <button type="submit">{% block btn_text %}{% endblock %}</button>
-        </form>
-    </div>
+  <div class="bg">
+    <form method="post" class="box">
+      <h1>{% block blk_title %}{% endblock %}</h1>
+      <div style="display: flex;flex-direction: column;">
+        {% csrf_token %}
+        {% block fields %}
+        {% endblock %}
+        {% if form.errors %}
+        {% for field in form %}
+        {% for error in field.errors %}
+        <p style="color: #F00;margin: auto;text-align: center">{{ error|escape }}</p>
+        {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+        <p style="color: #F00;margin: auto;text-align: center">{{ error|escape }}</p>
+        {% endfor %}
+        {% endif %}
+        <p class="noacc" >{% block other_msg %}{% endblock %} <a href="{% block other_link %}{% endblock %}">{% block other_link_msg %}{% endblock %}</a></p>
+      </div>
+
+      <button type="submit">{% block btn_text %}{% endblock %}</button>
+    </form>
+  </div>
 </div>
 {% endblock %}
 {% block AfterBody %}

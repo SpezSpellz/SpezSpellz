@@ -5,73 +5,93 @@
 {% endblock %}
 {% block Body %}
 <h1 class="sp-title">SpezSpellz</h1>
-<form style="display: flex;justify-content: center;" method="get" action="{% url 'spezspellz:filter' %}" class="search-form">
-    <input class="search-bar" name="s" placeholder="Cool spells" type="text"/>
-    <button type="submit" class="search-button">Search</button>
+<form style="display: flex;justify-content: center;" method="get"
+      action="{% url 'spezspellz:filter' %}" class="search-form">
+  <input class="search-bar" name="s" placeholder="Cool spells" type="text"/>
+  <button type="submit" class="search-button">Search</button>
 </form>
 {% if user.is_authenticated and recommended_spells %}
 <h2 style="padding-left: 20px;">Recommended for you</h2>
 <div class="strip-box">
-    {% for spell in recommended_spells %}
-    <a href="{% url 'spezspellz:spell' spell.pk %}"><div class="spell">
-        <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" "{{ spell.pk }}" class="spell-img"/>
-        <h2 class="spell-title">{{ spell.title }}</h2>
-    </div></a>
-    {% endfor %}
+  {% for spell in recommended_spells %}
+  <a href="{% url 'spezspellz:spell' spell.pk %}">
+    <div class="spell">
+      <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" "{{ spell.pk
+      }}" class="spell-img"/>
+      <h2 class="spell-title">{{ spell.title }}</h2>
+    </div>
+  </a>
+  {% endfor %}
 </div>
 {% endif %}
 <h2 style="padding-left: 20px;">Latest posts</h2>
 <div class="strip-box">
-    {% for spell in latest_spells %}
-    <a href="{% url 'spezspellz:spell' spell.pk %}"><div class="spell">
-        <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" "{{ spell.pk }}" class="spell-img"/>
-        <h2 class="spell-title">{{ spell.title }}</h2>
-    </div></a>
-    {% empty %}
-        <a href="{% url 'spezspellz:upload' %}" style="text-decoration: underline;">Nothing new yet, but you could create the newest one</a>
-    {% endfor %}
+  {% for spell in latest_spells %}
+  <a href="{% url 'spezspellz:spell' spell.pk %}">
+    <div class="spell">
+      <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" "{{ spell.pk
+      }}" class="spell-img"/>
+      <h2 class="spell-title">{{ spell.title }}</h2>
+    </div>
+  </a>
+  {% empty %}
+  <a href="{% url 'spezspellz:upload' %}" style="text-decoration: underline;">Nothing
+    new yet, but you could create the newest one</a>
+  {% endfor %}
 </div>
 <h2 style="padding-left: 20px;">Top rated posts</h2>
 <div class="strip-box">
-    {% for spell in top_rated_spells %}
-    <a href="{% url 'spezspellz:spell' spell.pk %}"><div class="spell">
-        <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" "{{ spell.pk }}" class="spell-img"/>
-        <h2 class="spell-title">{{ spell.title }}</h2>
-    </div></a>
-    {% empty %}
-        <a href="{% url 'spezspellz:upload' %}" style="text-decoration: underline;">Be the first person to have a top rated post</a>
-    {% endfor %}
+  {% for spell in top_rated_spells %}
+  <a href="{% url 'spezspellz:spell' spell.pk %}">
+    <div class="spell">
+      <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" "{{ spell.pk
+      }}" class="spell-img"/>
+      <h2 class="spell-title">{{ spell.title }}</h2>
+    </div>
+  </a>
+  {% empty %}
+  <a href="{% url 'spezspellz:upload' %}" style="text-decoration: underline;">Be
+    the first person to have a top rated post</a>
+  {% endfor %}
 </div>
 <h2 style="padding-left: 20px;">All Posts</h2>
 <div class="all-spell-container">
-    {% for spell in spells %}
-    <a href="{% url 'spezspellz:spell' spell.pk %}">
+  {% for spell in spells %}
+  <a href="{% url 'spezspellz:spell' spell.pk %}">
     <div class="all-spell">
-        <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="all-spell-img" alt="{{ spell.title }}"/>
-            <div>
-                <h3 class="all-spell-title">{{ spell.title }}</h3>
-                <p class="all-spell-category">{{ spell.category }}</p>
-                <p class="all-spell-creator">{{ spell.creator }}</p>
-                <p class="all-spell-data">{{ spell.title }} {{ spell.summary|slice:":100" }}...</p>
-            </div>
-        </div></a>
-    {% empty %}
-        <a href="{% url 'spezspellz:upload' %}" style="text-decoration: underline;">No posts yet, why not create one?</a>
-    {% endfor %}
-    {% if max_page > 1 %}
-    <div class="nav-bar" style="display: flex;justify-content: center;"><ul>
-        {% if cur_page != 1 %}
-        <a href="{% url 'spezspellz:home' %}?page=1">&lt&lt</a>
-        <a href="{% url 'spezspellz:home' %}?page={{ cur_page|add:'-1' }}">&lt</a>
-        {% endif %}
-        {% for page in pages %}
-        <a {% if page == cur_page %}class="cur"{% else %}href="{% url 'spezspellz:home' %}?page={{ page }}"{% endif %}>{{ page }}</a>
-        {% endfor %}
-        {% if cur_page != max_page %}
-        <a href="{% url 'spezspellz:home' %}?page={{ cur_page|add:1 }}">&gt</a>
-        <a href="{% url 'spezspellz:home' %}?page={{ max_page }}">&gt&gt</a>
-        {% endif %}
-    </ul></div>
-    {% endif %}
+      <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}"
+           class="all-spell-img" alt="{{ spell.title }}"/>
+      <div>
+        <h3 class="all-spell-title">{{ spell.title }}</h3>
+        <p class="all-spell-category">{{ spell.category }}</p>
+        <p class="all-spell-creator">{{ spell.creator }}</p>
+        <p class="all-spell-data">{{ spell.title }} {{
+          spell.summary|slice:":100" }}...</p>
+      </div>
+    </div>
+  </a>
+  {% empty %}
+  <a href="{% url 'spezspellz:upload' %}" style="text-decoration: underline;">No
+    posts yet, why not create one?</a>
+  {% endfor %}
+  {% if max_page > 1 %}
+  <div class="nav-bar" style="display: flex;justify-content: center;">
+    <ul>
+      {% if cur_page != 1 %}
+      <a href="{% url 'spezspellz:home' %}?page=1">&lt&lt</a>
+      <a href="{% url 'spezspellz:home' %}?page={{ cur_page|add:'-1' }}">&lt</a>
+      {% endif %}
+      {% for page in pages %}
+      <a {% if page== cur_page %}class="cur" {% else
+         %}href="{% url 'spezspellz:home' %}?page={{ page }}" {% endif %}>{{
+        page }}</a>
+      {% endfor %}
+      {% if cur_page != max_page %}
+      <a href="{% url 'spezspellz:home' %}?page={{ cur_page|add:1 }}">&gt</a>
+      <a href="{% url 'spezspellz:home' %}?page={{ max_page }}">&gt&gt</a>
+      {% endif %}
+    </ul>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}
