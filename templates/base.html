@@ -1,81 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="{% block favicon %}/assets/favicon.ico{% endblock %}">
-    <title>{% block Title %}{% endblock %}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="{% block favicon %}/assets/favicon.ico{% endblock %}">
+  <title>{% block Title %}{% endblock %}</title>
 </head>
 <link rel="stylesheet" href="/assets/base.css">
 
 <!--Messages go here-->
 {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li>{% if message.tags %}{% endif %}{{ message }}</li>
-        {% endfor %}
-    </ul>
+<ul class="messages">
+  {% for message in messages %}
+  <li>{% if message.tags %}{% endif %}{{ message }}</li>
+  {% endfor %}
+</ul>
 {% endif %}
 {% block BeforeBody %}
 {% endblock %}
 <body>
 {% block Body %}
 {% endblock %}
-    <div class="left-top-btns">
-        {% if request.resolver_match.url_name != 'home' %}
-        <a href="{% url 'spezspellz:home' %} " class="btn-like left-top-btn">
-            <img width="32" src="/assets/home.svg"/>
-        </a>
-        {% endif %}
-        <a href="{% url 'spezspellz:upload' %}" class="btn-like left-top-btn">
-            <img width="32" src="/assets/upload.svg"/>
-        </a>
-    </div>
-    <div class="right-top-btns">
-        {% if user.is_authenticated %}
-        <a id="bell_button" class="btn-like right-top-btn" onclick="popup()">
-            <img width="32" src="/assets/bell.svg"/>
-            <span class="badge" id="notif_count" {% if user.userinfo.unread_badge > 0 %}style="display: block"{% endif %}>{{ user.userinfo.unread_badge }}</span>
-        </a>
-        <div id="popup_box" class="popup">
-        {% if user.notification_set.count > 0 %}
-            {% for noti in user.notification_set.all|dictsortreversed:"timestamp" %}
-                <a href="{{ noti.ref }}" style="text-decoration: none">
-                    <div class="popup-notif" onmouseover="mark_as_read({{ noti.pk }}, this)" style="position: relative">
-                        <img class="popup-img" src="{{ noti.icon }}">
-                        <div>
-                            <h3 class="popup-title">{{ noti.title }}</h3>
-                            {% if noti.additional != "" %}
-                            <p class="popup-additional">{{ noti.additional }}:</p>
-                            {% endif %}
-                            <p class="popup-message">{{ noti.body }}</p>
-                            <p class="popup-time">{{ noti.timestamp|date:"d/m/Y \\a\\t g:i A" }}</p>
-                        </div>
-                        {% if not noti.is_read %}
-                        <span class="badge" id="unread-{{ noti.pk }}" style="display: block">New</span>
-                        {% endif %}
-                    </div>
-                </a>
-            {% endfor %}
-        {% else %}
-            <p id="no_noti" style="text-align: center; font-size: 20px; color: #ffffff; display: block">Nothing to notify</p>
-        {% endif %}
+<div class="left-top-btns">
+  {% if request.resolver_match.url_name != 'home' %}
+  <a href="{% url 'spezspellz:home' %} " class="btn-like left-top-btn">
+    <img width="32" src="/assets/home.svg"/>
+  </a>
+  {% endif %}
+  <a href="{% url 'spezspellz:upload' %}" class="btn-like left-top-btn">
+    <img width="32" src="/assets/upload.svg"/>
+  </a>
+</div>
+<div class="right-top-btns">
+  {% if user.is_authenticated %}
+  <a id="bell_button" class="btn-like right-top-btn" onclick="popup()">
+    <img width="32" src="/assets/bell.svg"/>
+    <span class="badge" id="notif_count" {% if user.userinfo.unread_badge > 0 %}style="display: block"{% endif %}>{{ user.userinfo.unread_badge }}</span>
+  </a>
+  <div id="popup_box" class="popup">
+    {% if user.notification_set.count > 0 %}
+    {% for noti in user.notification_set.all|dictsortreversed:"timestamp" %}
+    <a href="{{ noti.ref }}" style="text-decoration: none">
+      <div class="popup-notif" onmouseover="mark_as_read({{ noti.pk }}, this)" style="position: relative">
+        <img class="popup-img" src="{{ noti.icon }}">
+        <div>
+          <h3 class="popup-title">{{ noti.title }}</h3>
+          {% if noti.additional != "" %}
+          <p class="popup-additional">{{ noti.additional }}:</p>
+          {% endif %}
+          <p class="popup-message">{{ noti.body }}</p>
+          <p class="popup-time">{{ noti.timestamp|date:"d/m/Y \\a\\t g:i A" }}</p>
         </div>
+        {% if not noti.is_read %}
+        <span class="badge" id="unread-{{ noti.pk }}" style="display: block">New</span>
         {% endif %}
-        {% if request.resolver_match.url_name == 'profile' %}
-        <a href="{% url 'spezspellz:usersettings' %}" class="btn-like right-top-btn"><img width="32" src="/assets/cog.svg"/></a>
-        <form action="{% url 'logout' %}?next={% url 'spezspellz:home' %}" method="POST">
-            {% csrf_token %}
-            <input type="image" alt="Logout" name="submit" width="32" class="btn-like right-top-btn" src="/assets/logout.svg"/>
-        </form>
-        {% else %}
-        {% if user.is_authenticated %}
-        <a href="{% url 'spezspellz:profile' %}" class="btn-like right-top-btn"><img width="32" src="/assets/profile.svg"/></a>
-        {% elif request.resolver_match.url_name != 'login' %}
-        <a href="{% url 'login' %}?next={% url 'spezspellz:home' %}" class="btn-like right-top-btn"><img width="32" src="/assets/login.svg"/></a>
-        {% endif %}
-        {% endif %}
-    </div>
+      </div>
+    </a>
+    {% endfor %}
+    {% else %}
+    <p id="no_noti" style="text-align: center; font-size: 20px; color: #ffffff; display: block">Nothing to notify</p>
+    {% endif %}
+  </div>
+  {% endif %}
+  {% if request.resolver_match.url_name == 'profile' %}
+  <a href="{% url 'spezspellz:usersettings' %}" class="btn-like right-top-btn"><img width="32" src="/assets/cog.svg"/></a>
+  <form action="{% url 'logout' %}?next={% url 'spezspellz:home' %}" method="POST">
+    {% csrf_token %}
+    <input type="image" alt="Logout" name="submit" width="32" class="btn-like right-top-btn" src="/assets/logout.svg"/>
+  </form>
+  {% else %}
+  {% if user.is_authenticated %}
+  <a href="{% url 'spezspellz:profile' %}" class="btn-like right-top-btn"><img width="32" src="/assets/profile.svg"/></a>
+  {% elif request.resolver_match.url_name != 'login' %}
+  <a href="{% url 'login' %}?next={% url 'spezspellz:home' %}" class="btn-like right-top-btn"><img width="32" src="/assets/login.svg"/></a>
+  {% endif %}
+  {% endif %}
+</div>
 </body>
 {% block AfterBody %}
 {% endblock %}

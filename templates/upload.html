@@ -7,92 +7,92 @@
 {% if extra_data %}
 <data id="x-data" hidden>{{ extra_data }}</data>
 <dialog id="edit_warn_dlg">
-    <h1 class="section dlgheader">Warning</h1>
-    <p style="color: #FFF;">Editing a spell will result in all ratings, reviews, and comments being deleted.<br>This is to prevent people from changing a good post to spam or advertising later on.</p>
-    <button class="btn-like" style="display: block;margin: auto;padding: 10px;font-size: 12pt;" onclick="window.edit_warn_dlg.close()">Close</button>
+  <h1 class="section dlgheader">Warning</h1>
+  <p style="color: #FFF;">Editing a spell will result in all ratings, reviews, and comments being deleted.<br>This is to prevent people from changing a good post to spam or advertising later on.</p>
+  <button class="btn-like" style="display: block;margin: auto;padding: 10px;font-size: 12pt;" onclick="window.edit_warn_dlg.close()">Close</button>
 </dialog>
 {% endif %}
 <dialog id="upload_dlg">
-    <h1 class="section dlgheader">{% if extra_data %}Apply Changes{% else %}Upload{% endif %}</h1>
-    <p id="upload_text" style="color: #FFF;"></p>
-    <button id="upload_dlg_close">Close</button>
-    <a id="spell_btn" style="text-decoration: none; margin-left: 5px; font-family: 'Arial'; display: none">
-        Go to spell
-    </a>
+  <h1 class="section dlgheader">{% if extra_data %}Apply Changes{% else %}Upload{% endif %}</h1>
+  <p id="upload_text" style="color: #FFF;"></p>
+  <button id="upload_dlg_close">Close</button>
+  <a id="spell_btn" style="text-decoration: none; margin-left: 5px; font-family: 'Arial'; display: none">
+    Go to spell
+  </a>
 </dialog>
 <dialog id="add_tag_dlg" style="height: 400px;width:400px">
-    <h1 class="section dlgheader">Add Tags</h1>
-    <input id="add_tag_dlg_search" class="search-bar" placeholder="Enter tag name" type="text"/>
-    <ul id="tag_search_list" style="list-style: none;margin: 0;padding: 0;max-height: 250px;overflow: scroll;overflow-x: hidden;">
-    </ul>
-    <div style="position: absolute;bottom: 15px;left: 0;right: 0;display:flex;flex-direction: row;justify-content: space-evenly;">
-        <button id="close_add_tag_dlg">Close</button>
-    </div>
+  <h1 class="section dlgheader">Add Tags</h1>
+  <input id="add_tag_dlg_search" class="search-bar" placeholder="Enter tag name" type="text"/>
+  <ul id="tag_search_list" style="list-style: none;margin: 0;padding: 0;max-height: 250px;overflow: scroll;overflow-x: hidden;">
+  </ul>
+  <div style="position: absolute;bottom: 15px;left: 0;right: 0;display:flex;flex-direction: row;justify-content: space-evenly;">
+    <button id="close_add_tag_dlg">Close</button>
+  </div>
 </dialog>
 <dialog id="add_noti_dlg">
-    <h1 class="section dlgheader">Add Notification</h1>
-    <div style="display: flex;flex-direction: column;">
-        <div><span style="font-size: 12pt;">Message: </span><textarea style="font-size: 12pt;" id="noti_dlg_text" type="text"></textarea></div><br>
-        <div><span style="font-size: 12pt;">Date and time: </span><input style="font-size: 12pt;" id="noti_dlg_date_time" type="datetime-local"/></div><br>
-        <div>
-            <span style="font-size: 12pt;">Repetition: </span>
-            <select style="width: 150px;font-size: 12pt;" name="noti_every" id="noti_dlg_every">
-                <option value="D">Every Day</option>
-                <option value="W">Every Week</option>
-                <option value="M">Every Month</option>
-                <option value="Y">Every Year</option>
-                <option value="S">Single Event</option>
-            </select>
-        </div><br>
-        <span id="noti_dlg_err" style="color: #F00;margin: auto;display: none;">Failed to eat shit.</span>
-        <div style="justify-content: space-evenly;">
-            <button id="ok_noti_dlg">Ok</button>
-            <button id="cancel_noti_dlg">Cancel</button>
-        </div>
+  <h1 class="section dlgheader">Add Notification</h1>
+  <div style="display: flex;flex-direction: column;">
+    <div><span style="font-size: 12pt;">Message: </span><textarea style="font-size: 12pt;" id="noti_dlg_text" type="text"></textarea></div><br>
+    <div><span style="font-size: 12pt;">Date and time: </span><input style="font-size: 12pt;" id="noti_dlg_date_time" type="datetime-local"/></div><br>
+    <div>
+      <span style="font-size: 12pt;">Repetition: </span>
+      <select style="width: 150px;font-size: 12pt;" name="noti_every" id="noti_dlg_every">
+        <option value="D">Every Day</option>
+        <option value="W">Every Week</option>
+        <option value="M">Every Month</option>
+        <option value="Y">Every Year</option>
+        <option value="S">Single Event</option>
+      </select>
+    </div><br>
+    <span id="noti_dlg_err" style="color: #F00;margin: auto;display: none;">Failed to eat shit.</span>
+    <div style="justify-content: space-evenly;">
+      <button id="ok_noti_dlg">Ok</button>
+      <button id="cancel_noti_dlg">Cancel</button>
     </div>
+  </div>
 </dialog>
 <table style="width: 100%;">
-    <tr>
-        <th style="width: 300px" valign="top">
-            <h1 class="section">Settings</h1>
-            <ul style="list-style: none;margin: 0;padding: 0;" class="settings-list">
-                <li>
-                    <h2 class="section">Title</h2>
-                    <input type="text" placeholder="Enter title here" id="spell_title"/>
-                </li>
-                <li>
-                    <h2 class="section">Thumbnail</h2>
-                    <input type="file" id="thumbnail_file" style="position: fixed; top: -100em" accept="image/png, image/jpeg"/>
-                    <input id="change_thumbnail" type="image" width="128" src="/assets/default_thumbnail.jpg"/>
-                </li>
-                <li>
-                    <h2 class="section">Category</h2>
-                    <select name="category" id="category">
-                        {% for category in categories %}
-                            <option value="{{ category.name }}">{{ category.name }}</option>
-                        {% endfor %}
-                    </select> 
-                </li>
-                <li>
-                    <h2 class="section">Tags</h2>
-                    <div style="display: inline-block;" id="tag-list">
-                    </div>
-                    <button id="add_tag" class="tag tag-add">+</button>
-                </li>
-                <li>
-                    <h2 class="section">Notifications</h2>
-                    <ul style="list-style: none;margin: 0;padding: 0;" id="noti_list">
-                        
-                    </ul>
-                    <button id="add_noti_btn" class="tag tag-add">+</button>
-                </li>
-            </ul>
-        </th>
-        <th valign="top">
-            <h1 class="section">{% if extra_data %}Edit{% else %}Upload{% endif %}</h1>
-            <div style="position: relative;height: auto">
-                <div id="md_preview" class="markdown-input" style="text-align: left;display: none;padding: 10px;overflow: scroll;width: calc(100% - 20px);height: calc(100vh - 150px);"></div>
-                <textarea id="markdown_input" class="markdown-input">
+  <tr>
+    <th style="width: 300px" valign="top">
+      <h1 class="section">Settings</h1>
+      <ul style="list-style: none;margin: 0;padding: 0;" class="settings-list">
+        <li>
+          <h2 class="section">Title</h2>
+          <input type="text" placeholder="Enter title here" id="spell_title"/>
+        </li>
+        <li>
+          <h2 class="section">Thumbnail</h2>
+          <input type="file" id="thumbnail_file" style="position: fixed; top: -100em" accept="image/png, image/jpeg"/>
+          <input id="change_thumbnail" type="image" width="128" src="/assets/default_thumbnail.jpg"/>
+        </li>
+        <li>
+          <h2 class="section">Category</h2>
+          <select name="category" id="category">
+            {% for category in categories %}
+            <option value="{{ category.name }}">{{ category.name }}</option>
+            {% endfor %}
+          </select>
+        </li>
+        <li>
+          <h2 class="section">Tags</h2>
+          <div style="display: inline-block;" id="tag-list">
+          </div>
+          <button id="add_tag" class="tag tag-add">+</button>
+        </li>
+        <li>
+          <h2 class="section">Notifications</h2>
+          <ul style="list-style: none;margin: 0;padding: 0;" id="noti_list">
+
+          </ul>
+          <button id="add_noti_btn" class="tag tag-add">+</button>
+        </li>
+      </ul>
+    </th>
+    <th valign="top">
+      <h1 class="section">{% if extra_data %}Edit{% else %}Upload{% endif %}</h1>
+      <div style="position: relative;height: auto">
+        <div id="md_preview" class="markdown-input" style="text-align: left;display: none;padding: 10px;overflow: scroll;width: calc(100% - 20px);height: calc(100vh - 150px);"></div>
+        <textarea id="markdown_input" class="markdown-input">
 # Uploading a spell
 
 First click the eye button on the top right of this box so it's easier to read.  
@@ -173,34 +173,34 @@ Welcome to SpezSpellz's upload page! Follow these instructions to make the most 
 
 Feel free to customize the template to fit your spell's unique attributes! Happy spell sharing!
 </textarea>
-                <input type="image" src="/assets/preview.svg" width="32px" id="preview_md"/>
-                <input type="image" src="/assets/delete_x.svg" width="32px" id="clear_md"/>
-                <button class="div-box upload-btn" id="upload_btn">{% if extra_data %}Apply Changes{% else %}Upload{% endif %}</button>
-            </div>
-        </th>
-        <th style="width: 300px" valign="top">
-            <h1 class="section" style="text-align: left; margin-left: 25px">Attachments</h1>
-            <div id="upload_attachment_box">
-                <ul id="upload_attachment_list" style="list-style: none;margin: 0;padding: 0;">
-                    
-                </ul>
-                <button id="add_attachment_btn" class="tag tag-add">+</button>
-            </div>
-        </th>
-    </tr>
+        <input type="image" src="/assets/preview.svg" width="32px" id="preview_md"/>
+        <input type="image" src="/assets/delete_x.svg" width="32px" id="clear_md"/>
+        <button class="div-box upload-btn" id="upload_btn">{% if extra_data %}Apply Changes{% else %}Upload{% endif %}</button>
+      </div>
+    </th>
+    <th style="width: 300px" valign="top">
+      <h1 class="section" style="text-align: left; margin-left: 25px">Attachments</h1>
+      <div id="upload_attachment_box">
+        <ul id="upload_attachment_list" style="list-style: none;margin: 0;padding: 0;">
+
+        </ul>
+        <button id="add_attachment_btn" class="tag tag-add">+</button>
+      </div>
+    </th>
+  </tr>
 </table>
 <template id="attachment_template">
-    <div class="div-box" style="background-color: #5F5F5F;display: flex;margin: 10px">
-        <img style="flex-basis: 32px; flex-grow: 0; flex-shrink: 0;" width="32" src="/assets/file.svg"/>
-        <div style="margin: auto;margin-left: 10px;">
-            <span style="color: #FFF;font-family: monospace;font-size: 11pt;" id="attachment_file_name"></span><br>
-            <span style="color: #AAA;font-family: monospace;font-size: 9pt;" id="attachment_file_size"></span>
-        </div>
-        <div class="div-box" style="margin: 0;margin-left: 10px;background-color: #4b4b4b;padding: 3px;display: flex;flex-direction: column;border-radius: 5px;">
-            <input class="attach-link-btn" style="flex-basis: 12px; flex-grow: 0; flex-shrink: 0;" width="12" type="image" src="/assets/add-link.svg"/>
-            <input class="attach-remove-btn" style="flex-basis: 12px; flex-grow: 0; flex-shrink: 0;" width="12" type="image" src="/assets/delete.svg"/>
-        </div>
+  <div class="div-box" style="background-color: #5F5F5F;display: flex;margin: 10px">
+    <img style="flex-basis: 32px; flex-grow: 0; flex-shrink: 0;" width="32" src="/assets/file.svg"/>
+    <div style="margin: auto;margin-left: 10px;">
+      <span style="color: #FFF;font-family: monospace;font-size: 11pt;" id="attachment_file_name"></span><br>
+      <span style="color: #AAA;font-family: monospace;font-size: 9pt;" id="attachment_file_size"></span>
     </div>
+    <div class="div-box" style="margin: 0;margin-left: 10px;background-color: #4b4b4b;padding: 3px;display: flex;flex-direction: column;border-radius: 5px;">
+      <input class="attach-link-btn" style="flex-basis: 12px; flex-grow: 0; flex-shrink: 0;" width="12" type="image" src="/assets/add-link.svg"/>
+      <input class="attach-remove-btn" style="flex-basis: 12px; flex-grow: 0; flex-shrink: 0;" width="12" type="image" src="/assets/delete.svg"/>
+    </div>
+  </div>
 </template>
 <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.2/marked.min.js" integrity="sha512-bXyBT2/sYjZg1D7ykDS6eJSE4DFDVPJHvbRAfdfYKr6IusrCz7wAmSm36vz9G8zMob25Rvqu90vft3JI71ygcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="module">

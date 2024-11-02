@@ -1,4 +1,4 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 
 {% block Title %}
 Filter
@@ -10,54 +10,54 @@ Filter
 
 {% block Body %}
 <dialog id="add_tag_dlg" style="height: 400px;width:400px">
-    <h1 class="section dlgheader">Add Tags</h1>
-    <input id="add_tag_dlg_search" class="search-bar" placeholder="Enter tag name" type="text"/>
-    <ul id="tag_search_list" style="list-style: none;margin: 0;padding: 0;max-height: 250px;overflow: scroll;">
-    </ul>
-    <div style="position: absolute;bottom: 15px;left: 0;right: 0;display:flex;flex-direction: row;justify-content: space-evenly;">
-        <button id="close_add_tag_dlg">Close</button>
-    </div>
+  <h1 class="section dlgheader">Add Tags</h1>
+  <input id="add_tag_dlg_search" class="search-bar" placeholder="Enter tag name" type="text"/>
+  <ul id="tag_search_list" style="list-style: none;margin: 0;padding: 0;max-height: 250px;overflow: scroll;">
+  </ul>
+  <div style="position: absolute;bottom: 15px;left: 0;right: 0;display:flex;flex-direction: row;justify-content: space-evenly;">
+    <button id="close_add_tag_dlg">Close</button>
+  </div>
 </dialog>
 <form method="GET" action="{% url 'spezspellz:filter' %}">
-    {% if request.GET.creator %}
-    <input name="creator" value="{{ request.GET.creator }}" hidden/>
-    {% endif %}
-    <input id="page" name="page" value="{{ request.GET.page }}" hidden/>
-    <h1 style="margin: auto;text-align: center;">Search</h1>
-    <input class="search-bar" type="text" name="s" placeholder="Cool spells" value="{{ request.GET.s }}"/>
-    <div class="filter-box">
-        <h2 style="margin-top: 0;margin: auto;text-align: center;">Filters</h2>
-        <hr>
-        <div style="display: flex;">
-            <h3 style="margin: 0;margin-right: 8px;" >Category</h3>
-            <select name="category">
-                <option value="">All categories</option>
-                {% for category in spell_categories %}
-                <option value="{{ category.pk }}" {% if request.GET.category == category.pk|slugify %}selected{% endif %}>{{ category.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-            <h3 style="margin: 0;">Tags:</h3>
-            <div style="display: inline-block;" id="tag-list">
-            </div>
-            <button type="button" id="add_tag_btn" class="tag tag-add">+</button>
-            <br>
-            <select name="sort" onchange="this.form.submit()" style="margin-bottom: 5px;">
-                <option value="recent" {% if request.GET.sort == "recent" %}selected{% endif %}>Most Recent</option>
-                <option value="oldest" {% if request.GET.sort == "oldest" %}selected{% endif %}>Oldest</option>
-                <option value="most_commented" {% if request.GET.sort == "most_commented" %}selected{% endif %}>Most Commented</option>
-                <option value="least_commented" {% if request.GET.sort == "least_commented" %}selected{% endif %}>Least Commented</option>
-                <option value="most_viewed" {% if request.GET.sort == "most_viewed" %}selected{% endif %}>Most Viewed</option>
-                <option value="least_viewed" {% if request.GET.sort == "least_viewed" %}selected{% endif %}>Least Viewed</option>
-                <option value="most_rated" {% if request.GET.sort == "most_rated" %}selected{% endif %}>Most Rated</option>
-                <option value="least_rated" {% if request.GET.sort == "least_rated" %}selected{% endif %}>Least Rated</option>
-            </select>
-            
-        <div class="button-container">
-            <button id="submit" type="submit" class="apply-button">Apply</button>
-            <button type="reset" class="clear-button">Clear</button>
-        </div>
-        <script>
+  {% if request.GET.creator %}
+  <input name="creator" value="{{ request.GET.creator }}" hidden/>
+  {% endif %}
+  <input id="page" name="page" value="{{ request.GET.page }}" hidden/>
+  <h1 style="margin: auto;text-align: center;">Search</h1>
+  <input class="search-bar" type="text" name="s" placeholder="Cool spells" value="{{ request.GET.s }}"/>
+  <div class="filter-box">
+    <h2 style="margin-top: 0;margin: auto;text-align: center;">Filters</h2>
+    <hr>
+    <div style="display: flex;">
+      <h3 style="margin: 0;margin-right: 8px;" >Category</h3>
+      <select name="category">
+        <option value="">All categories</option>
+        {% for category in spell_categories %}
+        <option value="{{ category.pk }}" {% if request.GET.category == category.pk|slugify %}selected{% endif %}>{{ category.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <h3 style="margin: 0;">Tags:</h3>
+    <div style="display: inline-block;" id="tag-list">
+    </div>
+    <button type="button" id="add_tag_btn" class="tag tag-add">+</button>
+    <br>
+    <select name="sort" onchange="this.form.submit()" style="margin-bottom: 5px;">
+      <option value="recent" {% if request.GET.sort == "recent" %}selected{% endif %}>Most Recent</option>
+      <option value="oldest" {% if request.GET.sort == "oldest" %}selected{% endif %}>Oldest</option>
+      <option value="most_commented" {% if request.GET.sort == "most_commented" %}selected{% endif %}>Most Commented</option>
+      <option value="least_commented" {% if request.GET.sort == "least_commented" %}selected{% endif %}>Least Commented</option>
+      <option value="most_viewed" {% if request.GET.sort == "most_viewed" %}selected{% endif %}>Most Viewed</option>
+      <option value="least_viewed" {% if request.GET.sort == "least_viewed" %}selected{% endif %}>Least Viewed</option>
+      <option value="most_rated" {% if request.GET.sort == "most_rated" %}selected{% endif %}>Most Rated</option>
+      <option value="least_rated" {% if request.GET.sort == "least_rated" %}selected{% endif %}>Least Rated</option>
+    </select>
+
+    <div class="button-container">
+      <button id="submit" type="submit" class="apply-button">Apply</button>
+      <button type="reset" class="clear-button">Clear</button>
+    </div>
+    <script>
             window.to_page = (page) => {
                 window.page.value = page;
                 window.submit.click();
@@ -157,40 +157,40 @@ Filter
                 }, 250); 
             };
         </script>
-    </div>
+  </div>
 </form>
 <div class="results">
-    <h2 style="display: inline;">Results:</h2>
-    {% if spells %}
-        {% for spell in spells %}
-        <a href="{% url 'spezspellz:spell' spell.pk %}">
-        <div class="spell">
-            <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img" alt="{{ spell.title }}"/>
-                <div>
-                    <h3 class="spell-title">{{ spell.title }}</h3>
-                    <p class="spell-category">{{ spell.category }}</p>
-                    <p class="spell-creator">{{ spell.creator }}</p>
-                    <p class="spell-data">{{ spell.title }} {{ spell.summary|slice:":100" }}...</p>
-                </div>
-        </div></a>
-        {% endfor %}
-        {% if max_page != 1 %}
-        <div class="nav-bar" style="display: flex;justify-content: center;"><ul>
-            {% if cur_page != 1 %}
-            <a onclick="window.to_page(1)">&lt&lt</a>
-            <a onclick="window.to_page({{ cur_page|add:'-1' }})">&lt</a>
-            {% endif %}
-            {% for page in pages %}
-            <a {% if page == cur_page %}class="cur"{% else %}onclick="window.to_page({{ page }})"{% endif %}>{{ page }}</a>
-            {% endfor %}
-            {% if cur_page != max_page %}
-            <a onclick="window.to_page({{ cur_page|add:1 }})">&gt</a>
-            <a onclick="window.to_page({{ max_page }})">&gt&gt</a>
-            {% endif %}
-        </ul></div>
-        {% endif %}
-    {% else %}
-        <p>No spells found.</p>
+  <h2 style="display: inline;">Results:</h2>
+  {% if spells %}
+  {% for spell in spells %}
+  <a href="{% url 'spezspellz:spell' spell.pk %}">
+    <div class="spell">
+      <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img" alt="{{ spell.title }}"/>
+      <div>
+        <h3 class="spell-title">{{ spell.title }}</h3>
+        <p class="spell-category">{{ spell.category }}</p>
+        <p class="spell-creator">{{ spell.creator }}</p>
+        <p class="spell-data">{{ spell.title }} {{ spell.summary|slice:":100" }}...</p>
+      </div>
+    </div></a>
+  {% endfor %}
+  {% if max_page != 1 %}
+  <div class="nav-bar" style="display: flex;justify-content: center;"><ul>
+    {% if cur_page != 1 %}
+    <a onclick="window.to_page(1)">&lt&lt</a>
+    <a onclick="window.to_page({{ cur_page|add:'-1' }})">&lt</a>
     {% endif %}
+    {% for page in pages %}
+    <a {% if page == cur_page %}class="cur"{% else %}onclick="window.to_page({{ page }})"{% endif %}>{{ page }}</a>
+    {% endfor %}
+    {% if cur_page != max_page %}
+    <a onclick="window.to_page({{ cur_page|add:1 }})">&gt</a>
+    <a onclick="window.to_page({{ max_page }})">&gt&gt</a>
+    {% endif %}
+  </ul></div>
+  {% endif %}
+  {% else %}
+  <p>No spells found.</p>
+  {% endif %}
 </div>
 {% endblock %}
