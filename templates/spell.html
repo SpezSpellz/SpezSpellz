@@ -129,7 +129,7 @@
   <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like" style="margin: 0;margin-left: 8px">
     <img width="32" src="/assets/edit.svg"/>
   </a>
-  <a href="{% url 'spezspellz:home' %}" class="btn-like" style="margin: 0;margin-left: 8px" onclick="window.delete_spell({{ spell.pk }})">
+  <a class="btn-like" style="margin: 0;margin-left: 8px" onclick="window.delete_spell({{ spell.pk }})">
     <img width="32" src="/assets/delete.svg"/>
   </a>
   <script>
@@ -147,6 +147,7 @@
         }).then(res => {
             if(!res.ok)
                 return Promise.reject();
+            window.location = "{% url 'spezspellz:home' %}";
             return res.text()
         })
     }
