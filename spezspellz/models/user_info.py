@@ -40,7 +40,7 @@ class UserInfo(models.Model):
     @property
     def unread_badge(self):
         """Return number of unread notification for badge."""
-        return self.user.notification_set.filter(bell_clicked=False).count
+        return self.user.notification_set.filter(bell_clicked=False).count()
 
     def __str__(self):
         """Return user info as string."""
