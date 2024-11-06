@@ -18,14 +18,14 @@
 <div my_spell="{{ spell.pk }}" class="spell-container">
   <a style="flex: 1" href="{% url 'spezspellz:spell' spell.pk %}">
     <div class="spell-info">
-      <img src="{% url 'spezspellz:spell_thumbnail' spell.id %}"/>
+      <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}"/>
       <span class="spell-title">{{ spell.title }}</span>
     </div>
   </a>
   {% if not other_user %}
   <div class="actions">
     <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like"><img width="32" src="/assets/edit.svg"/></a>
-    <a onclick="window.delete_spell({{ spell.id }})" class="btn-like"><img width="32" src="/assets/delete.svg"/></a>
+    <a onclick="window.delete_spell({{ spell.pk }})" class="btn-like"><img width="32" src="/assets/delete.svg"/></a>
   </div>
   {% endif %}
 </div>

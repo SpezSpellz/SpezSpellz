@@ -178,14 +178,12 @@ class UploadPage(View):
         category = get_or_none(Category, name=category_name)
         if category is None:
             return HttpResponse("Unknown category", status=404)
-        spell = None
         if spell_id is not None:
-            old_spell = get_or_none(Spell, pk=spell_id)
-            if old_spell is None:
+            spell = get_or_none(Spell, pk=spell_id)
+            if spell is None:
                 return HttpResponse("Spell not found", status=404)
-            if old_spell.creator != request.user:
+            if spell.creator != request.user:
                 return HttpResponse("Forbidden", status=403)
-            spell = old_spell
             old_attach_len = min(
                 self.__class__.MAX_ATTACH_PER_POST, safe_cast(int, request.POST.get("oattachs"), 0)
             )

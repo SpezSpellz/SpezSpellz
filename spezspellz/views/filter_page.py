@@ -1,9 +1,75 @@
 """Implements the filter page."""
+from enum import Enum
+from functools import partial
 from django.shortcuts import render
 from django.views import View
-from django.db.models import Count, Avg
+from django.db.models import Count, Avg, QuerySet
 from spezspellz.models import Spell, Tag, Category
 from spezspellz.utils import safe_cast
+
+
+class SortOption(Enum):
+    """All the sort options."""
+
+    @partial
+    # type: ignore
+    def RECENT(spells: QuerySet[Spell]):
+        """Most recent first."""
+        return spells.order_by("-id")
+
+    @partial
+    # type: ignore
+    def OLDEST(spells: QuerySet[Spell]):
+        """Least recent first."""
+        return spells.order_by("id")
+
+    @partial
+    # type: ignore
+    def MOST_COMMENTED(spells: QuerySet[Spell]):
+        """Most comments first."""
+        return spells.annotate(
+            comment_count=Count('spellcomment')
+        ).order_by('-comment_count')
+
+    @partial
+    # type: ignore
+    def LEAST_COMMENTED(spells: QuerySet[Spell]):
+        """Least comments first."""
+        return spells.annotate(
+            comment_count=Count('spellcomment')
+        ).order_by('comment_count')
+
+    @partial
+    # type: ignore
+    def MOST_VIEWED(spells: QuerySet[Spell]):
+        """Most view first."""
+        return spells.annotate(
+            view_count=Count('spellhistoryentry')
+        ).order_by('-view_count')
+
+    @partial
+    # type: ignore
+    def LEAST_VIEWED(spells: QuerySet[Spell]):
+        """Least view first."""
+        return spells.annotate(
+            view_count=Count('spellhistoryentry')
+        ).order_by('view_count')
+
+    @partial
+    # type: ignore
+    def MOST_RATED(spells: QuerySet[Spell]):
+        """Most rated first."""
+        return spells.annotate(
+            average_rating=Avg('review__star')
+        ).order_by('-average_rating')
+
+    @partial
+    # type: ignore
+    def LEAST_RATED(spells: QuerySet[Spell]):
+        """Least rated first."""
+        return spells.annotate(
+            average_rating=Avg('review__star')
+        ).order_by('average_rating')
 
 
 class FilterPage(View):
@@ -39,35 +105,10 @@ class FilterPage(View):
             1 if spell_count % self.__class__.SPELLS_PER_PAGE != 0 else 0
         )
 
-        sort_option = request.GET.get("sort")
-        if sort_option == "recent":
-            spells = spells.order_by('-id')
-        elif sort_option == "oldest":
-            spells = spells.order_by('id')
-        elif sort_option == "most_commented":
-            spells = spells.annotate(
-                comment_count=Count('spellcomment')
-            ).order_by('-comment_count')
-        elif sort_option == "least_commented":
-            spells = spells.annotate(
-                comment_count=Count('spellcomment')
-            ).order_by('comment_count')
-        elif sort_option == "most_viewed":
-            spells = spells.annotate(
-                view_count=Count('spellhistoryentry')
-            ).order_by('-view_count')
-        elif sort_option == "least_viewed":
-            spells = spells.annotate(
-                view_count=Count('spellhistoryentry')
-            ).order_by('view_count')
-        elif sort_option == "most_rated":
-            spells = spells.annotate(
-                average_rating=Avg('review__star')
-            ).order_by('-average_rating')
-        elif sort_option == "least_rated":
-            spells = spells.annotate(
-                average_rating=Avg('review__star')
-            ).order_by('average_rating')
+        sort_option = str(request.GET.get("sort")).upper()
+        sort_type = SortOption.__members__.get(sort_option)
+        if sort_type is not None:
+            spells = sort_type.value(spells)
         spells = spells.distinct()
 
         return render(

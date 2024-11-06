@@ -194,34 +194,15 @@
     <!-- Script for selecting tab -->
     <script>
         let selectedTab = localStorage.getItem("spell_show") || "1";
+
+        const tabs = ["spell", "bookmark", "history"];
         window.show_tab = (tabIndex) => {
-            window.spell_tab.hidden = false;
-            window.bookmark_tab.hidden = true;
-            window.history_tab.hidden = true;
-            window.spell_btn.style.color = '#777';
-            window.bookmark_btn.style.color = '#777';
-            window.history_btn.style.color = '#777';
-
-            if (tabIndex === "1") {
-              window.spell_tab.hidden = false;
-              window.bookmark_tab.hidden = true;
-              window.history_tab.hidden = true;
-              window.spell_btn.style.color = '#FFF';
-            }
-            else if (tabIndex === "2") {
-              window.spell_tab.hidden = true;
-              window.bookmark_tab.hidden = false;
-              window.history_tab.hidden = true;
-              window.bookmark_btn.style.color = '#FFF';
-            }
-            else if (tabIndex === "3") {
-              window.spell_tab.hidden = true;
-              window.bookmark_tab.hidden = true;
-              window.history_tab.hidden = false;
-              window.history_btn.style.color = '#FFF';
-            }
-
-            localStorage.setItem("spell_show", tabIndex);
+          for(let i = 0;i < tabs.length;++i) {
+            const same_tab = ("" + (i + 1)) == tabIndex;
+            window[`${tabs[i]}_tab`].hidden = !same_tab;
+            window[`${tabs[i]}_btn`].style.color = (same_tab ? '#FFF' : '#777');
+          }
+          localStorage.setItem("spell_show", tabIndex);
         };
 
         window.show_tab(selectedTab);

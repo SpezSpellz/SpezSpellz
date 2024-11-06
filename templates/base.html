@@ -27,9 +27,11 @@
     <img width="32" src="/assets/home.svg"/>
   </a>
   {% endif %}
+  {% if request.resolver_match.url_name != 'upload' and request.resolver_match.url_name != 'edit' %}
   <a href="{% url 'spezspellz:upload' %}" class="btn-like left-top-btn">
     <img width="32" src="/assets/upload.svg"/>
   </a>
+  {% endif %}
 </div>
 <div class="right-top-btns">
   {% if user.is_authenticated %}
@@ -244,7 +246,7 @@ ${time_obj.toLocaleString("en-US", {hour:"numeric", minute:"numeric"})}`;
         for(const bookmark of notifications.bookmarks) {
             for(const noti of bookmark.notifications) {
                 const date = new Date(noti.time);
-                noti.target = "{{ user.id }}";
+                noti.target = "{{ user.pk }}";
                 noti.sender_id = noti.spell_id
                 noti.type = "spell";
                 noti.additional = "";

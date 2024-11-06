@@ -69,7 +69,6 @@ class NotificationView(View, RPCView):
             additional=additional,
             ref=ref
         )
-        notification.save()
         notifications = cast(Any, user).notification_set.all().order_by("-timestamp")
         if notifications.count() > MAX_NOTIFICATION_COUNT:
             notifications.filter(

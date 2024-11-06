@@ -96,7 +96,8 @@
     </table>
     <button id="change_password" class="generic-button">Change password</button>
   </div>
-  <script>
+</div>
+<script>
     function display_generic_failure(msg = null) {
         window.popup_msg.style.color = "#F00";
         window.popup_msg.innerText = msg || "Failed to apply changes";
@@ -203,4 +204,4 @@
         }).catch(() => display_generic_failure("Failed to upload avatar"));
     };
 </script>
-  {% endblock %}
+{% endblock %}

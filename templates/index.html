@@ -14,7 +14,7 @@
 <div class="strip-box">
   {% for spell in recommended_spells %}
   <a href="{% url 'spezspellz:spell' spell.pk %}"><div class="spell">
-    <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" "{{ spell.pk }}" class="spell-img"/>
+    <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img"/>
     <h2 class="spell-title">{{ spell.title }}</h2>
   </div></a>
   {% endfor %}
@@ -24,7 +24,7 @@
 <div class="strip-box">
   {% for spell in latest_spells %}
   <a href="{% url 'spezspellz:spell' spell.pk %}"><div class="spell">
-    <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" "{{ spell.pk }}" class="spell-img"/>
+    <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img"/>
     <h2 class="spell-title">{{ spell.title }}</h2>
   </div></a>
   {% empty %}
@@ -35,7 +35,7 @@
 <div class="strip-box">
   {% for spell in top_rated_spells %}
   <a href="{% url 'spezspellz:spell' spell.pk %}"><div class="spell">
-    <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" "{{ spell.pk }}" class="spell-img"/>
+    <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img"/>
     <h2 class="spell-title">{{ spell.title }}</h2>
   </div></a>
   {% empty %}

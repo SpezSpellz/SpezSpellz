@@ -42,7 +42,7 @@ Filter
     </div>
     <button type="button" id="add_tag_btn" class="tag tag-add">+</button>
     <br>
-    <select name="sort" onchange="this.form.submit()" style="margin-bottom: 5px;">
+    <select name="sort" style="margin-bottom: 5px;">
       <option value="recent" {% if request.GET.sort == "recent" %}selected{% endif %}>Most Recent</option>
       <option value="oldest" {% if request.GET.sort == "oldest" %}selected{% endif %}>Oldest</option>
       <option value="most_commented" {% if request.GET.sort == "most_commented" %}selected{% endif %}>Most Commented</option>
