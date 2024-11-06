@@ -38,7 +38,10 @@ class UploadPage(View):
         request: HttpRequest,
         spell_id: Optional[int] = None
     ) -> HttpResponseBase:
-        """Handle GET requests for this view."""
+        """
+        Handle GET requests for this view.
+        Normally when user edit the spell.
+        """
         if not request.user.is_authenticated:
             return redirect_to_login(
                 request.get_full_path(), settings.LOGIN_URL,
@@ -157,7 +160,10 @@ class UploadPage(View):
         request: HttpRequest,
         spell_id: Optional[int] = None
     ) -> HttpResponseBase:
-        """Handle POST requests for this view."""
+        """
+        Handle POST requests for this view.
+        When upload or make changes to the spell.
+        """
         if not request.user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
         data = request.POST.get("data")
