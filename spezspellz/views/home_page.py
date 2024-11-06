@@ -2,7 +2,7 @@
 from django.http import HttpRequest, HttpResponseBase
 from django.shortcuts import render
 from django.views import View
-from django.db.models import Avg, Sum, Case, When, IntegerField
+from django.db.models import Avg, Sum, Case, When, IntegerField, FloatField
 from spezspellz.models import Spell, RateTag, HasTag
 from spezspellz.utils import safe_cast
 
@@ -10,7 +10,7 @@ from spezspellz.utils import safe_cast
 class HomePage(View):
     """Handle the home page."""
 
-    SPELLS_PER_STRIP = 5
+    SPELLS_PER_STRIP = 13
     SPELLS_PER_PAGE = 15
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
@@ -33,7 +33,9 @@ class HomePage(View):
                         )
                     ) + 1.0)/(num_rated + 1.0)
                 )
-
+            cases = []
+            for v in liked_tags:
+                cases.append(When(hastag__tag__pk=v["tag"], then=v["weight"]))
             # TODO: Make this not shit
             # Rn it doesn't consider the weight from above and the tag rating from the spell
             # Does not consider category
@@ -44,9 +46,9 @@ class HomePage(View):
             recommended_spells = all_spells \
                 .annotate(weight=Sum(
                     Case(
-                        When(hastag__tag__in=liked_tags.values("tag"), then=1),
+                        *cases,
                         default=0,
-                        output_field=IntegerField()
+                        output_field=FloatField()
                     )
                 )).order_by("-weight")
 
