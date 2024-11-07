@@ -10,8 +10,30 @@ from spezspellz.models import Spell, Bookmark, \
     SpellHistoryEntry, Review, ReviewComment, SpellComment, CommentComment, Notification
 from spezspellz.utils import get_or_none
 from .rpc_view import RPCView
+from functools import wraps
 
 MAX_NOTIFICATION_COUNT = 50
+
+
+def validate_user_and_text(view_func):
+    """Decorator to validate user and text before running the view."""
+    @wraps(view_func)
+    def wrapper(self, request, *args, **kwargs):
+        """
+        Validates the user and text
+
+        Return: None if no issue
+        """
+        user = request.user
+        text = kwargs.get('text') or kwargs.get('desc')  # In case of the "desc" of rpc_review
+        if not user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        if not isinstance(text, str):
+            return HttpResponse(
+                "Parameter `text` must be a string", status=400
+            )
+        return view_func(self, request, *args, **kwargs)
+    return wrapper
 
 
 class SpellPage(View, RPCView):
@@ -71,6 +93,7 @@ class SpellPage(View, RPCView):
 
         return render(request, "spell.html", context)
 
+    @validate_user_and_text
     def rpc_comment(
         self,
         request: HttpRequest,
@@ -80,12 +103,7 @@ class SpellPage(View, RPCView):
         """Handle review comment requests."""
         _ = spell_id
         user = request.user
-        if not user.is_authenticated:
-            return HttpResponse("Unauthenticated", status=401)
-        if not isinstance(text, str):
-            return HttpResponse(
-                "Parameter `text` must be a string", status=400
-            )
+
         if len(text) > int(SpellComment.text.field.max_length or 0):
             return HttpResponse("Text too long", status=400)
         spell = get_or_none(Spell, pk=spell_id)
@@ -109,6 +127,7 @@ class SpellPage(View, RPCView):
             ).delete()
         return HttpResponse("Comment posted", status=200)
 
+    @validate_user_and_text
     def rpc_comment_comment(
         self,
         request: HttpRequest,
@@ -118,12 +137,7 @@ class SpellPage(View, RPCView):
     ) -> HttpResponseBase:
         """Handle review comment requests."""
         user = request.user
-        if not user.is_authenticated:
-            return HttpResponse("Unauthenticated", status=401)
-        if not isinstance(text, str):
-            return HttpResponse(
-                "Parameter `text` must be a string", status=400
-            )
+
         if not isinstance(comment_id, int):
             return HttpResponse(
                 "Parameter `review_id` must be a string", status=400
@@ -152,6 +166,7 @@ class SpellPage(View, RPCView):
             ).delete()
         return HttpResponse("Comment posted", status=200)
 
+    @validate_user_and_text
     def rpc_review_comment(
         self,
         request: HttpRequest,
@@ -161,12 +176,7 @@ class SpellPage(View, RPCView):
     ) -> HttpResponseBase:
         """Handle review comment requests."""
         user = request.user
-        if not user.is_authenticated:
-            return HttpResponse("Unauthenticated", status=401)
-        if not isinstance(text, str):
-            return HttpResponse(
-                "Parameter `text` must be a string", status=400
-            )
+
         if not isinstance(review_id, int):
             return HttpResponse(
                 "Parameter `review_id` must be a string", status=400
@@ -195,6 +205,7 @@ class SpellPage(View, RPCView):
             ).delete()
         return HttpResponse("Comment posted", status=200)
 
+    @validate_user_and_text
     def rpc_review(
         self,
         request: HttpRequest,
@@ -204,12 +215,7 @@ class SpellPage(View, RPCView):
     ) -> HttpResponseBase:
         """Handle review requests."""
         user = request.user
-        if not user.is_authenticated:
-            return HttpResponse("Unauthenticated", status=401)
-        if not isinstance(desc, str):
-            return HttpResponse(
-                "Parameter `desc` must be a string", status=400
-            )
+
         if not isinstance(stars, int):
             return HttpResponse(
                 "Parameter `stars` must be an integer", status=400
