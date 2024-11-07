@@ -40,6 +40,7 @@ class UploadPage(View):
     ) -> HttpResponseBase:
         """
         Handle GET requests for this view.
+
         Normally when user edit the spell.
         """
         if not request.user.is_authenticated:
@@ -162,6 +163,7 @@ class UploadPage(View):
     ) -> HttpResponseBase:
         """
         Handle POST requests for this view.
+
         When upload or make changes to the spell.
         """
         if not request.user.is_authenticated:

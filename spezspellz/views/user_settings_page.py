@@ -21,6 +21,7 @@ class UserSettingsPage(View, RPCView):
     def post(self, request: HttpRequest, **kwargs) -> HttpResponseBase:
         """
         Handle POST requests for this view.
+
         Will call RPCView post method if not profile picture update.
         """
         profile_picture = request.FILES.get("pp")
