@@ -17,14 +17,14 @@ MAX_NOTIFICATION_COUNT = 50
 
 def validate_user_and_text(view_func):
     """
-    Validates user and text before running the view.
+    Validate user and text before running the view.
 
     A Decorator
     """
     @wraps(view_func)
     def wrapper(self, request, *args, **kwargs):
         """
-        Validates the user and text.
+        Validate the user and text.
 
         Return: None if no issue
         """
