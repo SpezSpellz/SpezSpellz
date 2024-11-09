@@ -103,3 +103,22 @@ td {
 .switch-td {
     padding-left: 20px;
 }
+
+.tab {
+    display: inline-block;
+    margin: auto;
+}
+
+.tab-btn {
+    font-size: 18pt;
+    background-color: transparent;
+    border-style: none;
+    cursor: pointer;
+    color: #777;
+    padding: 10px;
+    padding-bottom: 0px;
+}
+
+.tab-btn:hover {
+    color: #aaa;
+}

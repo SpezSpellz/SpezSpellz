@@ -10,8 +10,16 @@
   <button id="close_popup" class="generic-button" style="display: block;margin: auto;">Close</button>
 </dialog>
 <div style="display: flex;flex-direction: column;">
-  <div style="display: inline-block;margin: auto;">
-    <h1>User settings for {{ user.username }}</h1>
+  <div class="tab">
+    <h1 style="text-align: center;">User settings for {{ user.username }}</h1>
+    <div style="display: flex;flex-direction: row;justify-content: center;">
+      <button onClick="change_tab(0)" id="0btn" class="tab-btn" style="color: #FFF;">General</button>
+      <button onClick="change_tab(1)" id="1btn" class="tab-btn">Username</button>
+      <button onClick="change_tab(2)" id="2btn" class="tab-btn">Password</button>
+    </div>
+    <hr>
+  </div>
+  <div id="0tab" class="tab">
     <h2>Avatar</h2>
     <hr>
     <input id="upload_avatar_btn" type="image" width="128" src="{% url 'spezspellz:avatar' user.pk %}"/>
@@ -72,136 +80,142 @@
         </td>
       </tr>
     </table>
-    <button id="apply_changes" class="generic-button">Apply changes</button>
-    <h2>Change username</h2>
-    <hr>
+    <button id="apply_changes" class="generic-button" style="font-size: 16pt;margin: auto;display: block;margin-top: 16px;">Apply changes</button>
+  </div>
+  <div id="1tab" class="tab" style="display: none;">
     <table>
       <tr>
         <td><span style="margin-right: 30px;">New Username</span></td>
-        <td><input id="new_username_ip" style="background-color: #3B3B3B;color: #FFF;"/></td>
+        <td><input id="new_username_ip" style="background-color: #3B3B3B;color: #FFF;border-style: solid;border-radius: 5px;border-width: 1px;"/></td>
       </tr>
     </table>
-    <button id="change_username" class="generic-button">Change username</button>
-    <h2>Change password</h2>
-    <hr>
+    <button id="change_username" class="generic-button" style="font-size: 16pt;margin: auto;display: block;margin-top: 16px;">Change username</button>
+  </div>
+  <div id="2tab" class="tab" style="display: none;">
     <table>
       <tr>
         <td><span style="margin-right: 30px;">Old Password</span></td>
-        <td><input id="old_passwd_ip" type="password" style="background-color: #3B3B3B;color: #FFF;"/></td>
+        <td><input id="old_passwd_ip" type="password" style="background-color: #3B3B3B;color: #FFF;border-style: solid;border-radius: 5px;border-width: 1px;"/></td>
       </tr>
       <tr>
         <td><span style="margin-right: 30px;">New Password</span></td>
-        <td><input id="new_passwd_ip" type="password" style="background-color: #3B3B3B;color: #FFF;"/></td>
+        <td><input id="new_passwd_ip" type="password" style="background-color: #3B3B3B;color: #FFF;border-style: solid;border-radius: 5px;border-width: 1px;"/></td>
       </tr>
     </table>
-    <button id="change_password" class="generic-button">Change password</button>
+    <button id="change_password" class="generic-button" style="font-size: 16pt;margin: auto;display: block;margin-top: 16px;">Change password</button>
   </div>
 </div>
 <script>
-    function display_generic_failure(msg = null) {
-        window.popup_msg.style.color = "#F00";
-        window.popup_msg.innerText = msg || "Failed to apply changes";
+  function change_tab(tar) {
+    for(let i = 0;i < 3;++i) {
+      window[`${i}tab`].style.display = (i != tar) ? 'none' : null;
+      window[`${i}btn`].style.color = (i == tar) ? "#FFF" : null;
     }
-    window.close_popup.onclick = () => window.popup_dlg.close();
-    window.change_username.onclick = () => {
-        window.popup_title.innerText = "Update Username";
-        window.popup_msg.style.color = "#FFF";
-        window.popup_msg.innerText = "Updating username, please wait"
-        window.popup_dlg.showModal();
-        fetch("{% url 'spezspellz:usersettings' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
-            body: JSON.stringify({
-                method: "up_uname",
-                name: window.new_username_ip.value
-            })
-        }).then(res => res.text().then(text => {
-            if(res.status != 200)
-                window.popup_msg.style.color = "#F00";
-            window.popup_msg.innerText = text;
-        })).catch(() => display_generic_failure());
-    }
-    window.change_password.onclick = () => {
-        window.popup_title.innerText = "Change Password";
-        window.popup_msg.style.color = "#FFF";
-        window.popup_msg.innerText = "Changing Password, please wait"
-        window.popup_dlg.showModal();
-        fetch("{% url 'spezspellz:usersettings' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
-            body: JSON.stringify({
-                method: "up_passwd",
-                opasswd: window.old_passwd_ip.value,
-                npasswd: window.new_passwd_ip.value
-            })
-        }).then(res => res.text().then(text => {
-            if(res.status != 200)
-                window.popup_msg.style.color = "#F00";
-            window.popup_msg.innerText = text;
-        })).catch(() => display_generic_failure());
-    }
-    window.apply_changes.onclick = () => {
-        window.popup_title.innerText = "Apply changes";
-        window.popup_msg.style.color = "#FFF";
-        window.popup_msg.innerText = "Applying changes, please wait"
-        window.popup_dlg.showModal();
-        fetch("{% url 'spezspellz:usersettings' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
-            body: JSON.stringify({
-                method: "update",
-                desc: window.about_me.value,
-                timed_noti: window.timed_noti.checked,
-                re_coms_noti: window.re_coms_noti.checked,
-                sp_re_noti: window.sp_re_noti.checked,
-                sp_coms_noti: window.sp_coms_noti.checked,
-                private: window.private_mode.checked
-            })
-        }).then(res => res.text().then(text => {
-            if(res.status != 200)
-                window.popup_msg.style.color = "#F00";
-            if(res.status == 200 && text == "OK")
-            window.popup_msg.innerText = "Changes applied";
-            else
-                window.popup_msg.innerText = text;
-        })).catch(() => display_generic_failure());
-    }
-    window.upload_avatar_btn.onclick = () => window.upload_avatar_input.click();
-    window.upload_avatar_input.onchange = () => {
-        const [file] = window.upload_avatar_input.files
-        if (!file)
-            return;
-        const form_data = new FormData();
-        form_data.set("pp", file);
-        window.popup_title.innerText = "Upload avatar";
-        window.popup_msg.style.color = "#FFF";
-        window.popup_msg.innerText = "Uploading avatar, please wait";
-        window.popup_dlg.showModal();
-        fetch("{% url 'spezspellz:usersettings' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
-            body: form_data
-        }).then(res => {
-            if(!res.ok) {
-                display_generic_failure("Failed to upload avatar");
-                return;
-            }
-            res.text().then(text => {
-                window.popup_msg.innerText = text;
-                if(res.status != 200)
-                    window.popup_msg.style.color = "#F00";
-                if(res.status == 200)
-                    window.upload_avatar_btn.src = URL.createObjectURL(file);
-            }).catch(() => display_generic_failure("Failed to upload avatar"));
-        }).catch(() => display_generic_failure("Failed to upload avatar"));
-    };
+  }
+  function display_generic_failure(msg = null) {
+      window.popup_msg.style.color = "#F00";
+      window.popup_msg.innerText = msg || "Failed to apply changes";
+  }
+  window.close_popup.onclick = () => window.popup_dlg.close();
+  window.change_username.onclick = () => {
+      window.popup_title.innerText = "Update Username";
+      window.popup_msg.style.color = "#FFF";
+      window.popup_msg.innerText = "Updating username, please wait"
+      window.popup_dlg.showModal();
+      fetch("{% url 'spezspellz:usersettings' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({
+              method: "up_uname",
+              name: window.new_username_ip.value
+          })
+      }).then(res => res.text().then(text => {
+          if(res.status != 200)
+              window.popup_msg.style.color = "#F00";
+          window.popup_msg.innerText = text;
+      })).catch(() => display_generic_failure());
+  }
+  window.change_password.onclick = () => {
+      window.popup_title.innerText = "Change Password";
+      window.popup_msg.style.color = "#FFF";
+      window.popup_msg.innerText = "Changing Password, please wait"
+      window.popup_dlg.showModal();
+      fetch("{% url 'spezspellz:usersettings' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({
+              method: "up_passwd",
+              opasswd: window.old_passwd_ip.value,
+              npasswd: window.new_passwd_ip.value
+          })
+      }).then(res => res.text().then(text => {
+          if(res.status != 200)
+              window.popup_msg.style.color = "#F00";
+          window.popup_msg.innerText = text;
+      })).catch(() => display_generic_failure());
+  }
+  window.apply_changes.onclick = () => {
+      window.popup_title.innerText = "Apply changes";
+      window.popup_msg.style.color = "#FFF";
+      window.popup_msg.innerText = "Applying changes, please wait"
+      window.popup_dlg.showModal();
+      fetch("{% url 'spezspellz:usersettings' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({
+              method: "update",
+              desc: window.about_me.value,
+              timed_noti: window.timed_noti.checked,
+              re_coms_noti: window.re_coms_noti.checked,
+              sp_re_noti: window.sp_re_noti.checked,
+              sp_coms_noti: window.sp_coms_noti.checked,
+              private: window.private_mode.checked
+          })
+      }).then(res => res.text().then(text => {
+          if(res.status != 200)
+              window.popup_msg.style.color = "#F00";
+          if(res.status == 200 && text == "OK")
+          window.popup_msg.innerText = "Changes applied";
+          else
+              window.popup_msg.innerText = text;
+      })).catch(() => display_generic_failure());
+  }
+  window.upload_avatar_btn.onclick = () => window.upload_avatar_input.click();
+  window.upload_avatar_input.onchange = () => {
+      const [file] = window.upload_avatar_input.files
+      if (!file)
+          return;
+      const form_data = new FormData();
+      form_data.set("pp", file);
+      window.popup_title.innerText = "Upload avatar";
+      window.popup_msg.style.color = "#FFF";
+      window.popup_msg.innerText = "Uploading avatar, please wait";
+      window.popup_dlg.showModal();
+      fetch("{% url 'spezspellz:usersettings' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: form_data
+      }).then(res => {
+          if(!res.ok) {
+              display_generic_failure("Failed to upload avatar");
+              return;
+          }
+          res.text().then(text => {
+              window.popup_msg.innerText = text;
+              if(res.status != 200)
+                  window.popup_msg.style.color = "#F00";
+              if(res.status == 200)
+                  window.upload_avatar_btn.src = URL.createObjectURL(file);
+          }).catch(() => display_generic_failure("Failed to upload avatar"));
+      }).catch(() => display_generic_failure("Failed to upload avatar"));
+  };
 </script>
 {% endblock %}
