@@ -42,6 +42,12 @@ def validate_user_and_text(view_func):
 
 
 def create_notification_object(sender: User, target: User, text: str, additional: str, ref: str):
+    """
+    Create notification object.
+
+    Created when sender is not the same as target.
+    After created, if exceed the limit which is 50, then auto delete.
+    """
     if sender == target:
         return
     Notification.objects.create(
@@ -136,8 +142,8 @@ class SpellPage(View, RPCView):
             spell=spell, commenter=user, text=text
         ).pk
         create_notification_object(
-            sender=user,
-            target=spell.creator,
+            sender=cast(Any, user),
+            target=cast(Any, spell.creator),
             text=text,
             additional=f"Commented on your {spell.title}",
             ref=f"/spell/{spell.pk}/#comment-{comment_pk}"
@@ -171,8 +177,8 @@ class SpellPage(View, RPCView):
             comment=comment, commenter=user, text=text
         ).pk
         create_notification_object(
-            sender=user,
-            target=comment.commenter,
+            sender=cast(Any, user),
+            target=cast(Any, comment.commenter),
             text=text,
             additional="Replied your comment",
             ref=f"/spell/{spell.pk}/#commentcomment-{comment_reply_pk}"
@@ -206,8 +212,8 @@ class SpellPage(View, RPCView):
             review=review, commenter=user, text=text
         ).pk
         create_notification_object(
-            sender=user,
-            target=review.user,
+            sender=cast(Any, user),
+            target=cast(Any, review.user),
             text=text,
             additional="Commented on your review",
             ref=f"/spell/{spell.pk}/#reviewcomment-{review_pk}"
@@ -248,8 +254,8 @@ class SpellPage(View, RPCView):
             user=user, spell=spell, star=stars, desc=desc
         ).pk
         create_notification_object(
-            sender=user,
-            target=spell.creator,
+            sender=cast(Any, user),
+            target=cast(Any, spell.creator),
             text=desc,
             additional=f"Review your {spell.title}",
             ref=f"/spell/{spell.pk}/#review-{review_pk}"
