@@ -6,6 +6,7 @@ from django.http import HttpRequest, HttpResponse, HttpResponseBase
 from django.shortcuts import render, redirect
 from django.views import View
 from django.db import transaction
+from django.contrib.auth.models import User
 from spezspellz.models import Spell, Bookmark, \
     SpellHistoryEntry, Review, ReviewComment, SpellComment, CommentComment, Notification
 from spezspellz.utils import get_or_none
@@ -38,6 +39,24 @@ def validate_user_and_text(view_func):
             )
         return view_func(self, request, *args, **kwargs)
     return wrapper
+
+
+def create_notification_object(sender: User, target: User, text: str, additional: str, ref: str):
+    if sender == target:
+        return
+    Notification.objects.create(
+        user=target,
+        title=sender.username,
+        icon=reverse("spezspellz:avatar", args=(sender.pk,)),
+        body=text,
+        additional=additional,
+        ref=ref
+    )
+    notifications = cast(Any, target).notification_set.all().order_by("-timestamp")
+    if notifications.count() > MAX_NOTIFICATION_COUNT:
+        notifications.filter(
+            pk__in=notifications[MAX_NOTIFICATION_COUNT:]
+        ).delete()
 
 
 class SpellPage(View, RPCView):
@@ -116,19 +135,13 @@ class SpellPage(View, RPCView):
         comment_pk = SpellComment.objects.create(
             spell=spell, commenter=user, text=text
         ).pk
-        Notification.objects.create(
-            user=spell.creator,
-            title=cast(Any, user).username,
-            icon=reverse("spezspellz:avatar", args=(user.pk, )),
-            body=text,
+        create_notification_object(
+            sender=user,
+            target=spell.creator,
+            text=text,
             additional=f"Commented on your {spell.title}",
-            ref=f"/spell/{spell_id}/#comment-{comment_pk}"
+            ref=f"/spell/{spell.pk}/#comment-{comment_pk}"
         )
-        notifications = cast(Any, spell.creator).notification_set.all().order_by("-timestamp")
-        if notifications.count() > MAX_NOTIFICATION_COUNT:
-            notifications.filter(
-                pk__in=notifications[MAX_NOTIFICATION_COUNT:]
-            ).delete()
         return HttpResponse("Comment posted", status=200)
 
     @validate_user_and_text
@@ -151,23 +164,19 @@ class SpellPage(View, RPCView):
         comment = get_or_none(SpellComment, pk=comment_id)
         if comment is None:
             return HttpResponse("Review not found", status=404)
+        spell = get_or_none(Spell, pk=spell_id)
+        if spell is None:
+            return HttpResponse("Spell not found", status=404)
         comment_reply_pk = CommentComment.objects.create(
             comment=comment, commenter=user, text=text
         ).pk
-        Notification.objects.create(
-            user=comment.commenter,
-            title=cast(Any, user).username,
-            icon=reverse("spezspellz:avatar", args=(user.pk, )),
-            body=text,
+        create_notification_object(
+            sender=user,
+            target=comment.commenter,
+            text=text,
             additional="Replied your comment",
-            ref=f"/spell/{spell_id}/#reply-{comment_reply_pk}"
+            ref=f"/spell/{spell.pk}/#commentcomment-{comment_reply_pk}"
         )
-        notifications = cast(Any, comment.commenter
-                             ).notification_set.all().order_by("-timestamp")
-        if notifications.count() > MAX_NOTIFICATION_COUNT:
-            notifications.filter(
-                pk__in=notifications[MAX_NOTIFICATION_COUNT:]
-            ).delete()
         return HttpResponse("Comment posted", status=200)
 
     @validate_user_and_text
@@ -190,23 +199,19 @@ class SpellPage(View, RPCView):
         review = get_or_none(Review, pk=review_id)
         if review is None:
             return HttpResponse("Review not found", status=404)
+        spell = get_or_none(Spell, pk=spell_id)
+        if spell is None:
+            return HttpResponse("Spell not found", status=404)
         review_pk = ReviewComment.objects.create(
             review=review, commenter=user, text=text
         ).pk
-        Notification.objects.create(
-            user=review.user,
-            title=cast(Any, user).username,
-            icon=reverse("spezspellz:avatar", args=(user.pk, )),
-            body=text,
+        create_notification_object(
+            sender=user,
+            target=review.user,
+            text=text,
             additional="Commented on your review",
-            ref=f"/spell/{spell_id}/#reviewcomment-{review_pk}"
+            ref=f"/spell/{spell.pk}/#reviewcomment-{review_pk}"
         )
-        notifications = cast(Any, review.user
-                             ).notification_set.all().order_by("-timestamp")
-        if notifications.count() > MAX_NOTIFICATION_COUNT:
-            notifications.filter(
-                pk__in=notifications[MAX_NOTIFICATION_COUNT:]
-            ).delete()
         return HttpResponse("Comment posted", status=200)
 
     @validate_user_and_text
@@ -242,18 +247,11 @@ class SpellPage(View, RPCView):
         review_pk = Review.objects.create(
             user=user, spell=spell, star=stars, desc=desc
         ).pk
-        Notification.objects.create(
-            user=spell.creator,
-            title=cast(Any, user).username,
-            icon=reverse("spezspellz:avatar", args=(user.pk, )),
-            body=desc,
+        create_notification_object(
+            sender=user,
+            target=spell.creator,
+            text=desc,
             additional=f"Review your {spell.title}",
-            ref=f"/spell/{spell_id}/#review-{review_pk}"
+            ref=f"/spell/{spell.pk}/#review-{review_pk}"
         )
-        notifications = cast(Any, spell.creator
-                             ).notification_set.all().order_by("-timestamp")
-        if notifications.count() > MAX_NOTIFICATION_COUNT:
-            notifications.filter(
-                pk__in=notifications[MAX_NOTIFICATION_COUNT:]
-            ).delete()
         return HttpResponse("Review posted", status=200)
