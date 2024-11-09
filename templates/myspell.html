@@ -3,27 +3,36 @@
 {% block Body %}
 <link rel="stylesheet" href="/assets/myspell.css">
 <body>
-    <h1 style="margin: auto; text-align: center">All created spell</h1>
-    <form method="GET" action="{% url 'spezspellz:filter' %}">
-        <input name="s" class="search-bar" placeholder="Search my spell" type="text">
-        <input name="creator" value="{{ user.pk }}" hidden/>
-        <button type="submit" hidden></button>
-    </form>
-    <br>
-    {% for spell in spells %}
-    <div my_spell="{{ spell.pk }}" class="spell-container">
-        <a style="flex: 1" href="{% url 'spezspellz:spell' spell.pk %}">
-            <div class="spell-info">
-                <img src="{% url 'spezspellz:spell_thumbnail' spell.id %}"/>
-                <span class="spell-title">{{ spell.title }}</span>
-            </div>
-        </a>
-        <div class="actions">
-            <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like"><img width="32" src="/assets/edit.svg"/></a>
-            <a onclick="window.delete_spell({{ spell.id }})" class="btn-like"><img width="32" src="/assets/delete.svg"/></a>
-        </div>
+{% if not other_user %}
+<h1 style="margin: auto; text-align: center">All created spell</h1>
+{% else %}
+<h1 style="margin: auto; text-align: center">{{ other_user.username }}'s created spell</h1>
+{% endif %}
+<form method="GET" action="{% url 'spezspellz:filter' %}">
+  <input name="s" class="search-bar" placeholder="Search my spell" type="text">
+  <input name="creator" value="{% if other_user %}{{ other_user.pk }}{% else %}{{ user.pk }}{% endif %}" hidden/>
+  <button type="submit" hidden></button>
+</form>
+<br>
+{% for spell in spells %}
+<div my_spell="{{ spell.pk }}" class="spell-container">
+  <a style="flex: 1" href="{% url 'spezspellz:spell' spell.pk %}">
+    <div class="spell-info">
+      <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}"/>
+      <span class="spell-title">{{ spell.title }}</span>
     </div>
-    {% endfor %}
+  </a>
+  {% if not other_user %}
+  <div class="actions">
+    <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like"><img width="32" src="/assets/edit.svg"/></a>
+    <a onclick="window.delete_spell({{ spell.pk }})" class="btn-like"><img width="32" src="/assets/delete.svg"/></a>
+  </div>
+  {% endif %}
+</div>
+{% empty %}
+<br>
+<h2 style="margin: auto; text-align: center">You don't have any spells.</h2>
+{% endfor %}
 <script>
     window.delete_spell = (spell) => {
     fetch("{% url 'spezspellz:usersettings' %}", {

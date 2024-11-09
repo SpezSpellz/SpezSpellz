@@ -5,89 +5,219 @@
 <link rel="stylesheet" href="/assets/profile.css">
 {% endblock %}
 {% block Body %}
-<h1>Profile of {{ user.username }}</h1>
 
-<div style="display: flex;justify-content: center;">
-  <h2 style="margin: 0;margin-right: 10px;padding-left: 80px;">Your Spells</h2>
-  <div style="display: flex;flex-direction: column;justify-content: end;">
-    <a href="{% url 'spezspellz:myspell' %}">(View all)</a>
+<div class="cover-all">
+  <div id="aboutMe" class="profile-container">
+    <div id="ProfilePic" style="margin: 0 50px 0 0;">
+      {% if not other_user %}
+      <img class="profile-pic" src="{% url 'spezspellz:avatar' user.pk %}"/>
+      {% else %}
+      <img class="profile-pic" src="{% url 'spezspellz:avatar' other_user.pk %}"/>
+      {% endif %}
+    </div>
+
+    <div id="ProfileInfo">
+      {% if not other_user %}
+      <span class="name"> {{ user.username }} </span>
+      <p style="margin-top: 30px;"> {{ user.userinfo.user_desc }} </p>
+      {% else %}
+      <span class="name"> {{ other_user.username }} </span>
+      <p style="margin-top: 30px;"> {{ other_user.userinfo.user_desc }} </p>
+      {% endif %}
+    </div>
+
   </div>
-</div>
-<ul>
-  {% for spell in spells %}
-  <li my_spell="{{ spell.pk }}">
-    <a href="{% url 'spezspellz:spell' spell.pk %}" style="padding-left: 60px">{{ spell.title }}</a>
-    <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
-    <a onclick="window.delete_spell({{spell.pk}})" class="btn-like edit-btn"><img width="32" src="/assets/delete.svg"/></a>
-  </li>
-  {% empty %}
-  <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any spells</p></li>
-  {% endfor %}
-</ul>
 
-<h2>Your Bookmarks</h2>
+  {% if not other_user.userinfo.is_private %}
+  <!-- Everything after profile -->
 
-<ul>
-  {% for bookmark in bookmarks %}
-  <li bookmark_spell="{{ bookmark.spell.pk }}">
-    <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" style="padding-left:60px;">{{ bookmark.spell.title }}</a>
-    <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="btn-like bookmark" width="32" src="/assets/bookmark_remove.svg"/>
-  </li>
-  {% empty %}
-    <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any bookmarks</p></li>
-  {% endfor %}
-</ul>
-<h2>Spell History</h2>
-<ul>
-  {% for spell in history %}
-  <li>
-    <a href="{% url 'spezspellz:spell' spell.spell.pk %}">{{ spell.spell.title }}</a>
-  </li>
-  {% empty %}
-  <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You didn't view any spell</p></li>
-  {% endfor %}
-</ul>
-<script>
-  window.delete_spell = (spell) => {
-    fetch("{% url 'spezspellz:usersettings' %}", {
-          method: "POST",
-          headers: {
-              "X-CSRFToken": "{{ csrf_token }}"
-          },
-          body: JSON.stringify({
-              method: "delete",
-              obj_type: "spell",
-              obj_id: spell
-          })
-      }).then(res => {
-          if(!res.ok)
-              return Promise.reject();
-          return res.text()
-      }).then(text => {
-          if(text != "Object deleted")
-            return;
-          document.querySelector("[my_spell=\"" + spell + "\"]").remove();
-      })
-  }
-  window.bookmark_spell = (spell) => {
+  <div class="spell">
+
+    <div class="header">
+      <button id="spell_btn" style="font-size: 28pt;background-color: transparent;border-style: none;color: #FFF;cursor: pointer;" onclick="window.show_tab('1')">Spell</button>
+      <button id="bookmark_btn" style="font-size: 28pt;background-color: transparent;border-style: none;color: #777;cursor: pointer;" onclick="window.show_tab('2')">Bookmark</button>
+      <button id="history_btn" style="font-size: 28pt;background-color: transparent;border-style: none;color: #777;cursor: pointer;" onclick="window.show_tab('3')">History</button>
+    </div>
+
+    <div id="scroll_box" style="margin-top: 20px;">
+
+      <div id="spell_tab">
+        <ul>
+          <!-- Add search bar here -->
+
+          {% for spell in spells %}
+          <li my_spell="{{ spell.pk }}">
+            {% if not other_user %}
+            <a href="{% url 'spezspellz:spell' spell.pk %}" class="spell-row">
+              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' spell.pk %}">
+              <div class="spell-text-box">
+                <span class="all-spell-title" style="margin-left: 20px;"> {{ spell.title }} </span>
+                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ spell.category }} </span>
+              </div>
+            </a>
+            <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
+            <a onclick="window.delete_spell({{spell.pk}})" class="btn-like edit-btn"><img width="32" src="/assets/delete.svg"/></a>
+            {% else %}
+            <a href="{% url 'spezspellz:spell' spell.pk %}" class="spell-row">
+              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' spell.pk %}">
+              <div class="spell-text-box">
+                <span class="all-spell-title" style="margin-left: 20px;"> {{ spell.title }} </span>
+                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ spell.category }} </span>
+              </div>
+            </a>
+            {% endif %}
+          </li>
+          {% empty %}
+
+          {% if not other_user %}
+          <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any spells</p></li>
+          {% else %}
+          <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">This user doesn't have any spells</p></li>
+          {% endif %}
+
+          {% endfor %}
+        </ul>
+        {% if spells|length > 5 %}
+        <div style="display: flex; margin: auto;">
+          {% if not other_user %}
+          <a href="{% url 'spezspellz:myspell' %}" class="view-all btn-like" style="text-decoration: none;"> View all </a>
+          {% else %}
+          <a href="{% url 'spezspellz:other_spell' other_user.pk %}" class="view-all btn-like" style="text-decoration: none;"> View all </a>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+
+      <div id="bookmark_tab" hidden>
+        <ul>
+          {% for bookmark in bookmarks %}
+          <li bookmark_spell="{{ bookmark.spell.pk }}">
+            {% if not other_user %}
+            <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" class="spell-row">
+              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' bookmark.spell.pk %}">
+              <div class="spell-text-box">
+                <span class="all-spell-title" style="margin-left: 20px;"> {{ bookmark.spell.title }} </span>
+                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ bookmark.spell.category }} </span>
+              </div>
+            </a>
+            <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="btn-like bookmark" width="32" src="/assets/bookmark_remove.svg"/>
+            {% else %}
+            <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" class="spell-row">
+              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' bookmark.spell.pk %}">
+              <div class="spell-text-box">
+                <span class="all-spell-title" style="margin-left: 20px;"> {{ bookmark.spell.title }} </span>
+                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ bookmark.spell.category }} </span>
+              </div>
+            </a>
+            {% endif %}
+          </li>
+          {% empty %}
+          {% if not other_user %}
+            <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You don't have any bookmarks</p></li>
+          {% else %}
+            <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">This user doesn't have any bookmarks</p></li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div id="history_tab" hidden>
+        <ul>
+          {% for historyObj in history %}
+          <li>
+            <a href="{% url 'spezspellz:spell' historyObj.spell.pk %}" class="spell-row">
+              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' historyObj.spell.pk %}">
+              <div class="spell-text-box">
+                <span class="all-spell-title" style="margin-left: 20px;"> {{ historyObj.spell.title }} </span>
+                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ historyObj.spell.category }} </span>
+              </div>
+              <span style="color: #AAA"> {{ historyObj.time|date:"d/m/Y" }} <br> {{ historyObj.time|date:"H:i A" }} </span>
+            </a>
+          </li>
+          {% empty %}
+          {% if not other_user %}
+          <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">You didn't view any spell</p></li>
+          {% else %}
+          <li style="padding-top: 10px;padding-bottom: 10px;"><p style="margin: auto;text-align: center;">This user didn't view any spell</p></li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <script>
+    window.delete_spell = (spell) => {
       fetch("{% url 'spezspellz:usersettings' %}", {
-          method: "POST",
-          headers: {
-              "X-CSRFToken": "{{ csrf_token }}"
-          },
-          body: JSON.stringify({
-              method: "bookmark",
-              spell_id: spell
-          })
-      }).then(res => {
-          if(!res.ok)
-              return Promise.reject();
-          return res.text()
-      }).then(text => {
-          if(text != "Unbookmarked")
-            return;
-          document.querySelector("[bookmark_spell=\"" + spell + "\"]").remove();
-      })
-  }
-</script>
-{% endblock %}
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                method: "delete",
+                obj_type: "spell",
+                obj_id: spell
+            })
+        }).then(res => {
+            if(!res.ok)
+                return Promise.reject();
+            return res.text()
+        }).then(text => {
+            if(text != "Object deleted")
+              return;
+            document.querySelector("[my_spell=\"" + spell + "\"]").remove();
+            for(const obj of document.querySelectorAll("[bookmark_spell=\"" + spell + "\"]"))
+              obj.remove();
+        })
+    }
+    window.bookmark_spell = (spell) => {
+        fetch("{% url 'spezspellz:usersettings' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                method: "bookmark",
+                spell_id: spell
+            })
+        }).then(res => {
+            if(!res.ok)
+                return Promise.reject();
+            return res.text()
+        }).then(text => {
+            if(text != "Unbookmarked")
+              return;
+            document.querySelector("[bookmark_spell=\"" + spell + "\"]").remove();
+        })
+    }
+    </script>
+
+    <!-- Script for selecting tab -->
+    <script>
+        let selectedTab = localStorage.getItem("spell_show") || "1";
+
+        const tabs = ["spell", "bookmark", "history"];
+        window.show_tab = (tabIndex) => {
+          for(let i = 0;i < tabs.length;++i) {
+            const same_tab = ("" + (i + 1)) == tabIndex;
+            window[`${tabs[i]}_tab`].hidden = !same_tab;
+            window[`${tabs[i]}_btn`].style.color = (same_tab ? '#FFF' : '#777');
+          }
+          localStorage.setItem("spell_show", tabIndex);
+        };
+
+        window.show_tab(selectedTab);
+    </script>
+
+  </div>
+
+
+  {% else %}
+  <div class="centered-container">
+    <img src="/assets/lock.svg" style="width:200px; margin: 100px 0 50px 0;">
+    <h1>This profile is private</h1>
+  </div>
+
+</div>
+
+  {% endif %}
+  {% endblock %}

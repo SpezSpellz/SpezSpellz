@@ -4,6 +4,89 @@ body {
 h1, h2, li, a {
     color: #FFFFFF;
 }
+
+.badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: red;
+    color: white;
+    border-radius: 100%;
+    padding: 4px 7px;
+    font-size: 12px;
+    display: none;
+}
+
+#bell_button {
+    position: relative;
+}
+
+.popup {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: #343434;
+    width: 350px;
+    max-height: 600px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.popup-notif {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    height: 100px;
+    background-color: #1C1C1C;
+    border-radius: 6px;
+    padding: 5px;
+}
+
+.popup-notif:hover {
+    background-color: #292929;
+}
+
+.popup-notif:active {
+    background-color: #303030;
+}
+
+.popup-img {
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+    margin-right: 10px;
+}
+
+.popup-title {
+    color: #ffffff;
+    font-size: 18px;
+    margin: 4px;
+}
+
+.popup-message {
+    color: #ffffff;
+    font-size: 14px;
+    margin: 4px;
+}
+
+.popup-additional {
+    color: #ffffff;
+    font-size: 16px;
+    margin: 4px;
+    font-weight: bold;
+}
+
+.popup-time {
+    color: #ffffff;
+    font-size: 14px;
+    margin: 4px;
+}
+
+
 .btn-like {
     color: #FFF;
     border-style: none;
@@ -27,7 +110,7 @@ h1, h2, li, a {
 .left-top-btns {
     display: flex;
     position: absolute;
-    top: 8px;
+    top: 12px;
     left: 0;
     flex-direction: row;
 }
@@ -35,7 +118,7 @@ h1, h2, li, a {
 .right-top-btns {
     display: flex;
     position: absolute;
-    top: 8px;
+    top: 12px;
     right: 0;
     flex-direction: row;
 }
@@ -59,4 +142,25 @@ h1, h2, li, a {
 
 dialog::backdrop {
     backdrop-filter: blur(2px);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #959595;
+    border-radius: 5px;
+}
+  
+::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+* {
+    scrollbar-gutter: stable both-edges;
 }

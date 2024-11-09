@@ -2,6 +2,7 @@
 from typing import cast, Any
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Avg
 from .category import Category
 
 
@@ -31,8 +32,10 @@ class Spell(models.Model):
 
     def calc_avg_stars(self) -> float:
         """Calculate average stars for a spell."""
-        from .review import Review
-        return Review.calc_avg_stars(self)
+        avg_star = cast(Any, self).review_set.aggregate(Avg('star'))['star__avg']
+        if avg_star is None:
+            avg_star = 9
+        return round(avg_star * .5 + .5, 2)
 
     def calc_category_rating(self) -> int:
         """Calculate the category rating."""
@@ -42,4 +45,6 @@ class Spell(models.Model):
     @property
     def summary(self):
         """Find a possible summary of the spell."""
-        return self.data[(self.data.find("is") or 0):]
+        start = self.data.find("is ") or 0
+        end = start + (self.data[start:].find(".") or (len(self.data) - start))
+        return self.data[start:end].replace("#", "")

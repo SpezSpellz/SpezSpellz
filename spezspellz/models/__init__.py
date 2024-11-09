@@ -15,7 +15,8 @@ from .spell_history_entry import SpellHistoryEntry
 from .review_comment import ReviewComment
 from .spell_comment import SpellComment
 from .comment_comment import CommentComment
-
+from .notification import Notification
+from .file2model import VirtualFileModel
 
 __all__ = (
     "Category",
@@ -33,5 +34,7 @@ __all__ = (
     "SpellHistoryEntry",
     "ReviewComment",
     "SpellComment",
-    "CommentComment"
+    "CommentComment",
+    "Notification",
+    "VirtualFileModel"
 )

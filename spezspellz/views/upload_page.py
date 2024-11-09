@@ -24,12 +24,25 @@ class UploadPage(View):
     # 2MB thumbnail limit
     MAX_THUMBNAIL_SIZE = 2e6
 
+    # Max number of tags per post
+    MAX_TAGS_PER_POST = 30
+
+    # Max number of notifications per post
+    MAX_NOTI_PER_POST = 50
+
+    # Max number of attachments per post
+    MAX_ATTACH_PER_POST = 50
+
     def get(
         self,
         request: HttpRequest,
         spell_id: Optional[int] = None
     ) -> HttpResponseBase:
-        """Handle GET requests for this view."""
+        """
+        Handle GET requests for this view.
+
+        Normally when user edit the spell.
+        """
         if not request.user.is_authenticated:
             return redirect_to_login(
                 request.get_full_path(), settings.LOGIN_URL,
@@ -105,7 +118,7 @@ class UploadPage(View):
     ) -> Optional[dict[str, Any]]:
         """Attempt to parse, validate, and convert the provided arguments to values fit for SpellNotification constructor."""
         if message is None or datetime is None or period is None \
-                or period not in SpellNotification.EveryType.choices:
+                or period not in SpellNotification.EveryType.values:
             return None
         try:
             parsed_date = parse_datetime(datetime)
@@ -148,7 +161,11 @@ class UploadPage(View):
         request: HttpRequest,
         spell_id: Optional[int] = None
     ) -> HttpResponseBase:
-        """Handle POST requests for this view."""
+        """
+        Handle POST requests for this view.
+
+        When upload or make changes to the spell.
+        """
         if not request.user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
         data = request.POST.get("data")
@@ -160,25 +177,23 @@ class UploadPage(View):
         thumbnail = request.FILES.get("thumbnail")
         if thumbnail is not None and thumbnail.size is not None and thumbnail.size > self.__class__.MAX_THUMBNAIL_SIZE:
             return HttpResponse("Thumbnail too large.", status=400)
-        tags_len = min(30, safe_cast(int, request.POST.get("tags"), 0))
-        noti_len = min(50, safe_cast(int, request.POST.get("notis"), 0))
-        attach_len = min(50, safe_cast(int, request.POST.get("attachs"), 0))
+        tags_len = min(self.__class__.MAX_TAGS_PER_POST, safe_cast(int, request.POST.get("tags"), 0))
+        noti_len = min(self.__class__.MAX_NOTI_PER_POST, safe_cast(int, request.POST.get("notis"), 0))
+        attach_len = min(self.__class__.MAX_ATTACH_PER_POST, safe_cast(int, request.POST.get("attachs"), 0))
         title = request.POST.get("title", "No Title")
         if not title.strip():
             return HttpResponse("Title must not be empty", status=400)
         category = get_or_none(Category, name=category_name)
         if category is None:
             return HttpResponse("Unknown category", status=404)
-        spell = None
         if spell_id is not None:
-            old_spell = get_or_none(Spell, pk=spell_id)
-            if old_spell is None:
+            spell = get_or_none(Spell, pk=spell_id)
+            if spell is None:
                 return HttpResponse("Spell not found", status=404)
-            if old_spell.creator != request.user:
+            if spell.creator != request.user:
                 return HttpResponse("Forbidden", status=403)
-            spell = old_spell
             old_attach_len = min(
-                50, safe_cast(int, request.POST.get("oattachs"), 0)
+                self.__class__.MAX_ATTACH_PER_POST, safe_cast(int, request.POST.get("oattachs"), 0)
             )
             old_attachs = []
             for i in range(old_attach_len):
@@ -249,4 +264,4 @@ class UploadPage(View):
                 )
             spell.data = data
             spell.save()
-        return HttpResponse("OK", status=200)
+        return HttpResponse("OK", status=200, headers={"pk": spell.pk})

@@ -7,11 +7,15 @@ from spezspellz.models import Tag
 from .rpc_view import RPCView
 
 
+MAX_TAGS_RESULT = 100
+
+
 class TagsPage(View, RPCView):
     """Shows all tags and query tags."""
 
     def get(self, _: HttpRequest) -> HttpResponseBase:
         """Show the tags page."""
+        # TODO: List all tags + request tags to be added
         return HttpResponse("Not Implemented", status=404)
 
     def rpc_search(
@@ -31,9 +35,9 @@ class TagsPage(View, RPCView):
             return HttpResponse(
                 "Parameter `max_len` must be an integer", status=400
             )
-        if max_len > 100 or max_len < 1:
+        if max_len > MAX_TAGS_RESULT or max_len < 1:
             return HttpResponse(
-                "Parameter `max_len` must be more than 0 but less than 100",
+                f"Parameter `max_len` must be more than 0 but less than {MAX_TAGS_RESULT}",
                 status=400
             )
         return HttpResponse(

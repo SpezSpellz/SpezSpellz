@@ -4,6 +4,7 @@ from django.http import HttpRequest, HttpResponse, HttpResponseBase
 from django.shortcuts import render
 from django.views import View
 from django.db import transaction
+from django.contrib.auth.models import User
 from spezspellz.models import Spell, HasTag, UserInfo, Bookmark, \
     Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory
 from spezspellz.utils import get_or_none
@@ -18,7 +19,11 @@ class UserSettingsPage(View, RPCView):
         return render(request, "user_settings.html")
 
     def post(self, request: HttpRequest, **kwargs) -> HttpResponseBase:
-        """Handle POST requests for this view."""
+        """
+        Handle POST requests for this view.
+
+        Will call RPCView post method if not profile picture update.
+        """
         profile_picture = request.FILES.get("pp")
         if profile_picture is not None:
             if not request.user.is_authenticated:
@@ -61,11 +66,15 @@ class UserSettingsPage(View, RPCView):
         rate = get_or_none(rate_class, subject=obj, user=user)
         if rate is None:
             if vote is None:
-                return HttpResponse(rate_class.calc_rating(subject=obj), status=200)
+                return HttpResponse(
+                    rate_class.calc_rating(subject=obj), status=200
+                )
             rate = rate_class(user=user, subject=obj)
         elif vote is None:
             rate.delete()
-            return HttpResponse(rate_class.calc_rating(subject=obj), status=200)
+            return HttpResponse(
+                rate_class.calc_rating(subject=obj), status=200
+            )
         cast(Any, rate).positive = vote
         rate.save()
         return HttpResponse(rate_class.calc_rating(subject=obj), status=200)
@@ -125,14 +134,14 @@ class UserSettingsPage(View, RPCView):
         )
 
     def rpc_update(
-            self,
-            request: HttpRequest,
-            timed_noti: bool = True,
-            re_coms_noti: bool = True,
-            sp_re_noti: bool = True,
-            sp_coms_noti: bool = True,
-            private: bool = False,
-            desc: str = ""
+        self,
+        request: HttpRequest,
+        timed_noti: bool = True,
+        re_coms_noti: bool = True,
+        sp_re_noti: bool = True,
+        sp_coms_noti: bool = True,
+        private: bool = False,
+        desc: str = ""
     ) -> HttpResponse:
         """Handle settings update."""
         if not request.user.is_authenticated:
@@ -149,3 +158,44 @@ class UserSettingsPage(View, RPCView):
             user_info.user_desc = str(desc)
             user_info.save()
         return HttpResponse("OK")
+
+    def rpc_up_uname(
+        self,
+        request: HttpRequest,
+        name: str = ""
+    ) -> HttpResponse:
+        """Handle settings update."""
+        if not request.user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        user = cast(User, request.user)
+        if not isinstance(name, str):
+            return HttpResponse("Parameter `name` must be a string", status=400)
+        if not name:
+            return HttpResponse("Username must not be empty", status=400)
+        with transaction.atomic():
+            if get_or_none(User, username=name) is not None:
+                return HttpResponse("A user with that username already exists", status=403)
+            user.username = name
+            user.save()
+        return HttpResponse("Username updated")
+
+    def rpc_up_passwd(
+        self,
+        request: HttpRequest,
+        opasswd: str = "",
+        npasswd: str = ""
+    ) -> HttpResponse:
+        """Handle settings update."""
+        if not request.user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        if not isinstance(opasswd, str):
+            return HttpResponse("Parameter `opasswd` must be a string", status=400)
+        if not isinstance(npasswd, str):
+            return HttpResponse("Parameter `npasswd` must be a string", status=400)
+        if not opasswd or not npasswd:
+            return HttpResponse("Passwords must not be empty", status=400)
+        if not request.user.check_password(opasswd):
+            return HttpResponse("Old password is incorrect", status=400)
+        request.user.set_password(npasswd)
+        request.user.save()
+        return HttpResponse("Password changed")
