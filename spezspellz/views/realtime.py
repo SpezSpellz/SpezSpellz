@@ -8,11 +8,13 @@ class RealtimeConsumer(AsyncWebsocketConsumer):
     """React to realtime stuff."""
 
     def __init__(self, *args, **kwargs):
+        """Initialize the consumer."""
         super().__init__(args, kwargs)
         self.user_id = None
         self.channels = []
 
     async def connect(self):
+        """Call when the websocket is connected."""
         user = self.scope['user']
         if not user.is_authenticated:
             await self.accept()
@@ -32,6 +34,7 @@ class RealtimeConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, _):
+        """Call when the websocket is disconnected."""
         for channel in self.channels:
             await self.channel_layer.group_discard(channel, self.channel_name)
         await self.channel_layer.group_discard(

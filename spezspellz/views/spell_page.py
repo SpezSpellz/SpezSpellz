@@ -84,6 +84,7 @@ def create_notification_object(sender: User, target: User, text: str, additional
         }
     )
 
+
 class SpellPage(View, RPCView):
     """Handle spell page."""
 
@@ -150,7 +151,7 @@ class SpellPage(View, RPCView):
     ) -> HttpResponseBase:
         """Handle review comment requests."""
         _ = spell_id
-        user = request.user
+        user = cast(User, request.user)
 
         if len(text) > int(SpellComment.text.field.max_length or 0):
             return HttpResponse("Text too long", status=400)
@@ -194,7 +195,7 @@ class SpellPage(View, RPCView):
         text: str = "",
     ) -> HttpResponseBase:
         """Handle review comment requests."""
-        user = request.user
+        user = cast(User, request.user)
 
         if not isinstance(comment_id, int):
             return HttpResponse(
@@ -247,7 +248,7 @@ class SpellPage(View, RPCView):
         text: str = "",
     ) -> HttpResponseBase:
         """Handle review comment requests."""
-        user = request.user
+        user = cast(User, request.user)
 
         if not isinstance(review_id, int):
             return HttpResponse(
@@ -299,7 +300,7 @@ class SpellPage(View, RPCView):
         stars: int = 19
     ) -> HttpResponseBase:
         """Handle review requests."""
-        user = request.user
+        user = cast(User, request.user)
 
         if not isinstance(stars, int):
             return HttpResponse(
