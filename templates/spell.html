@@ -203,6 +203,146 @@
     <button id="comments_btn" style="font-size: 28pt;background-color: transparent;border-style: none;color: #777;cursor: pointer;" onclick="window.show_tab(true)">Comments</button>
   </div>
   <hr>
+  <template id="review_template">
+    <div>
+      <div class="review-entry">
+        <div style="display: flex;justify-content: space-between;">
+          <div>
+            <a style="display: flex; text-decoration: none">
+              <img style="margin-right: 10px;" width="32" height="32"/>
+              <h2 style="margin: 0;margin-right: 10px;"></h2>
+              <div style="display: flex;" stars>
+              </div>
+            </a>
+            <p></p>
+          </div>
+          <div style="display: flex;flex-direction: column;justify-content: flex-end;">
+            <input onclick="window.addReviewReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, parseInt(this.getAttribute('rid')))" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/reply.svg"/>
+          </div>
+        </div>
+      </div>
+      <div coms></div>
+    <div>
+  </template>
+  <template id="review_comment_template">
+    <div class="review-entry" style="margin-left: 50px;">
+      <a style="display: flex; text-decoration: none">
+        <img style="margin-right: 10px;" width="24" height="24"/>
+        <h3 style="margin: 0;margin-right: 16px;"></h3>
+      </a>
+      <div style="display: flex;justify-content: space-between;">
+        <p></p>
+      </div>
+    </div>
+  </template>
+  <template id="comment_template">
+    <div>
+      <div class="review-entry">
+        <div style="display: flex;justify-content: space-between;">
+          <div style="display: flex;flex-direction: column;">
+            <a style="display: flex; text-decoration: none">
+              <img style="margin-right: 10px;" width="32" height="32"/>
+              <h2 style="margin: 0;margin-right: 16px;"></h2>
+            </a>
+            <p></p>
+          </div>
+          <div style="display: flex;flex-direction: column;justify-content: flex-end;">
+            <input onclick="window.addCommentReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, parseInt(this.getAttribute('rid')))" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
+          </div>
+        </div>
+      </div>
+      <div coms></div>
+    </div>
+  </template>
+  <script>
+    window.add_review = (data) => {
+      const prob = document.querySelector("[noreviews]")
+      if(prob != null)
+        prob.remove();
+      const review = window.review_template.content.cloneNode(true).firstElementChild;
+      review.setAttribute("id", `review-${data.review}`);
+      review.querySelector("a").href = data.link;
+      review.querySelector("img").src = data.avatar;
+      review.querySelector("h2").innerText = data.username;
+      review.querySelector("p").innerText = data.desc;
+      review.querySelector("input").setAttribute("rid", data.review)
+      review.querySelector("[coms]").setAttribute("id", `review-${data.review}-comments`);
+      const stars_container = review.querySelector("[stars]");
+      for(let i = 0;i < 10;i += 2) {
+        const star = document.createElement("img");
+        star.width = 24;
+        if(data.stars > i)
+          star.src = "/assets/star.svg";
+        else if(data.stars >= i)
+          star.src = "/assets/half_star.svg";
+        else
+          star.src = "/assets/empty_star.svg";
+        stars_container.append(star);
+      }
+      window.reviews_tab.append(review);
+    };
+    window.add_review_comment = (data) => {
+      const review_container = document.getElementById(`review-${data.review}-comments`);
+      const review_comment = window.review_comment_template.content.cloneNode(true).firstElementChild;
+      review_comment.setAttribute("id", `reviewcomment-${data.comment}`)
+      review_comment.querySelector("a").href = data.link;
+      review_comment.querySelector("img").src = data.avatar;
+      review_comment.querySelector("h3").innerText = data.username;
+      review_comment.querySelector("p").innerText = data.text;
+      review_container.append(review_comment);
+    };
+    window.add_comment = (data) => {
+      const prob = document.querySelector("[nocomms]")
+      if(prob != null)
+        prob.remove();
+      const comment = window.comment_template.content.cloneNode(true).firstElementChild;
+      comment.setAttribute("id", `comment-${data.comment}`);
+      comment.querySelector("a").href = data.link;
+      comment.querySelector("img").src = data.avatar;
+      comment.querySelector("h2").innerText = data.username;
+      comment.querySelector("p").innerText = data.text;
+      comment.querySelector("input").setAttribute("rid", data.comment)
+      comment.querySelector("[coms]").setAttribute("id", `comment-${data.comment}-comments`);
+      window.comments_tab.append(comment);
+    };
+    window.add_comment_comment = (data) => {
+      const comment_container = document.getElementById(`comment-${data.comment}-comments`);
+      const comment_comment = window.review_comment_template.content.cloneNode(true).firstElementChild;
+      comment_comment.setAttribute("id", `commentcomment-${data.comment_comment}`)
+      comment_comment.querySelector("a").href = data.link;
+      comment_comment.querySelector("img").src = data.avatar;
+      comment_comment.querySelector("h3").innerText = data.username;
+      comment_comment.querySelector("p").innerText = data.text;
+      comment_container.append(comment_comment);
+    };
+    window.ws.addEventListener("message", (event) => {
+        const data = JSON.parse(event.data);
+        switch(data.type) {
+          case "spell_comment": {
+            window.add_comment(data);
+            break;
+          }
+          case "comment_comment": {
+            window.add_comment_comment(data);
+            break;
+          }
+          case "review": {
+            window.add_review(data);
+            break;
+          }
+          case "review_comment": {
+            window.add_review_comment(data);
+            break;
+          }
+          case "deleted": {
+            const obj = document.getElementById(`${data.obj}-${data.id}`);
+            if(obj != null)
+              obj.remove();
+            break;
+          }
+        }
+    });
+  </script>
   <div id="reviews_tab">
     {% if user.is_authenticated and user != spell.creator %}
     <div style="padding: 5px;">
@@ -221,109 +361,109 @@
         <input class="btn-like send-btn" style="margin-left: 8px;" width="32" type="image" id="submit_review" src="/assets/send.svg"/>
       </div>
       <script>
-                let mouse_over = 0;
-                let selected_stars = {% if review %}{{ review.star }} * .5 + .5{% else %}5{% endif %};
-                let render_stars = selected_stars;
-                const stars = window.rate_stars.querySelectorAll("img");
-                function update_stars() {
-                    const floored_stars = ~~render_stars;
-                    const idx = (floored_stars == render_stars) ? (floored_stars - 1) : floored_stars;
-                    stars[idx].src = (floored_stars == render_stars) ? "/assets/star.svg" : "/assets/half_star.svg";
-                    for(let j = 0;j < idx;++j)
-                        stars[j].src = "/assets/star.svg";
-                    for(let j = idx + 1;j < stars.length;++j)
-                        stars[j].src = "/assets/empty_star.svg";
-                }
-                update_stars();
-                for(let i = 0;i < stars.length;++i) {
-                    stars[i].addEventListener('mouseover', () => mouse_over += 1);
-                    stars[i].addEventListener('mouseleave', () => {
-                        mouse_over -= 1;
+        let mouse_over = 0;
+        let selected_stars = {% if review %}{{ review.star }} * .5 + .5{% else %}5{% endif %};
+        let render_stars = selected_stars;
+        const stars = window.rate_stars.querySelectorAll("img");
+        function update_stars() {
+            const floored_stars = ~~render_stars;
+            const idx = (floored_stars == render_stars) ? (floored_stars - 1) : floored_stars;
+            stars[idx].src = (floored_stars == render_stars) ? "/assets/star.svg" : "/assets/half_star.svg";
+            for(let j = 0;j < idx;++j)
+                stars[j].src = "/assets/star.svg";
+            for(let j = idx + 1;j < stars.length;++j)
+                stars[j].src = "/assets/empty_star.svg";
+        }
+        update_stars();
+        for(let i = 0;i < stars.length;++i) {
+            stars[i].addEventListener('mouseover', () => mouse_over += 1);
+            stars[i].addEventListener('mouseleave', () => {
+                mouse_over -= 1;
+                if(mouse_over == 0) {
+                    setTimeout(() => {
                         if(mouse_over == 0) {
-                            setTimeout(() => {
-                                if(mouse_over == 0) {
-                                    render_stars = selected_stars;
-                                    update_stars();
-                                }
-                            }, 20);
+                            render_stars = selected_stars;
+                            update_stars();
                         }
-                    });
-                    stars[i].addEventListener('click', () => selected_stars = render_stars);
-                    stars[i].addEventListener('mousemove', (e) => {
-                        const tar = e.target.getBoundingClientRect();
-                        const posX = e.clientX - tar.left;
-                        render_stars = i + ((posX > (tar.right - tar.left)/2) ? 1 : .5);
-                        update_stars();
-                    });
+                    }, 20);
                 }
-                window.submit_review.onclick = () => {
-                    fetch("{% url 'spezspellz:spell' spell.pk %}", {
-                        method: "POST",
-                        headers: {
-                            "X-CSRFToken": "{{ csrf_token }}"
-                        },
-                        body: JSON.stringify({
-                            method: "review",
-                            desc: window.review_desc.value,
-                            stars: ~~(selected_stars * 9 / 5)
-                        })
-                    }).then(res => {
-                        if(!res.ok)
-                            return res.text().then(msg => Promise.reject(msg));
-                        return res.text().then(text => {
-                            window.dlg_header.innerText = "Review Submission";
-                            window.dlg_text.innerText = text;
-                            window.base_dlg.showModal();
-                            window.base_dlg.addEventListener("close", () => location.reload());
-                        });
-                    }).catch((res) => {
-                        window.dlg_header.innerText = "Review Submission Error";
-                        window.dlg_text.innerText = res;
-                        window.base_dlg.showModal();
-                    });
-                };
-            </script>
+            });
+            stars[i].addEventListener('click', () => selected_stars = render_stars);
+            stars[i].addEventListener('mousemove', (e) => {
+                const tar = e.target.getBoundingClientRect();
+                const posX = e.clientX - tar.left;
+                render_stars = i + ((posX > (tar.right - tar.left)/2) ? 1 : .5);
+                update_stars();
+            });
+        }
+        window.submit_review.onclick = () => {
+            fetch("{% url 'spezspellz:spell' spell.pk %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    method: "review",
+                    desc: window.review_desc.value,
+                    stars: ~~(selected_stars * 9 / 5)
+                })
+            }).then(res => {
+                if(!res.ok)
+                    return res.text().then(msg => Promise.reject(msg));
+                return res.text().then(text => {
+                    window.dlg_header.innerText = "Review Submission";
+                    window.dlg_text.innerText = text;
+                    window.base_dlg.showModal();
+                    window.base_dlg.addEventListener("close", () => location.reload());
+                });
+            }).catch((res) => {
+                window.dlg_header.innerText = "Review Submission Error";
+                window.dlg_text.innerText = res;
+                window.base_dlg.showModal();
+            });
+        };
+      </script>
     </div>
     {% endif %}
     <script>
-            function send_review_comment(review_id, text) {
-                return fetch("{% url 'spezspellz:spell' spell.pk %}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": "{{ csrf_token }}"
-                    },
-                    body: JSON.stringify({
-                        method: "review_comment",
-                        text: text,
-                        review_id: review_id
-                    })
-                }).then(res => {
-                    if(!res.ok)
-                        return res.text().then(msg => Promise.reject(msg));
-                    return res.text();
-                });
-            }
-            window.addReviewReplyWindow = (btn, review, review_id) => {
-                const clone = window.review_reply_template.content.cloneNode(true).firstElementChild;
-                const text = clone.querySelector("[c_text]");
-                btn.style.display = "none";
-                clone.querySelector("[c_cancel]").onclick = () => {
-                    clone.remove();
-                    btn.style.display = null;
-                }
-                clone.querySelector("[c_send]").onclick = () => {
-                    send_review_comment(review_id, text.value).then(() => {
-                        clone.remove();
-                        btn.style.display = null;
-                        location.reload();
-                    });
-                }
-                review.firstElementChild.after(clone);
-            }
-        </script>
+      function send_review_comment(review_id, text) {
+          return fetch("{% url 'spezspellz:spell' spell.pk %}", {
+              method: "POST",
+              headers: {
+                  "X-CSRFToken": "{{ csrf_token }}"
+              },
+              body: JSON.stringify({
+                  method: "review_comment",
+                  text: text,
+                  review_id: review_id
+              })
+          }).then(res => {
+              if(!res.ok)
+                  return res.text().then(msg => Promise.reject(msg));
+              return res.text();
+          });
+      }
+      window.addReviewReplyWindow = (btn, review, review_id) => {
+          const clone = window.review_reply_template.content.cloneNode(true).firstElementChild;
+          const text = clone.querySelector("[c_text]");
+          btn.style.display = "none";
+          clone.querySelector("[c_cancel]").onclick = () => {
+              clone.remove();
+              btn.style.display = null;
+          }
+          clone.querySelector("[c_send]").onclick = () => {
+              send_review_comment(review_id, text.value).then(() => {
+                  clone.remove();
+                  btn.style.display = null;
+                  location.reload();
+              });
+          }
+          review.firstElementChild.after(clone);
+      }
+    </script>
     {% for review in reviews %}
-    <div>
-      <div class="review-entry" id="review-{{ review.pk }}">
+    <div id="review-{{ review.pk }}">
+      <div class="review-entry">
         <div style="display: flex;justify-content: space-between;">
           <div>
             <a style="display: flex; text-decoration: none" href="{% url 'spezspellz:other_profile' review.user.pk %}">
@@ -351,23 +491,25 @@
           </div>
         </div>
       </div>
-      {% for comment in review.reviewcomment_set.all %}
-      <div class="review-entry" style="margin-left: 50px;" id="reviewcomment-{{ comment.pk }}">
-        <a style="display: flex; text-decoration: none" href="{% url 'spezspellz:other_profile' comment.commenter.pk %}">
-          <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment.commenter.pk %}" width="24" height="24"/>
-          <h3 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h3>
-        </a>
-        <div style="display: flex;justify-content: space-between;">
-          <p>{{ comment.text }}</p>
-          {% if comment.commenter == user %}
-          <input onclick="window.delete_obj('review_comment', {{ comment.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
-          {% endif %}
+      <div id="review-{{ review.pk }}-comments">
+        {% for comment in review.reviewcomment_set.all %}
+        <div class="review-entry" style="margin-left: 50px;" id="reviewcomment-{{ comment.pk }}">
+          <a style="display: flex; text-decoration: none" href="{% url 'spezspellz:other_profile' comment.commenter.pk %}">
+            <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment.commenter.pk %}" width="24" height="24"/>
+            <h3 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h3>
+          </a>
+          <div style="display: flex;justify-content: space-between;">
+            <p>{{ comment.text }}</p>
+            {% if comment.commenter == user %}
+            <input onclick="window.delete_obj('review_comment', {{ comment.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
+            {% endif %}
+          </div>
         </div>
+        {% endfor %}
       </div>
-      {% endfor %}
     </div>
     {% empty %}
-    <h2>There are no reviews on this spell yet.</h2>
+    <h2 noreviews>There are no reviews on this spell yet.</h2>
     {% endfor %}
   </div>
   <div id="comments_tab" hidden>
@@ -379,66 +521,66 @@
         <input class="btn-like send-btn" style="margin-left: 8px;" width="32" type="image" id="submit_comment" src="/assets/send.svg"/>
       </div>
       <script>
-                window.submit_comment.onclick = () => {
-                    fetch("{% url 'spezspellz:spell' spell.pk %}", {
-                        method: "POST",
-                        headers: {
-                            "X-CSRFToken": "{{ csrf_token }}"
-                        },
-                        body: JSON.stringify({
-                            method: "comment",
-                            text: window.comment_desc.value
-                        })
-                    }).then(res => {
-                        if(!res.ok)
-                            return res.text().then(msg => Promise.reject(msg));
-                        return res.text().then(_ => {location.reload();});
-                    }).catch((res) => {
-                        window.dlg_header.innerText = "Review Submission Error";
-                        window.dlg_text.innerText = res;
-                        window.base_dlg.showModal();
-                    });
-                };
-                function send_comment_comment(comment_id, text) {
-                    return fetch("{% url 'spezspellz:spell' spell.pk %}", {
-                        method: "POST",
-                        headers: {
-                            "X-CSRFToken": "{{ csrf_token }}"
-                        },
-                        body: JSON.stringify({
-                            method: "comment_comment",
-                            text: text,
-                            comment_id: comment_id
-                        })
-                    }).then(res => {
-                        if(!res.ok)
-                            return res.text().then(msg => Promise.reject(msg));
-                        return res.text();
-                    });
-                }
-                window.addCommentReplyWindow = (btn, comment, comment_id) => {
-                    const clone = window.review_reply_template.content.cloneNode(true).firstElementChild;
-                    const text = clone.querySelector("[c_text]");
-                    btn.style.display = "none";
-                    clone.querySelector("[c_cancel]").onclick = () => {
-                        clone.remove();
-                        btn.style.display = null;
-                    }
-                    clone.querySelector("[c_send]").onclick = () => {
-                        send_comment_comment(comment_id, text.value).then(() => {
-                            clone.remove();
-                            btn.style.display = null;
-                            location.reload();
-                        });
-                    }
-                    comment.firstElementChild.after(clone);
-                }
-            </script>
+        window.submit_comment.onclick = () => {
+            fetch("{% url 'spezspellz:spell' spell.pk %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    method: "comment",
+                    text: window.comment_desc.value
+                })
+            }).then(res => {
+                if(!res.ok)
+                    return res.text().then(msg => Promise.reject(msg));
+                return res.text().then(_ => {location.reload();});
+            }).catch((res) => {
+                window.dlg_header.innerText = "Review Submission Error";
+                window.dlg_text.innerText = res;
+                window.base_dlg.showModal();
+            });
+        };
+        function send_comment_comment(comment_id, text) {
+            return fetch("{% url 'spezspellz:spell' spell.pk %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    method: "comment_comment",
+                    text: text,
+                    comment_id: comment_id
+                })
+            }).then(res => {
+                if(!res.ok)
+                    return res.text().then(msg => Promise.reject(msg));
+                return res.text();
+            });
+        }
+        window.addCommentReplyWindow = (btn, comment, comment_id) => {
+            const clone = window.review_reply_template.content.cloneNode(true).firstElementChild;
+            const text = clone.querySelector("[c_text]");
+            btn.style.display = "none";
+            clone.querySelector("[c_cancel]").onclick = () => {
+                clone.remove();
+                btn.style.display = null;
+            }
+            clone.querySelector("[c_send]").onclick = () => {
+                send_comment_comment(comment_id, text.value).then(() => {
+                    clone.remove();
+                    btn.style.display = null;
+                    location.reload();
+                });
+            }
+            comment.firstElementChild.after(clone);
+        }
+      </script>
     </div>
     {% endif %}
     {% for comment in comments %}
-    <div>
-      <div class="review-entry" id="comment-{{ comment.pk }}">
+    <div id="comment-{{ comment.pk }}">
+      <div class="review-entry">
         <div style="display: flex;justify-content: space-between;">
           <div style="display: flex;flex-direction: column;">
             <a style="display: flex; text-decoration: none" href="{% url 'spezspellz:other_profile' comment.commenter.pk %}">
@@ -455,54 +597,56 @@
           </div>
         </div>
       </div>
-      {% for comment_comment in comment.commentcomment_set.all %}
-      <div class="review-entry" style="margin-left: 50px;" id="commentcomment-{{ comment_comment.pk }}">
-        <a style="display: flex; text-decoration: none" href="{% url 'spezspellz:other_profile' comment_comment.commenter.pk %}">
-          <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment_comment.commenter.pk %}" width="24" height="24"/>
-          <h3 style="margin: 0;margin-right: 16px;">{{ comment_comment.commenter.username }}</h3>
-        </a>
-        <div style="display: flex;justify-content: space-between;">
-          <p>{{ comment_comment.text }}</p>
-          {% if comment_comment.commenter == user %}
-          <input onclick="window.delete_obj('comment_comment', {{ comment_comment.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
-          {% endif %}
+      <div id="comment-{{ comment.pk }}-comments">
+        {% for comment_comment in comment.commentcomment_set.all %}
+        <div class="review-entry" style="margin-left: 50px;" id="commentcomment-{{ comment_comment.pk }}">
+          <a style="display: flex; text-decoration: none" href="{% url 'spezspellz:other_profile' comment_comment.commenter.pk %}">
+            <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment_comment.commenter.pk %}" width="24" height="24"/>
+            <h3 style="margin: 0;margin-right: 16px;">{{ comment_comment.commenter.username }}</h3>
+          </a>
+          <div style="display: flex;justify-content: space-between;">
+            <p>{{ comment_comment.text }}</p>
+            {% if comment_comment.commenter == user %}
+            <input onclick="window.delete_obj('comment_comment', {{ comment_comment.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
+            {% endif %}
+          </div>
         </div>
+        {% endfor %}
       </div>
-      {% endfor %}
     </div>
     {% empty %}
-    <h2>There are no comments on this spell yet.</h2>
+    <h2 nocomms>There are no comments on this spell yet.</h2>
     {% endfor %}
   </div>
   <script>
-        window.delete_obj = (type, id) => {
-            fetch("{% url 'spezspellz:usersettings' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: JSON.stringify({
-                    method: "delete",
-                    obj_type: type,
-                    obj_id: id
-                })
-            }).then(res => {
-                if(!res.ok)
-                    return res.text().then(msg => Promise.reject(msg));
-                return res.text().then(text => location.reload());
-            });
-        };
-        let show_rn = localStorage.getItem("coms_show") == "T";
-        window.show_tab = (tf) => {
-            window.reviews_tab.hidden = tf;
-            window.comments_tab.hidden = !tf;
-            window.comments_btn.style.color = tf ? '#FFF' : '#777';
-            window.reviews_btn.style.color = (!tf) ? '#FFF' : '#777';
-            localStorage.setItem("coms_show", tf ? "T" : "F");
-        };
-        if(show_rn)
-            window.show_tab(show_rn);
-    </script>
+    window.delete_obj = (type, id) => {
+        fetch("{% url 'spezspellz:usersettings' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                method: "delete",
+                obj_type: type,
+                obj_id: id
+            })
+        }).then(res => {
+            if(!res.ok)
+                return res.text().then(msg => Promise.reject(msg));
+            return res.text().then(text => location.reload());
+        });
+    };
+    let show_rn = localStorage.getItem("coms_show") == "T";
+    window.show_tab = (tf) => {
+        window.reviews_tab.hidden = tf;
+        window.comments_tab.hidden = !tf;
+        window.comments_btn.style.color = tf ? '#FFF' : '#777';
+        window.reviews_btn.style.color = (!tf) ? '#FFF' : '#777';
+        localStorage.setItem("coms_show", tf ? "T" : "F");
+    };
+    if(show_rn)
+        window.show_tab(show_rn);
+  </script>
 </div>
 <br><br>
 {% endblock %}

@@ -5,6 +5,8 @@ from django.shortcuts import render
 from django.views import View
 from django.db import transaction
 from django.contrib.auth.models import User
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 from spezspellz.models import Spell, HasTag, UserInfo, Bookmark, \
     Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory
 from spezspellz.utils import get_or_none
@@ -79,6 +81,23 @@ class UserSettingsPage(View, RPCView):
         rate.save()
         return HttpResponse(rate_class.calc_rating(subject=obj), status=200)
 
+    @staticmethod
+    def send_deleted(channel_name: str, obj_type: str, obj_id: int, exclude: Optional[User]):
+        """Send signal to client that the object is deleted."""
+        channel = get_channel_layer()
+        async_to_sync(channel.group_send)(
+            channel_name,
+            {
+                "type": "realtime",
+                "except": exclude,
+                "data": {
+                    "type": "deleted",
+                    "obj": obj_type,
+                    "id": obj_id
+                }
+            }
+        )
+
     def rpc_delete(
         self,
         request: HttpRequest,
@@ -96,18 +115,20 @@ class UserSettingsPage(View, RPCView):
         if not isinstance(obj_id, int):
             return HttpResponse("Parameter `id` must be a string", status=400)
         obj_types = {
-            "spell": (Spell, "creator"),
-            "review": (Review, "user"),
-            "comment": (SpellComment, "commenter"),
-            "review_comment": (ReviewComment, "commenter"),
-            "comment_comment": (CommentComment, "commenter")
+            "spell": (Spell, "creator", None),
+            "review": (Review, "user", lambda obj, usr: self.send_deleted(f"spell_{obj.spell.pk}", "review", obj.pk, usr)),
+            "comment": (SpellComment, "commenter", lambda obj, usr: self.send_deleted(f"spell_{obj.spell.pk}", "comment", obj.pk, usr)),
+            "review_comment": (ReviewComment, "commenter", lambda obj, usr: self.send_deleted(f"spell_{obj.review.spell.pk}", "reviewcomment", obj.pk, usr)),
+            "comment_comment": (CommentComment, "commenter", lambda obj, usr: self.send_deleted(f"spell_{obj.comment.spell.pk}", "commentcomment", obj.pk, usr))
         }
-        obj_class, user_attr = obj_types.get(obj_type, (None, None))
+        obj_class, user_attr, callback = obj_types.get(obj_type, (None, None, None))
         if obj_class is None:
             return HttpResponse("Parameter `obj_type` is invalid", status=400)
         obj = get_or_none(obj_class, pk=obj_id, **{cast(str, user_attr): user})
         if obj is None:
             return HttpResponse("Object not found", status=404)
+        if callback is not None:
+            callback(obj, user)
         obj.delete()
         return HttpResponse("Object deleted", status=200)
 

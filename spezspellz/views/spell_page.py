@@ -1,5 +1,6 @@
 """Implements the spell detail page."""
 from typing import Any, cast
+from functools import wraps
 from django.utils import timezone
 from django.urls import reverse
 from django.http import HttpRequest, HttpResponse, HttpResponseBase
@@ -7,11 +8,12 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.db import transaction
 from django.contrib.auth.models import User
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 from spezspellz.models import Spell, Bookmark, \
     SpellHistoryEntry, Review, ReviewComment, SpellComment, CommentComment, Notification
 from spezspellz.utils import get_or_none
 from .rpc_view import RPCView
-from functools import wraps
 
 MAX_NOTIFICATION_COUNT = 50
 
@@ -50,20 +52,37 @@ def create_notification_object(sender: User, target: User, text: str, additional
     """
     if sender == target:
         return
-    Notification.objects.create(
+    icon_url = reverse("spezspellz:avatar", args=(sender.pk,))
+    noti_pk = Notification.objects.create(
         user=target,
         title=sender.username,
-        icon=reverse("spezspellz:avatar", args=(sender.pk,)),
+        icon=icon_url,
         body=text,
         additional=additional,
         ref=ref
-    )
+    ).pk
     notifications = cast(Any, target).notification_set.all().order_by("-timestamp")
     if notifications.count() > MAX_NOTIFICATION_COUNT:
         notifications.filter(
             pk__in=notifications[MAX_NOTIFICATION_COUNT:]
         ).delete()
-
+    channel = get_channel_layer()
+    async_to_sync(channel.group_send)(
+        f"user_{target.pk}",
+        {
+            "type": "realtime",
+            "data": {
+                "type": "noti",
+                "pk": noti_pk,
+                "title": sender.username,
+                "icon": icon_url,
+                "message": text,
+                "additional": additional,
+                "time": timezone.now().isoformat(),
+                "ref": ref
+            }
+        }
+    )
 
 class SpellPage(View, RPCView):
     """Handle spell page."""
@@ -148,6 +167,22 @@ class SpellPage(View, RPCView):
             additional=f"Commented on your {spell.title}",
             ref=f"/spell/{spell.pk}/#comment-{comment_pk}"
         )
+        channel = get_channel_layer()
+        async_to_sync(channel.group_send)(
+            f"spell_{spell.pk}",
+            {
+                "type": "realtime",
+                "except": user.pk,
+                "data": {
+                    "type": "spell_comment",
+                    "comment": comment_pk,
+                    "username": user.username,
+                    "avatar": reverse('spezspellz:avatar', args=(user.pk, )),
+                    "link": reverse('spezspellz:other_profile', args=(user.pk, )),
+                    "text": text
+                }
+            }
+        )
         return HttpResponse("Comment posted", status=200)
 
     @validate_user_and_text
@@ -163,7 +198,7 @@ class SpellPage(View, RPCView):
 
         if not isinstance(comment_id, int):
             return HttpResponse(
-                "Parameter `review_id` must be a string", status=400
+                "Parameter `comment_id` must be an int", status=400
             )
         if len(text) > int(CommentComment.text.field.max_length or 0):
             return HttpResponse("Text too long", status=400)
@@ -183,6 +218,24 @@ class SpellPage(View, RPCView):
             additional="Replied your comment",
             ref=f"/spell/{spell.pk}/#commentcomment-{comment_reply_pk}"
         )
+        channel = get_channel_layer()
+        async_to_sync(channel.group_send)(
+            f"spell_{spell.pk}",
+            {
+                "type": "realtime",
+                "except": user.pk,
+                "data": {
+                    "type": "comment_comment",
+                    "comment": comment.pk,
+                    "comment_comment": comment_reply_pk,
+                    "user_id": user.pk,
+                    "username": user.username,
+                    "avatar": reverse('spezspellz:avatar', args=(user.pk, )),
+                    "link": reverse('spezspellz:other_profile', args=(user.pk, )),
+                    "text": text
+                }
+            }
+        )
         return HttpResponse("Comment posted", status=200)
 
     @validate_user_and_text
@@ -198,7 +251,7 @@ class SpellPage(View, RPCView):
 
         if not isinstance(review_id, int):
             return HttpResponse(
-                "Parameter `review_id` must be a string", status=400
+                "Parameter `review_id` must be an int", status=400
             )
         if len(text) > int(ReviewComment.text.field.max_length or 0):
             return HttpResponse("Text too long", status=400)
@@ -208,7 +261,7 @@ class SpellPage(View, RPCView):
         spell = get_or_none(Spell, pk=spell_id)
         if spell is None:
             return HttpResponse("Spell not found", status=404)
-        review_pk = ReviewComment.objects.create(
+        review_comment_pk = ReviewComment.objects.create(
             review=review, commenter=user, text=text
         ).pk
         create_notification_object(
@@ -216,7 +269,24 @@ class SpellPage(View, RPCView):
             target=cast(Any, review.user),
             text=text,
             additional="Commented on your review",
-            ref=f"/spell/{spell.pk}/#reviewcomment-{review_pk}"
+            ref=f"/spell/{spell.pk}/#reviewcomment-{review_comment_pk}"
+        )
+        channel = get_channel_layer()
+        async_to_sync(channel.group_send)(
+            f"spell_{spell.pk}",
+            {
+                "type": "realtime",
+                "except": user.pk,
+                "data": {
+                    "type": "review_comment",
+                    "review": review.pk,
+                    "comment": review_comment_pk,
+                    "username": user.username,
+                    "avatar": reverse('spezspellz:avatar', args=(user.pk, )),
+                    "link": reverse('spezspellz:other_profile', args=(user.pk, )),
+                    "text": text
+                }
+            }
         )
         return HttpResponse("Comment posted", status=200)
 
@@ -259,5 +329,22 @@ class SpellPage(View, RPCView):
             text=desc,
             additional=f"Review your {spell.title}",
             ref=f"/spell/{spell.pk}/#review-{review_pk}"
+        )
+        channel = get_channel_layer()
+        async_to_sync(channel.group_send)(
+            f"spell_{spell.pk}",
+            {
+                "type": "realtime",
+                "except": user.pk,
+                "data": {
+                    "type": "review",
+                    "review": review_pk,
+                    "username": user.username,
+                    "avatar": reverse('spezspellz:avatar', args=(user.pk, )),
+                    "link": reverse('spezspellz:other_profile', args=(user.pk, )),
+                    "stars": stars,
+                    "desc": desc
+                }
+            }
         )
         return HttpResponse("Review posted", status=200)

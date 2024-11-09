@@ -5,6 +5,7 @@ import spezspellz.views as views
 
 
 app_name = "spezspellz"
+
 urlpatterns = [
     path("", views.HomePage.as_view(), name="home"),
     path("login/", lambda _: redirect("login")),
@@ -22,5 +23,10 @@ urlpatterns = [
     path("profile/myspell/<int:user_id>", views.other_spell_view, name="other_spell"),
     path("filter/", views.FilterPage.as_view(), name="filter"),
     path("avatar/<int:user_id>/", views.profile_picture_view, name="avatar"),
-    path("notifications/", views.NotificationView.as_view(), name="notifications"),
+    path("notifications/", views.NotificationView.as_view(), name="notifications")
+]
+
+websocket_urlpatterns = [
+    path("<str:channels>/", views.RealtimeConsumer.as_asgi(), name="ws"),
+    path("", views.RealtimeConsumer.as_asgi(), name="ws")
 ]
