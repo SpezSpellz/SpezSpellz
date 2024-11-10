@@ -21,7 +21,9 @@ from django.urls import path, re_path, include
 
 
 urlpatterns = [
-    path('accounts/', include('django.contrib.auth.urls')),
+    # path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/', include('allauth.urls')),
+    path('/', include('users.urls')),
     path('admin/', admin.site.urls),
     path('', include("spezspellz.urls", namespace="spsp")),
     re_path(r"^assets/(?P<path>.*)$", serve, {
