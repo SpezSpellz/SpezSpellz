@@ -175,6 +175,11 @@ AUTHENTICATION_BACKENDS = [
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
+        'APP': {
+            'client_id': config('GOOGLE_CLIENT_ID', cast=str),
+            'secret': config('GOOGLE_CLIENT_SECRET', cast=str),
+            'key': '',
+        },
         'SCOPE': ['email', 'profile'],
         'AUTH_PARAMS': {'access_type': 'online'},
     }
