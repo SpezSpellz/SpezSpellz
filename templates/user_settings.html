@@ -26,7 +26,8 @@
     <input id="upload_avatar_input" accept="image/png, image/jpeg" name="pp" type="file" hidden/>
     <h2>About me</h2>
     <hr>
-    <textarea id="about_me" class="profile-desc">{{ user.userinfo.user_desc }}</textarea>
+    <textarea id="about_me" class="profile-desc" oninput="update_counter()" maxlength="{{ max_desc }}">{{ user.userinfo.user_desc }}</textarea>
+    <p id="char_left"></p>
     <h2>Privacy</h2>
     <hr>
     <table>
@@ -115,6 +116,10 @@
   </div>
 </div>
 <script>
+  function update_counter() {
+      const remain = {{ max_desc }} - window.about_me.value.length;
+      window.char_left.innerText = `${remain} characters left`;
+  }
   function change_tab(tar) {
     for(let i = 0;i < 3;++i) {
       window[`${i}tab`].style.display = (i != tar) ? 'none' : null;
@@ -227,5 +232,6 @@
           }).catch(() => display_generic_failure("Failed to upload avatar"));
       }).catch(() => display_generic_failure("Failed to upload avatar"));
   };
+  update_counter();
 </script>
 {% endblock %}
