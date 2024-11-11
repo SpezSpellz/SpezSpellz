@@ -1,0 +1,39 @@
+body {
+
+}
+
+.contain-all {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-content: center;
+    text-align: center;
+    margin: 200px auto 0 auto;
+    padding: 50px;
+    max-width: 800px;
+    min-width: 500px;
+    width: 40%;
+    height: 40vh;
+    border: 1px solid black;
+    border-radius: 20px;
+    background-color: #3E3E3E;
+}
+
+.main {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    border: 1px solid brown;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.head {
+    font-family: Arial;
+    font-size: 30px;
+    font-weight: bold;
+}
