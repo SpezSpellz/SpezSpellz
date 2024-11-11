@@ -177,7 +177,7 @@ class UserSettingsPage(View, RPCView):
             user_info.spell_review_notification = bool(sp_re_noti)
             user_info.spell_comment_notification = bool(sp_coms_noti)
             user_info.private = bool(private)
-            user_info.user_desc = str(desc)
+            user_info.user_desc = str(desc)[:UserInfo.user_desc.field.max_length]
             user_info.save()
         return HttpResponse("OK")
 

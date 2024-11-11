@@ -19,10 +19,18 @@
     <div id="ProfileInfo">
       {% if not other_user %}
       <span class="name"> {{ user.username }} </span>
-      <p style="margin-top: 30px;"> {{ user.userinfo.user_desc }} </p>
+      <p style="margin: 0;"> Joined on {{ user.date_joined }} </p>
+      <p style="margin: 0;"> Success rate: {{ user.userinfo.success_rate }}% </p>
+      <p style="margin: 0;"> Post(s) used by {{ user.userinfo.spells_tried }} user(s) </p>
+      <hr>
+      <p style="margin-top: 10px;"> {{ user.userinfo.user_desc }} </p>
       {% else %}
       <span class="name"> {{ other_user.username }} </span>
-      <p style="margin-top: 30px;"> {{ other_user.userinfo.user_desc }} </p>
+      <p style="margin: 0;"> Joined on {{ other_user.date_joined }} </p>
+      <p style="margin: 0;"> Success rate: {{ other_user.userinfo.success_rate }}% </p>
+      <p style="margin: 0;"> Post(s) used by {{ user.userinfo.spells_tried }} user(s) </p>
+      <hr>
+      <p style="margin-top: 10px;"> {{ other_user.userinfo.user_desc }} </p>
       {% endif %}
     </div>
 
