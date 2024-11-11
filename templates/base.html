@@ -196,6 +196,10 @@ ${time_obj.toLocaleString("en-US", {hour:"numeric", minute:"numeric"})}`;
       const data = JSON.parse(event.data);
       if(data.type != "noti")
           return;
+      const n = new Notification(data.title, {
+          body: data.message,
+          icon: data.icon
+      })
       window.create_li(data);
       window.update_badge(++unread_count);
   });
