@@ -18,7 +18,13 @@ class UserSettingsPage(View, RPCView):
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Handle GET requests for this view."""
-        return render(request, "user_settings.html")
+        return render(
+            request,
+            "user_settings.html",
+            {
+                "max_desc": UserInfo.user_desc.field.max_length
+            }
+        )
 
     def post(self, request: HttpRequest, **kwargs) -> HttpResponseBase:
         """
