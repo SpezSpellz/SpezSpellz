@@ -15,15 +15,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from pathlib import Path
+
+from allauth.core.internal.httpkit import redirect
 from django.contrib import admin
 from django.views.static import serve
 from django.urls import path, re_path, include
 
 
 urlpatterns = [
-    # path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
+    path("login/", lambda request: redirect("spezspellz:custom_login"), name="login"),
     path('', include("spezspellz.urls", namespace="spsp")),
     re_path(r"^assets/(?P<path>.*)$", serve, {
         'document_root':

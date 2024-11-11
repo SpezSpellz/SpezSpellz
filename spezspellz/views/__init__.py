@@ -14,6 +14,7 @@ from .register_view import RegisterView
 from .profile_picture_view import profile_picture_view
 from .notification_view import NotificationView
 from .realtime import RealtimeConsumer
+from .login_view import CustomLoginView
 
 
 __all__ = (
@@ -33,5 +34,6 @@ __all__ = (
     "other_profile_view",
     "other_spell_view",
     "NotificationView",
-    "RealtimeConsumer"
+    "RealtimeConsumer",
+    "CustomLoginView"
 )

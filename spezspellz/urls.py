@@ -8,7 +8,7 @@ app_name = "spezspellz"
 
 urlpatterns = [
     path("", views.HomePage.as_view(), name="home"),
-    path("login/", lambda _: redirect("login")),
+    path("accounts/custom_login/", views.CustomLoginView.as_view(), name="custom_login"),
     path("register/", views.RegisterView.as_view(), name="register"),
     path("upload/", views.UploadPage.as_view(), name="upload"),
     path("edit/<int:spell_id>/", views.UploadPage.as_view(), name="edit"),
