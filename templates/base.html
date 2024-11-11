@@ -192,6 +192,7 @@ ${time_obj.toLocaleString("en-US", {hour:"numeric", minute:"numeric"})}`;
           noti_box.append(span);
       }
   }
+  {% if user.userinfo.review_comment_notification or user.userinfo.spell_review_notification or user.userinfo.spell_comment_notification or user.userinfo.comment_reply_notifications %}
   window.ws.addEventListener("message", (event) => {
       const data = JSON.parse(event.data);
       if(data.type != "noti")
@@ -203,6 +204,7 @@ ${time_obj.toLocaleString("en-US", {hour:"numeric", minute:"numeric"})}`;
       window.create_li(data);
       window.update_badge(++unread_count);
   });
+  {% endif %}
   window.create_notification = (noti) => {
       fetch("{% url 'spezspellz:notifications' %}", {
           method: "POST",
