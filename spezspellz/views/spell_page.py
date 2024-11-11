@@ -58,7 +58,7 @@ def create_notification_object(
     After created, if exceed the limit which is 50, then auto delete.
     """
     # If notification is not turned on do nothing.
-    if sender == target or not getattr(target.userinfo, noti_type):
+    if sender == target or not getattr(cast(Any, target).userinfo, noti_type):
         return
     icon_url = reverse("spezspellz:avatar", args=(sender.pk,))
     noti_pk = Notification.objects.create(
