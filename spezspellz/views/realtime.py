@@ -19,6 +19,7 @@ class RealtimeConsumer(AsyncWebsocketConsumer):
         if not user.is_authenticated:
             await self.accept()
             await self.close(code=3000)
+            return
         self.user_id = user.pk
         await self.channel_layer.group_add(
             f"user_{self.user_id}", self.channel_name
