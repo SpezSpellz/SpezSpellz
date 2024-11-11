@@ -1,6 +1,7 @@
 """Implements the tags page."""
 from typing import Optional
 import json
+from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, HttpResponseBase
 from django.views import View
 from spezspellz.models import Tag
@@ -13,10 +14,12 @@ MAX_TAGS_RESULT = 100
 class TagsPage(View, RPCView):
     """Shows all tags and query tags."""
 
-    def get(self, _: HttpRequest) -> HttpResponseBase:
+    def get(self, request: HttpRequest) -> HttpResponseBase:
         """Show the tags page."""
-        # TODO: List all tags + request tags to be added
-        return HttpResponse("Not Implemented", status=404)
+        context = {
+            "tags": Tag.objects.all()
+        }
+        return render(request, "tags.html", context)
 
     def rpc_search(
             self,
