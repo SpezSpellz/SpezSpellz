@@ -116,6 +116,9 @@ class SpellPage(View, RPCView):
         context["category_vote"] = cast(Any, spell).ratecategory_set.filter(
             user=user
         ).first() if user.is_authenticated else None
+        context["success_vote"] = cast(Any, spell).ratesuccess_set.filter(
+            user=user
+        ).first() if user.is_authenticated else None
         if user.is_authenticated:
             context["review"] = get_or_none(Review, user=user, spell=spell)
             context["bookmark"] = get_or_none(Bookmark, user=user, spell=spell)

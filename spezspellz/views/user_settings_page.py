@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from spezspellz.models import Spell, HasTag, UserInfo, Bookmark, \
-    Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory
+    Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory, RateSuccess
 from spezspellz.utils import get_or_none
 from .rpc_view import RPCView
 
@@ -58,6 +58,7 @@ class UserSettingsPage(View, RPCView):
         obj_types = {
             "tag": (HasTag, RateTag),
             "category": (Spell, RateCategory),
+            "success": (Spell, RateSuccess)
         }
         obj_class, rate_class = obj_types.get(obj_type, (None, None))
         if obj_class is None or rate_class is None:
