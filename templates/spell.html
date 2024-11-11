@@ -636,9 +636,9 @@
             return res.text().then(text => location.reload());
         });
     };
-    const isReview = window.location.hash.startsWith("#review-") != -1 || window.location.hash.startsWith("#reviewc") != -1;
-    const isComment = window.location.hash.startsWith("#comment-") != -1 || window.location.hash.startsWith("#commentc") != -1;
-    let show_rn = (isReview || isComment) ? (isComment ? "T" : "F") : (localStorage.getItem("coms_show") == "T");
+    const isReview = window.location.hash.startsWith("#review-") || window.location.hash.startsWith("#reviewc");
+    const isComment = window.location.hash.startsWith("#comment-") || window.location.hash.startsWith("#commentc");
+    let show_rn = (isReview || isComment) ? isComment : (localStorage.getItem("coms_show") == "T");
     window.show_tab = (tf) => {
         window.reviews_tab.hidden = tf;
         window.comments_tab.hidden = !tf;
