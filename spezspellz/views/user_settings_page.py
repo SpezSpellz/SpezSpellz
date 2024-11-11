@@ -162,6 +162,7 @@ class UserSettingsPage(View, RPCView):
         re_coms_noti: bool = True,
         sp_re_noti: bool = True,
         sp_coms_noti: bool = True,
+        coms_rep_noti: bool = True,
         private: bool = False,
         desc: str = ""
     ) -> HttpResponse:
@@ -176,6 +177,7 @@ class UserSettingsPage(View, RPCView):
             user_info.review_comment_notification = bool(re_coms_noti)
             user_info.spell_review_notification = bool(sp_re_noti)
             user_info.spell_comment_notification = bool(sp_coms_noti)
+            user_info.comment_reply_notifications = bool(coms_rep_noti)
             user_info.private = bool(private)
             user_info.user_desc = str(desc)[:UserInfo.user_desc.field.max_length]
             user_info.save()

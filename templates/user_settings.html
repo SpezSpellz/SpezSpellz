@@ -62,6 +62,15 @@
         </td>
       </tr>
       <tr>
+        <td><span>Comment reply notifications</span></td>
+        <td class="switch-td">
+          <label class="switch">
+            <input id="coms_rep_noti" type="checkbox" {% if user.userinfo.comment_reply_notifications %}checked{% endif %}>
+            <span class="slider round"></span>
+          </label>
+        </td>
+      </tr>
+      <tr>
         <td><span>Spell reviews notifications</span></td>
         <td class="switch-td">
           <label class="switch">
@@ -175,6 +184,7 @@
               re_coms_noti: window.re_coms_noti.checked,
               sp_re_noti: window.sp_re_noti.checked,
               sp_coms_noti: window.sp_coms_noti.checked,
+              coms_rep_noti: window.coms_rep_noti.checked,
               private: window.private_mode.checked
           })
       }).then(res => res.text().then(text => {
