@@ -21,7 +21,7 @@
     </a>
     <h3 style="color: #FFF;margin: 0;margin-top: 5px;margin-right: 8px;">{{ avg_star }} stars</h3>
     <div style="display: flex;" state="{% if success_vote is None %}N{% else %}{% if success_vote.positive %}U{% else %}D{% endif %}{% endif %}">
-      <h3 style="color: #FFF;margin: 0;margin-right: 8px;">Success rate: {{ spell.creator.userinfo.success_rate|floatformat:2 }}%</h3>
+      <h3 style="color: #FFF;margin: 0;margin-right: 8px;">Success rate: {{ spell.success_rate|floatformat:2 }}%</h3>
       <input v_rt hidden/>
       {% if user.is_authenticated %}
       <input uv_btn onclick="window.vote_obj(this.parentElement, 'success', true, {{ spell.pk }})" type="image" src="{% if success_vote is not None and success_vote.positive %}/assets/up_filled.svg{% else %}/assets/up_outline.svg{% endif %}"/>
@@ -30,7 +30,7 @@
       <input dv_btn onclick="window.vote_obj(this.parentElement, 'success', false, {{ spell.pk }})" type="image" src="{% if success_vote is not None and not success_vote.positive %}/assets/down_filled.svg{% else %}/assets/down_outline.svg{% endif %}"/>
       {% endif %}
     </div>
-    <h3 style="color: #FFF;margin: 0;margin-top: 5px;margin-right: 8px;">Used by {{ spell.creator.userinfo.spells_tried }} user(s)</h3>
+    <h3 style="color: #FFF;margin: 0;margin-top: 5px;margin-right: 8px;">Used by {{ spell.tried }} user(s)</h3>
     <div style="display: flex;" state="{% if category_vote is None %}N{% else %}{% if category_vote.positive %}U{% else %}D{% endif %}{% endif %}">
       <h3 style="color: #FFF;margin: 0;margin-right: 8px;">Category: {{ spell.category.name }}</h3>
       {% if user.is_authenticated %}
