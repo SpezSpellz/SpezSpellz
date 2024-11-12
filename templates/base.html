@@ -80,8 +80,6 @@
   <a href="{% url 'spezspellz:profile' %}" class="btn-like right-top-btn"><img width="32" src="/assets/profile.svg"/></a>
   {% elif request.resolver_match.url_name != 'login' %}
   <a href="{% url 'login' %}?next={% url 'spezspellz:home' %}" class="btn-like right-top-btn"><img width="32" src="/assets/login.svg"/></a>
-    <!-- Temp google button -->
-  <a href="{% provider_login_url 'google' %}?next={% url 'spezspellz:home' %}" class="btn-like right-top-btn"><img width="40" src="/assets/login.svg"/></a>
   {% endif %}
 
   {% endif %}
