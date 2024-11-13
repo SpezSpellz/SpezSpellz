@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block Body %}
-<form method="post" action="{% url 'spezspellz:custom_login' %}">
+<form method="post" action="?next={{ request.GET.next }}">
     {% csrf_token %}
     <h3>Login Here</h3>
 
@@ -37,7 +37,7 @@
     <button>Log In</button>
     {% load socialaccount %}
     <div class="social">
-      <a href="{% provider_login_url 'google' %}?next={% url 'spezspellz:home' %}" style="display: flex; width: 100%; text-decoration: None">
+      <a href="{% provider_login_url 'google' %}" style="display: flex; width: 100%; text-decoration: None">
       <div class="go"><i class="fab fa-google"></i>  Google</div>
       </a>
     </div>

@@ -186,8 +186,6 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 # Pages to redirect after login/logout
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
 
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'

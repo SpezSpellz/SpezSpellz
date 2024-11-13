@@ -19,13 +19,12 @@ from pathlib import Path
 from allauth.core.internal.httpkit import redirect
 from django.contrib import admin
 from django.views.static import serve
-from django.urls import path, re_path, include
-
+from django.urls import path, re_path, include, reverse
 
 urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
-    path("custom_login/", lambda request: redirect("spezspellz:custom_login"), name="login"),
+    path("custom_login/", lambda request: redirect(f"{reverse('spezspellz:custom_login')}?next={request.GET.get('next', '')}"), name="login"),
     path('', include("spezspellz.urls", namespace="spsp")),
     re_path(r"^assets/(?P<path>.*)$", serve, {
         'document_root':
