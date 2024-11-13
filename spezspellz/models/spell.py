@@ -1,4 +1,5 @@
 """Implements Spell model."""
+from datetime import datetime
 from typing import cast, Any
 from django.contrib.auth.models import User
 from django.db import models
@@ -20,6 +21,7 @@ class Spell(models.Model):
     category: models.ForeignKey[Category] = models.ForeignKey(
         Category, null=True, blank=True, on_delete=models.SET_NULL
     )
+    date: models.DateField = models.DateField(default=datetime.today)
 
     def __str__(self) -> str:
         """Return the spell title."""

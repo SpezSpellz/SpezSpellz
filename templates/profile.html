@@ -67,7 +67,7 @@
                 <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> Success rate: {{ this_many }}%</span>
               </div>
               <div class="spell-text-box">
-                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> Creation date: {{ spell_creation_date }}</span>
+                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> Creation date: {{ spell.date }}</span>
               </div>
             </a>
             <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
