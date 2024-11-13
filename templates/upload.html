@@ -350,12 +350,21 @@ Feel free to customize the template to fit your spell's unique attributes! Happy
             return a & a;
         }, 0);
     }
-    const tag_colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'];
+    const tag_colors = [
+        '#e6194b', '#3cb44b', '#ffe119',
+        '#4363d8', '#f58231', '#911eb4',
+        '#46f0f0', '#f032e6', '#bcf60c',
+        '#fabebe', '#008080', '#e6beff',
+        '#9a6324', '#fffac8', '#800000',
+        '#aaffc3', '#808000', '#ffd8b1',
+        '#808080', '#ffffff'
+    ];
     function add_tag(tag) {
-        const col = tag_colors[hashStr(tag) % tag_colors.length];
+        const hash = hashStr(tag);
+        const col = tag_colors[(hash+tag_colors.length*(1+Math.abs(~~(hash / tag_colors.length)))) % tag_colors.length];
         const div = document.createElement("button");
         div.classList.add("tag");
-        div.style.backgroundColor = col + "4C";
+        div.style.backgroundColor = col + "4c";
         div.style.borderColor = col;
         const span = document.createElement("span");
         span.innerText = tag;

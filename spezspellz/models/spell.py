@@ -48,3 +48,16 @@ class Spell(models.Model):
         start = self.data.find("is ") or 0
         end = start + (self.data[start:].find(".") or (len(self.data) - start))
         return self.data[start:end].replace("#", "")
+
+    @property
+    def tried(self) -> int:
+        """Returns the spell tried."""
+        return cast(Any, self).ratesuccess_set.all().count()
+
+    @property
+    def success_rate(self) -> float:
+        """Calculates percentage of positive of total."""
+        rate_count = self.tried
+        return ((cast(Any, self).ratesuccess_set.filter(
+            positive=True,
+        ).count()/rate_count) if rate_count != 0 else 1) * 100

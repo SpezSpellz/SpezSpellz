@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block Title %}Tags - SpezSpellz{% endblock %}
+{% block BeforeBody %}
+<link rel="stylesheet" href="/assets/spell.css" />
+{% endblock %}
+{% block Body %}
+<div style="display: flex; flex-direction: column">
+  {% for tag in tags %}
+  <span>{{ tag.name }}</span>
+  {% endfor %}
+</div>
+{% endblock %}

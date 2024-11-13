@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from spezspellz.models import Spell, HasTag, UserInfo, Bookmark, \
-    Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory
+    Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory, RateSuccess
 from spezspellz.utils import get_or_none
 from .rpc_view import RPCView
 
@@ -18,7 +18,13 @@ class UserSettingsPage(View, RPCView):
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Handle GET requests for this view."""
-        return render(request, "user_settings.html")
+        return render(
+            request,
+            "user_settings.html",
+            {
+                "max_desc": UserInfo.user_desc.field.max_length
+            }
+        )
 
     def post(self, request: HttpRequest, **kwargs) -> HttpResponseBase:
         """
@@ -58,6 +64,7 @@ class UserSettingsPage(View, RPCView):
         obj_types = {
             "tag": (HasTag, RateTag),
             "category": (Spell, RateCategory),
+            "success": (Spell, RateSuccess)
         }
         obj_class, rate_class = obj_types.get(obj_type, (None, None))
         if obj_class is None or rate_class is None:
@@ -161,6 +168,7 @@ class UserSettingsPage(View, RPCView):
         re_coms_noti: bool = True,
         sp_re_noti: bool = True,
         sp_coms_noti: bool = True,
+        coms_rep_noti: bool = True,
         private: bool = False,
         desc: str = ""
     ) -> HttpResponse:
@@ -175,8 +183,9 @@ class UserSettingsPage(View, RPCView):
             user_info.review_comment_notification = bool(re_coms_noti)
             user_info.spell_review_notification = bool(sp_re_noti)
             user_info.spell_comment_notification = bool(sp_coms_noti)
+            user_info.comment_reply_notifications = bool(coms_rep_noti)
             user_info.private = bool(private)
-            user_info.user_desc = str(desc)
+            user_info.user_desc = str(desc)[:UserInfo.user_desc.field.max_length]
             user_info.save()
         return HttpResponse("OK")
 
