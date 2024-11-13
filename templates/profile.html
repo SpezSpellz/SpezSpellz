@@ -62,6 +62,13 @@
                 <span class="all-spell-title" style="margin-left: 20px;"> {{ spell.title }} </span>
                 <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ spell.category }} </span>
               </div>
+              <div class="spell-text-box">
+                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> Used by: {{ this_many }} people</span>
+                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> Success rate: {{ this_many }}%</span>
+              </div>
+              <div class="spell-text-box">
+                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> Creation date: {{ this_many }}</span>
+              </div>
             </a>
             <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
             <a onclick="window.delete_spell({{spell.pk}})" class="btn-like edit-btn"><img width="32" src="/assets/delete.svg"/></a>
