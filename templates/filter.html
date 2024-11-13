@@ -24,7 +24,7 @@ Filter
   {% endif %}
   <input id="page" name="page" value="{{ request.GET.page }}" hidden/>
   <h1 style="margin: auto;text-align: center;">Search</h1>
-  <input class="search-bar" type="text" name="s" placeholder="Cool spells" value="{{ request.GET.s }}"/>
+  <input id="search_box" class="search-bar" type="text" name="s" placeholder="Cool spells" value="{{ request.GET.s }}"/>
   <div class="filter-box">
     <h2 style="margin-top: 0;margin: auto;text-align: center;">Filters</h2>
     <hr>
@@ -55,7 +55,7 @@ Filter
 
     <div class="button-container">
       <button id="submit" type="submit" class="apply-button">Apply</button>
-      <button type="reset" class="clear-button">Clear</button>
+      <button type="reset" class="clear-button" onclick="reset_page()">Clear</button>
     </div>
     <script>
             window.to_page = (page) => {
@@ -64,6 +64,9 @@ Filter
             };
             const selected_tags = new Set();
             const tag_colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'];
+            function reset_page() {
+                window.location.assign(`/filter/?s=${window.search_box.value}`);
+            }
             function hashStr(s) {
                 return s.split("").reduce(function(a, b) {
                     a = ((a << 5) - a) + b.charCodeAt(0);
@@ -154,7 +157,7 @@ Filter
                 update_tags_tm = setTimeout(() => {
                     update_tags_tm = null;
                     update_tags(query);
-                }, 250); 
+                }, 250);
             };
         </script>
   </div>

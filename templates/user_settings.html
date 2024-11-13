@@ -26,7 +26,8 @@
     <input id="upload_avatar_input" accept="image/png, image/jpeg" name="pp" type="file" hidden/>
     <h2>About me</h2>
     <hr>
-    <textarea id="about_me" class="profile-desc">{{ user.userinfo.user_desc }}</textarea>
+    <textarea id="about_me" class="profile-desc" oninput="update_counter()" maxlength="{{ max_desc }}">{{ user.userinfo.user_desc }}</textarea>
+    <p id="char_left"></p>
     <h2>Privacy</h2>
     <hr>
     <table>
@@ -57,6 +58,15 @@
         <td class="switch-td">
           <label class="switch">
             <input id="re_coms_noti" type="checkbox" {% if user.userinfo.review_comment_notification %}checked{% endif %}>
+            <span class="slider round"></span>
+          </label>
+        </td>
+      </tr>
+      <tr>
+        <td><span>Comment reply notifications</span></td>
+        <td class="switch-td">
+          <label class="switch">
+            <input id="coms_rep_noti" type="checkbox" {% if user.userinfo.comment_reply_notifications %}checked{% endif %}>
             <span class="slider round"></span>
           </label>
         </td>
@@ -106,6 +116,10 @@
   </div>
 </div>
 <script>
+  function update_counter() {
+      const remain = {{ max_desc }} - window.about_me.value.length;
+      window.char_left.innerText = `${remain} characters left`;
+  }
   function change_tab(tar) {
     for(let i = 0;i < 3;++i) {
       window[`${i}tab`].style.display = (i != tar) ? 'none' : null;
@@ -175,6 +189,7 @@
               re_coms_noti: window.re_coms_noti.checked,
               sp_re_noti: window.sp_re_noti.checked,
               sp_coms_noti: window.sp_coms_noti.checked,
+              coms_rep_noti: window.coms_rep_noti.checked,
               private: window.private_mode.checked
           })
       }).then(res => res.text().then(text => {
@@ -217,5 +232,6 @@
           }).catch(() => display_generic_failure("Failed to upload avatar"));
       }).catch(() => display_generic_failure("Failed to upload avatar"));
   };
+  update_counter();
 </script>
 {% endblock %}

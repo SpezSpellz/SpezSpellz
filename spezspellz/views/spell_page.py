@@ -43,14 +43,22 @@ def validate_user_and_text(view_func):
     return wrapper
 
 
-def create_notification_object(sender: User, target: User, text: str, additional: str, ref: str):
+def create_notification_object(
+        sender: User,
+        target: User,
+        text: str,
+        additional: str,
+        ref: str,
+        noti_type: str,
+):
     """
     Create notification object.
 
     Created when sender is not the same as target.
     After created, if exceed the limit which is 50, then auto delete.
     """
-    if sender == target:
+    # If notification is not turned on do nothing.
+    if sender == target or not getattr(cast(Any, target).userinfo, noti_type):
         return
     icon_url = reverse("spezspellz:avatar", args=(sender.pk,))
     noti_pk = Notification.objects.create(
@@ -116,6 +124,9 @@ class SpellPage(View, RPCView):
         context["category_vote"] = cast(Any, spell).ratecategory_set.filter(
             user=user
         ).first() if user.is_authenticated else None
+        context["success_vote"] = cast(Any, spell).ratesuccess_set.filter(
+            user=user
+        ).first() if user.is_authenticated else None
         if user.is_authenticated:
             context["review"] = get_or_none(Review, user=user, spell=spell)
             context["bookmark"] = get_or_none(Bookmark, user=user, spell=spell)
@@ -166,7 +177,8 @@ class SpellPage(View, RPCView):
             target=cast(Any, spell.creator),
             text=text,
             additional=f"Commented on your {spell.title}",
-            ref=f"/spell/{spell.pk}/#comment-{comment_pk}"
+            ref=f"/spell/{spell.pk}/#comment-{comment_pk}",
+            noti_type="spell_comment_notification"
         )
         channel = get_channel_layer()
         async_to_sync(channel.group_send)(
@@ -217,7 +229,8 @@ class SpellPage(View, RPCView):
             target=cast(Any, comment.commenter),
             text=text,
             additional="Replied your comment",
-            ref=f"/spell/{spell.pk}/#commentcomment-{comment_reply_pk}"
+            ref=f"/spell/{spell.pk}/#commentcomment-{comment_reply_pk}",
+            noti_type="comment_reply_notifications"
         )
         channel = get_channel_layer()
         async_to_sync(channel.group_send)(
@@ -270,7 +283,8 @@ class SpellPage(View, RPCView):
             target=cast(Any, review.user),
             text=text,
             additional="Commented on your review",
-            ref=f"/spell/{spell.pk}/#reviewcomment-{review_comment_pk}"
+            ref=f"/spell/{spell.pk}/#reviewcomment-{review_comment_pk}",
+            noti_type="review_comment_notification"
         )
         channel = get_channel_layer()
         async_to_sync(channel.group_send)(
@@ -329,7 +343,8 @@ class SpellPage(View, RPCView):
             target=cast(Any, spell.creator),
             text=desc,
             additional=f"Review your {spell.title}",
-            ref=f"/spell/{spell.pk}/#review-{review_pk}"
+            ref=f"/spell/{spell.pk}/#review-{review_pk}",
+            noti_type="spell_review_notification"
         )
         channel = get_channel_layer()
         async_to_sync(channel.group_send)(

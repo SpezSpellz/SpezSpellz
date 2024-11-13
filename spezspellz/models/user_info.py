@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from .rate_success import RateSuccess
 
 
 class UserInfo(models.Model):
@@ -36,6 +37,20 @@ class UserInfo(models.Model):
     def is_private(self):
         """Checks whether user is private."""
         return self.private
+
+    @property
+    def spells_tried(self) -> int:
+        """Returns the spell tried."""
+        return RateSuccess.objects.filter(subject__creator=self.user).count()
+
+    @property
+    def success_rate(self):
+        """Calculates the success rate of all their spells."""
+        rate_count = self.spells_tried
+        return ((RateSuccess.objects.filter(
+            subject__creator=self.user,
+            positive=True
+        ).count()/rate_count) if rate_count != 0 else 1) * 100
 
     @property
     def unread_badge(self):
