@@ -10,3 +10,4 @@ class Tag(models.Model):
     def __str__(self):
         """Return the tag name."""
         return str(self.name)
+
