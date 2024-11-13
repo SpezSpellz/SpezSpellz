@@ -25,7 +25,7 @@ from django.urls import path, re_path, include
 urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
-    path("login/", lambda request: redirect("spezspellz:custom_login"), name="login"),
+    path("custom_login/", lambda request: redirect("spezspellz:custom_login"), name="login"),
     path('', include("spezspellz.urls", namespace="spsp")),
     re_path(r"^assets/(?P<path>.*)$", serve, {
         'document_root':
