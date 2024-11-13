@@ -2,9 +2,6 @@
 
 {% block BeforeBody %}
 <link rel="stylesheet" href="/assets/login.css">
-<link rel="preconnect" href="https://fonts.gstatic.com">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block Body %}
@@ -38,7 +35,7 @@
     {% load socialaccount %}
     <div class="social">
       <a href="{% provider_login_url 'google' %}" style="display: flex; width: 100%; text-decoration: None">
-      <div class="go"><i class="fab fa-google"></i>  Google</div>
+      <div class="go" style="display: flex;flex-direction: row;justify-content: center;padding: 8px;"><img src="/assets/google.svg" style="margin-right: 5px;"/>  Google</div>
       </a>
     </div>
 
