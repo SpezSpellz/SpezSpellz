@@ -33,7 +33,7 @@
     "comment_reply_notifications": true,
     "user_desc": "I AM THE DEMO, I AM THE FIRST USER EVER CREATED, EVER!!",
     "avatar": "content/BlackbeardPeak.jpg",
-    "last_notified": "2024-11-10T08:54:44.582Z"
+    "last_notified": "2024-11-12T13:14:01.617Z"
   }
 },
 {
@@ -145,7 +145,7 @@
     "comment_reply_notifications": true,
     "user_desc": "",
     "avatar": "content/images_6dWK57z_vxxBLIf.jfif",
-    "last_notified": "2024-11-10T09:11:13.083Z"
+    "last_notified": "2024-11-13T01:12:13.526Z"
   }
 },
 {
@@ -1893,6 +1893,51 @@
     "comment": 14,
     "commenter": 5,
     "text": "I've heard that Shadowwalk can be unstable when used with multiple people. Be careful, and make sure you have a clear connection with the group."
+  }
+},
+{
+  "model": "spezspellz.notification",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "timestamp": "2024-11-07T11:21:23.732Z",
+    "title": "demo1",
+    "additional": "Commented on your Fireball",
+    "body": "hey",
+    "icon": "/avatar/1/",
+    "is_read": false,
+    "bell_clicked": true,
+    "ref": "/spell/1/#comment-15"
+  }
+},
+{
+  "model": "spezspellz.notification",
+  "pk": 2,
+  "fields": {
+    "user": 6,
+    "timestamp": "2024-11-07T11:21:36.907Z",
+    "title": "demo1",
+    "additional": "Review your Witch's Brew of Dreams",
+    "body": "not bad kid",
+    "icon": "/avatar/1/",
+    "is_read": false,
+    "bell_clicked": false,
+    "ref": "/spell/13/#review-17"
+  }
+},
+{
+  "model": "spezspellz.notification",
+  "pk": 3,
+  "fields": {
+    "user": 1,
+    "timestamp": "2024-11-07T11:21:41.993Z",
+    "title": "demo1",
+    "additional": "Commented on your review",
+    "body": "hey",
+    "icon": "/avatar/1/",
+    "is_read": false,
+    "bell_clicked": true,
+    "ref": "/spell/13/#reviewcomment-4"
   }
 }
 ]
