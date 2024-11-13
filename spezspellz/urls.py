@@ -1,6 +1,5 @@
 """This file contains urls of SpezSpellz."""
 from django.urls import path
-from django.shortcuts import redirect
 import spezspellz.views as views
 
 
