@@ -11,6 +11,7 @@ TAG_COLORS = (
     '#808080', '#ffffff'
 )
 
+
 class Tag(models.Model):
     """The tag."""
 
@@ -28,4 +29,3 @@ class Tag(models.Model):
             h = (((h << 5) - h) + ord(ch))
         h &= 0xFFFFFFFF
         return TAG_COLORS[h % len(TAG_COLORS)]
-
