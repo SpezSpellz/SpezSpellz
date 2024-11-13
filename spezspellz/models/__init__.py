@@ -18,6 +18,8 @@ from .comment_comment import CommentComment
 from .notification import Notification
 from .file2model import VirtualFileModel
 from .rate_success import RateSuccess
+from .tag_request import TagRequest
+from .rate_tag_request import RateTagRequest
 
 
 __all__ = (
@@ -39,5 +41,7 @@ __all__ = (
     "CommentComment",
     "Notification",
     "VirtualFileModel",
-    "RateSuccess"
+    "RateSuccess",
+    "TagRequest",
+    "RateTagRequest"
 )

@@ -1,0 +1,60 @@
+.tag {
+    font-family: monospace;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 20px;
+    margin: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+    display: flex;
+    padding: 2px;
+    user-select: none;
+}
+
+#create_request_dlg {
+    border-radius: 10px;
+    background-color: #444;
+    border-style: none;
+    outline: none;
+}
+
+#create_request_dlg h1 {
+    margin: 0px;
+}
+
+#create_request_dlg span, #create_request_dlg p {
+    color: #FFF;
+    font-size: 15pt;
+}
+
+#create_request_dlg input, #create_request_dlg textarea {
+    background-color: #333;
+    border-style: solid;
+    border-radius: 8px;
+    outline: none;
+    color: #FFF;
+    font-size: 12pt;
+    padding: 5px;
+    border-width: 1px;
+}
+
+#create_request_dlg button {
+    font-size: 15pt;
+    display: block;
+    margin: auto;
+    margin-top: 5px;
+    background-color: #333;
+    color: #FFF;
+    border-radius: 8px;
+    border-style: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#create_request_dlg button:hover {
+    background-color: #555;
+}
+
+#create_request_dlg button:active {
+    background-color: #666;
+}

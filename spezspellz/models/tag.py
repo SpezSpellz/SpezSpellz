@@ -11,10 +11,11 @@ TAG_COLORS = (
     '#808080', '#ffffff'
 )
 
+
 class Tag(models.Model):
     """The tag."""
 
-    name: models.CharField = models.CharField(max_length=50)
+    name: models.CharField = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         """Return the tag name."""

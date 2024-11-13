@@ -1,12 +1,129 @@
 {% extends "base.html" %}
 {% block Title %}Tags - SpezSpellz{% endblock %}
 {% block BeforeBody %}
-<link rel="stylesheet" href="/assets/spell.css" />
+<link rel="stylesheet" href="/assets/tags.css" />
 {% endblock %}
 {% block Body %}
-<div style="display: flex; flex-direction: column">
+<h1 style="display: block;text-align: center;">Tags</h1>
+<div>
   {% for tag in tags %}
-  <span>{{ tag.name }}</span>
+  <div style="display: inline-block;">
+    <div class="tag" style="background-color: {{ tag.color }}4e; border-color: {{ tag.color }};">
+      <span style="color: {{ tag.color }};margin-right: 4px;margin-left: 4px;">{{ tag.name }}</span>
+    </div>
+  </div>
   {% endfor %}
 </div>
+<h1 style="display: block;text-align: center;">Tag Requests</h1>
+<button onclick="popup_tag_req()">Create</button>
+<div style="display: flex;flex-direction: column;">
+  {% for tag_request in tag_requests %}
+  <div style="display: flex;flex-direction: row;padding: 10px;background-color: #333;border-radius: 8px;">
+    <div style="display: inline-block;">
+      <div class="tag" style="background-color: {{ tag_request.req.color }}4e; border-color: {{ tag_request.req.color }};">
+        <div state="{% if tag_request.vote is None %}N{% else %}{% if tag_request.vote.positive %}U{% else %}D{% endif %}{% endif %}" style="display: flex;margin-right: 4px; margin-left: 3px;">
+          {% if user.is_authenticated %}
+          <input uv_btn onclick="rate(this.parentElement, true, {{ tag_request.req.pk }})" type="image" src="{% if tag_request.vote is not None and tag_request.vote.positive %}/assets/up_filled.svg{% else %}/assets/up_outline.svg{% endif %}" height="15"/>
+          {% endif %}
+          <span v_rt style="color: #FFF">{{ tag_request.req.rating }}</span>
+          {% if user.is_authenticated %}
+          <input dv_btn onclick="rate(this.parentElement, false, {{ tag_request.req.pk }})" type="image" src="{% if tag_request.vote is not None and not tag_request.vote.positive %}/assets/down_filled.svg{% else %}/assets/down_outline.svg{% endif %}" height="15"/>
+          {% endif %}
+        </div>
+        <span style="color: {{ tag_request.req.color }};margin-right: 4px;">{{ tag_request.req.name }}</span>
+      </div>
+    </div>
+    <p style="color: #FFF;margin: 0;margin-left: 5px;">{{ tag_request.req.desc }}</p>
+  </div>
+  {% endfor %}
+</div>
+<dialog id="create_request_dlg">
+  <h1>Create a tag request</h1>
+  <hr>
+  <div id="input_part">
+    <span>Name</span><br><input maxlength="30" id="tag_name"/><br>
+    <span>Description</span><br><textarea maxlength="512" id="tag_desc"></textarea><br>
+    <button onclick="submit_req()">Submit</button>
+  </div>
+  <div id="msg_part" style="display: none;">
+    <p id="out_msg">This is a test message</p>
+    <button onclick="window.create_request_dlg.close()" id="close_btn">Close</button>
+  </div>
+</dialog>
+<script>
+  function rate_obj(type, id, positive) {
+      return fetch("{% url 'spezspellz:usersettings' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({
+              method: "rate",
+              obj_type: type,
+              obj_id: id,
+              vote: positive
+          })
+      }).then(res => {
+          if(!res.ok)
+              return res.text().then(msg => Promise.reject(msg));
+          return res.text()
+      });
+  }
+  function set_arrow(element, type) {
+    element.setAttribute("state", type);
+    switch(type) {
+      case 'N':
+        element.querySelector("[uv_btn]").src = "/assets/up_outline.svg";
+        element.querySelector("[dv_btn]").src = "/assets/down_outline.svg";
+        break;
+      case 'U':
+        element.querySelector("[uv_btn]").src = "/assets/up_filled.svg";
+        element.querySelector("[dv_btn]").src = "/assets/down_outline.svg";
+        break;
+      case 'D':
+        element.querySelector("[uv_btn]").src = "/assets/up_outline.svg";
+        element.querySelector("[dv_btn]").src = "/assets/down_filled.svg";
+        break;
+    }
+  }
+  function rate(element, new_state, id) {
+      const state = element.getAttribute("state");
+      const new_state_code = (state == 'N') ? (new_state ? 'U' : 'D') : ((state == 'U') ? (new_state ? 'N' : 'D') : (new_state ? 'U' : 'N'));
+      set_arrow(element, new_state_code);
+      rate_obj('tag_req', id, (new_state_code == 'N') ? null : new_state).then(txt => {
+          set_arrow(element, new_state_code);
+          element.querySelector("[v_rt]").innerText = txt;
+      })
+  };
+  function popup_tag_req() {
+    window.msg_part.style.display = 'none';
+    window.input_part.style.display = null;
+    window.create_request_dlg.showModal();
+    window.tag_name.value = "";
+    window.tag_desc.value = "";
+  }
+  function submit_req() {
+    window.input_part.style.display = 'none';
+    window.msg_part.style.display = null;
+    window.out_msg.innerText = "Submitting...";
+    window.close_btn.setAttribute("disabled", true);
+    fetch("{% url 'spezspellz:tags' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: JSON.stringify({
+        method: "create_request",
+        name: window.tag_name.value,
+        desc: window.tag_desc.value
+      })
+    }).then(res => res.text()).then(text => {
+      window.out_msg.innerText = text;
+      window.close_btn.removeAttribute("disabled");
+    }).catch(() => {
+      window.out_msg.innerText = "An unexpected error occurred";
+      window.close_btn.removeAttribute("disabled");
+    });
+  }
+</script>
 {% endblock %}
