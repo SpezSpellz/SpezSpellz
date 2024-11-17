@@ -4,18 +4,21 @@
 <link rel="stylesheet" href="/assets/tags.css" />
 {% endblock %}
 {% block Body %}
+<div class="all-container">
 <h1 style="display: block;text-align: center;">Tags</h1>
 
 <div class="main-container">
+  <div class="tag-wrapper">
   {% for tag in tags %}
-  <div class="tag" style="background-color: {{ tag.color }}4e; border-color: {{ tag.color }};">
-    <span style="color: {{ tag.color }};margin-right: 4px;margin-left: 4px;">{{ tag.name }}</span>
-  </div>
+    <div class="tag" style="background-color: {{ tag.color }}8e;   border-color: {{ tag.color }};">
+      <span style="color: white;margin-right: 4px;margin-left: 4px;">{{ tag.name }}</span>
+    </div>
   {% endfor %}
+  </div>
 </div>
 
 <h1 style="display: block;text-align: center;">Tag Requests</h1>
-<button onclick="popup_tag_req()">Create</button>
+<button onclick="popup_tag_req()" class="btn-like create-button">Create</button>
 <div style="display: flex;flex-direction: column;">
   {% for tag_request in tag_requests %}
   <div style="display: flex;flex-direction: row;padding: 10px;background-color: #333;border-radius: 8px;">
@@ -36,6 +39,8 @@
     <p style="color: #FFF;margin: 0;margin-left: 5px;">{{ tag_request.req.desc }}</p>
   </div>
   {% endfor %}
+</div>
+
 </div>
 
 <dialog id="create_request_dlg">
