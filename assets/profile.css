@@ -170,11 +170,13 @@ li:empty {
 .all-spell-title {
     color: #FFF;
     font-size: 16pt;
-    margin: 0;
+    margin-left: 20px;
 }
+
 .all-spell-category {
     color: #AAA;
     font-size: 12pt;
+    margin: 5px 0 20px 20px;
 }
 
 .spell-text-box {
@@ -182,7 +184,6 @@ li:empty {
     flex-direction: column;
     min-width: 150px;
     width: 15%;
-    border: 1px solid black;
 }
 
 .overflow {

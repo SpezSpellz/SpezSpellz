@@ -59,15 +59,20 @@
             <a href="{% url 'spezspellz:spell' spell.pk %}" class="spell-row">
               <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' spell.pk %}">
               <div class="spell-text-box">
-                <span class="all-spell-title" style="margin-left: 20px;"> {{ spell.title }} </span>
-                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ spell.category }} </span>
+                <span class="all-spell-title"> {{ spell.title }} </span>
+                <span class="all-spell-category" style="margin-top: 20px;"> {{ spell.category }} </span>
               </div>
               <div class="spell-text-box">
-                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> Used by: {{ spell.tried }} people</span>
-                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> Success rate: {{ spell.success_rate }}%</span>
+                <span class="all-spell-category"> Used by: {{ spell.tried }} people</span>
+                <span class="all-spell-category" style="color:  {% if spell.success_rate >= 80 %}green
+                                                                {% elif spell.success_rate >= 60 %}yellow
+                                                                {% elif spell.success_rate >= 40 %}orange
+                                                                {% else %}red
+                                                                {% endif %};">
+                  Success rate: {{ spell.success_rate }}%</span>
               </div>
-              <div class="spell-text-box">
-                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> Creation date: {{ spell.date }}</span>
+              <div class="spell-text-box" style="margin-left: auto">
+                <span class="all-spell-category"> Creation date: {{ spell.date }}</span>
               </div>
             </a>
             <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
