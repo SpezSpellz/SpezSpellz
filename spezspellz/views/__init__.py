@@ -15,6 +15,7 @@ from .profile_picture_view import profile_picture_view
 from .notification_view import NotificationView
 from .realtime import RealtimeConsumer
 from .login_view import CustomLoginView
+from .adapters import CustomSocialAccountAdapter
 
 
 __all__ = (
@@ -35,5 +36,6 @@ __all__ = (
     "other_spell_view",
     "NotificationView",
     "RealtimeConsumer",
-    "CustomLoginView"
+    "CustomLoginView",
+    "CustomSocialAccountAdapter",
 )
