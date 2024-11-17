@@ -59,22 +59,23 @@
 }
 
 .tag-wrapper {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
     width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 10px;
-    border: 1px solid black;
+    margin-bottom: 50px;
 }
 
 .tag {
+    max-width: 320px;
     font-size: 25px;
-    min-width: 260px;
     font-family: monospace;
     border: 2px solid;
     border-radius: 5px;
     margin: 2px;
     padding: 5px;
     user-select: none;
+    box-sizing: border-box;
 }
 
 /* for color display, not used in the moment. */
