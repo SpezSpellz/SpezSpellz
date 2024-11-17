@@ -5,15 +5,15 @@
 {% endblock %}
 {% block Body %}
 <h1 style="display: block;text-align: center;">Tags</h1>
-<div>
+
+<div class="main-container">
   {% for tag in tags %}
-  <div style="display: inline-block;">
-    <div class="tag" style="background-color: {{ tag.color }}4e; border-color: {{ tag.color }};">
-      <span style="color: {{ tag.color }};margin-right: 4px;margin-left: 4px;">{{ tag.name }}</span>
-    </div>
+  <div class="tag" style="background-color: {{ tag.color }}4e; border-color: {{ tag.color }};">
+    <span style="color: {{ tag.color }};margin-right: 4px;margin-left: 4px;">{{ tag.name }}</span>
   </div>
   {% endfor %}
 </div>
+
 <h1 style="display: block;text-align: center;">Tag Requests</h1>
 <button onclick="popup_tag_req()">Create</button>
 <div style="display: flex;flex-direction: column;">
@@ -37,6 +37,7 @@
   </div>
   {% endfor %}
 </div>
+
 <dialog id="create_request_dlg">
   <h1>Create a tag request</h1>
   <hr>
