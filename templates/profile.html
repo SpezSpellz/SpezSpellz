@@ -64,11 +64,7 @@
               </div>
               <div class="spell-text-box">
                 <span class="all-spell-category"> Used by: {{ spell.tried }} people</span>
-                <span class="all-spell-category" style="color:  {% if spell.success_rate >= 80 %}green
-                                                                {% elif spell.success_rate >= 60 %}yellow
-                                                                {% elif spell.success_rate >= 40 %}orange
-                                                                {% else %}red
-                                                                {% endif %};">
+                <span class="all-spell-category success-rate" data-rate="{{ spell.success_rate }}">
                   Success rate: {{ spell.success_rate }}%</span>
               </div>
               <div class="spell-text-box" style="margin-left: auto">
@@ -226,6 +222,29 @@
         };
 
         window.show_tab(selectedTab);
+    </script>
+
+    <!--Script for getting color depending on the success rate -->
+    <script>
+        function getSuccessRateColor(successRate) {
+      if (successRate >= 80) {
+          return "green";
+      } else if (successRate >= 60) {
+          return "yellow";
+      } else if (successRate >= 40) {
+          return "orange";
+      } else {
+          return "red";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+            // Apply color directly
+            document.querySelectorAll(".success-rate").forEach((element) => {
+                const successRate = parseInt(element.dataset.rate, 10);
+                element.style.color = getSuccessRateColor(successRate); // Call directly
+            });
+        });
     </script>
 
   </div>
