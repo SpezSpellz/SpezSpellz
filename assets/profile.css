@@ -186,6 +186,13 @@ li:empty {
     width: 15%;
 }
 
+.spell-big-box {
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+    width: 30%;
+}
+
 .overflow {
     display: flex;
     flex-direction: column;
