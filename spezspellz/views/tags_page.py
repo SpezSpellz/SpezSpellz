@@ -5,11 +5,12 @@ from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, HttpResponseBase
 from django.views import View
 from spezspellz.models import Tag, TagRequest
-from spezspellz.utils import get_or_none
+from spezspellz.utils import get_or_none, safe_cast
 from .rpc_view import RPCView
 
 
 MAX_TAGS_RESULT = 100
+TAG_PER_PAGE = 40
 
 
 class TagsPage(View, RPCView):
@@ -17,8 +18,14 @@ class TagsPage(View, RPCView):
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Show the tags page."""
+        all_tags = Tag.objects.all()
+        max_page = all_tags.count()//TAG_PER_PAGE + (1 if all_tags.count() % TAG_PER_PAGE != 0 else 0)
+        cur_page = safe_cast(int, request.GET.get("page"), 1)
         context = {
-            "tags": Tag.objects.all(),
+            "tags": all_tags[TAG_PER_PAGE * (cur_page - 1): TAG_PER_PAGE * cur_page],
+            "cur_page": cur_page,
+            "max_page": max_page,
+            "pages": range(max(1, cur_page - 5), min(max_page, cur_page + 5) + 1),
             "tag_requests": ({
                 "req": tag_request,
                 "vote": cast(Any, tag_request).ratetagrequest_set.filter(user=request.user).first() if request.user.is_authenticated else None

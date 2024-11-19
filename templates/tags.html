@@ -42,6 +42,21 @@
     {% endfor %}
   </div>
 
+{% if max_page > 1 %}
+  <div class="nav-bar" style="display: flex;justify-content: center;"><ul style="padding: 0">
+    {% if cur_page != 1 %}
+    <a href="{% url 'spezspellz:tags' %}?page=1">&lt&lt</a>
+    <a href="{% url 'spezspellz:tags' %}?page={{ cur_page|add:'-1' }}">&lt</a>
+    {% endif %}
+    {% for page in pages %}
+    <a {% if page == cur_page %}class="cur"{% else %}href="{% url 'spezspellz:tags' %}?page={{ page }}"{% endif %}>{{ page }}</a>
+    {% endfor %}
+    {% if cur_page != max_page %}
+    <a href="{% url 'spezspellz:tags' %}?page={{ cur_page|add:1 }}">&gt</a>
+    <a href="{% url 'spezspellz:tags' %}?page={{ max_page }}">&gt&gt</a>
+    {% endif %}
+  </ul></div>
+{% endif %}
 </div>
 
 <dialog id="create_request_dlg">
