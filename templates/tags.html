@@ -50,7 +50,10 @@
   <div id="input_part">
     <span>Name</span><br><input maxlength="30" id="tag_name"/><br>
     <span>Description</span><br><textarea maxlength="512" id="tag_desc"></textarea><br>
-    <button onclick="submit_req()">Submit</button>
+    <div style="display: flex">
+      <button onclick="submit_req()">Submit</button>
+      <button onclick="window.create_request_dlg.close()" id="close_btn">Close</button>
+    </div>
   </div>
   <div id="msg_part" style="display: none;">
     <p id="out_msg">This is a test message</p>

@@ -24,6 +24,7 @@
     font-size: 12pt;
     padding: 5px;
     border-width: 1px;
+    width: 275px;
 }
 
 #create_request_dlg button {
