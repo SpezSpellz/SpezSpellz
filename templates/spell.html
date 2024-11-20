@@ -21,7 +21,7 @@
     </a>
     <h3 style="color: #FFF;margin: 0;margin-top: 5px;margin-right: 8px;">{{ avg_star }} stars</h3>
     <div style="display: flex;" state="{% if success_vote is None %}N{% else %}{% if success_vote.positive %}U{% else %}D{% endif %}{% endif %}">
-      <h3 style="color: #FFF;margin: 0;margin-right: 8px;">Success rate: {{ spell.success_rate|floatformat:2 }}%</h3>
+      <h3 style="color: #FFF;margin: 0;margin-right: 8px;">Success rate: {{ success_rate }}%</h3>
       <input v_rt hidden/>
       {% if user.is_authenticated %}
       <input uv_btn onclick="window.vote_obj(this.parentElement, 'success', true, {{ spell.pk }})" type="image" src="{% if success_vote is not None and success_vote.positive %}/assets/up_filled.svg{% else %}/assets/up_outline.svg{% endif %}"/>
@@ -30,7 +30,7 @@
       <input dv_btn onclick="window.vote_obj(this.parentElement, 'success', false, {{ spell.pk }})" type="image" src="{% if success_vote is not None and not success_vote.positive %}/assets/down_filled.svg{% else %}/assets/down_outline.svg{% endif %}"/>
       {% endif %}
     </div>
-    <h3 style="color: #FFF;margin: 0;margin-top: 5px;margin-right: 8px;">Used by {{ spell.tried }} user(s)</h3>
+    <h3 style="color: #FFF;margin: 0;margin-top: 5px;margin-right: 8px;">Used by {{ success_count }} user(s)</h3>
     <div style="display: flex;" state="{% if category_vote is None %}N{% else %}{% if category_vote.positive %}U{% else %}D{% endif %}{% endif %}">
       <h3 style="color: #FFF;margin: 0;margin-right: 8px;">Category: {{ spell.category.name }}</h3>
       {% if user.is_authenticated %}
@@ -214,6 +214,53 @@
     <input c_send class="btn-like send-btn" style="margin-left: 8px;" width="32" type="image" src="/assets/send.svg"/>
   </div>
 </template>
+    
+<div class="spell">
+    <h2>Have you ever tried this spell before? Please share your success rate with us!</h2>
+
+    <div class="rating-boxes">
+        <form action="{% url 'spezspellz:spell' spell.id %}" method="post">
+            {% csrf_token %}
+            <button name="rating" value="0" class="rating-box {% if user_rating.rating == 0 %}selected{% endif %}">
+                Never works for me
+            </button>
+        </form>
+        <form action="{% url 'spezspellz:spell' spell.id %}" method="post">
+            {% csrf_token %}
+            <button name="rating" value="1" class="rating-box {% if user_rating.rating == 1 %}selected{% endif %}">
+                Rarely works for me
+            </button>
+        </form>
+        <form action="{% url 'spezspellz:spell' spell.id %}" method="post">
+            {% csrf_token %}
+            <button name="rating" value="2" class="rating-box {% if user_rating.rating == 2 %}selected{% endif %}">
+                Sometimes works for me
+            </button>
+        </form>
+        <form action="{% url 'spezspellz:spell' spell.id %}" method="post">
+            {% csrf_token %}
+            <button name="rating" value="3" class="rating-box {% if user_rating.rating == 3 %}selected{% endif %}">
+                Usually works for me
+            </button>
+        </form>
+        <form action="{% url 'spezspellz:spell' spell.id %}" method="post">
+            {% csrf_token %}
+            <button name="rating" value="4" class="rating-box {% if user_rating.rating == 4 %}selected{% endif %}">
+                Always works for me
+            </button>
+        </form>
+    </div>
+
+    {% if user_rating %}
+        <div class="previous-choice">
+            <form action="{% url 'spezspellz:spell' spell.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" name="delete_rating" class="delete-button">Remove Rating</button>
+            </form>
+        </div>
+    {% endif %}
+</div>
+    
 <div class="spell">
   <div style="display: flex;justify-content: space-evenly;">
     <button id="reviews_btn" style="font-size: 28pt;background-color: transparent;border-style: none;color: #FFF;cursor: pointer;" onclick="window.show_tab(false)">Reviews</button>

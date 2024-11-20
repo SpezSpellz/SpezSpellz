@@ -4,7 +4,7 @@ from django.http import HttpRequest, HttpResponseBase, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from spezspellz.models import Spell, Bookmark
+from spezspellz.models import Spell, Bookmark, Success
 from spezspellz.utils import get_or_none
 
 
@@ -15,8 +15,10 @@ def profile_view(request: HttpRequest) -> HttpResponseBase:
     spells = Spell.objects.filter(creator=user)
     bookmarks = Bookmark.objects.filter(user=user)
     history = cast(Any, user).spellhistoryentry_set.order_by("-time")
+    user_success_rate = Success.user_successrate(user)
     context = {
         'user': user,
+        'user_success_rate': user_success_rate,
         'spells': spells,
         'bookmarks': bookmarks,
         'history': history
@@ -33,8 +35,10 @@ def other_profile_view(request: HttpRequest, user_id: int) -> HttpResponseBase:
     other_user = get_or_none(User, pk=user_id)
     if other_user is None:
         return HttpResponse("User not found", status=404)
+    user_success_rate = Success.user_successrate(other_user)
     return render(request, 'profile.html', {
         'other_user': other_user,
+        'user_success_rate': user_success_rate,
         'spells': cast(Any, other_user).spell_set.all(),
         'bookmarks': cast(Any, other_user).bookmark_set.all(),
         'history': cast(Any, other_user).spellhistoryentry_set.order_by("-time")

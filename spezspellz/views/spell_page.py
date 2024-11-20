@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from spezspellz.models import Spell, Bookmark, \
-    SpellHistoryEntry, Review, ReviewComment, SpellComment, CommentComment, Notification
+    SpellHistoryEntry, Review, ReviewComment, SpellComment, CommentComment, Notification, Success
 from spezspellz.utils import get_or_none
 from .rpc_view import RPCView
 
@@ -104,7 +104,10 @@ class SpellPage(View, RPCView):
         spell = get_or_none(Spell, pk=spell_id)
         if spell is None:
             return redirect("spezspellz:home")
+
         context: dict = {"spell": spell, "star_range": range(0, 10, 2)}
+        context["success_rate"] = Success.spell_successrate(spell)
+        context["success_count"] = Success.objects.filter(spell=spell).count()
         context["reviews"] = Review.objects.filter(spell=spell).all()
         context["comments"] = cast(Any, spell).spellcomment_set.all()
         context["avg_star"] = spell.calc_avg_stars() or 5.0
@@ -127,7 +130,9 @@ class SpellPage(View, RPCView):
         context["success_vote"] = cast(Any, spell).ratesuccess_set.filter(
             user=user
         ).first() if user.is_authenticated else None
+
         if user.is_authenticated:
+            context["user_rating"] = Success.objects.filter(user=user, spell=spell).first()
             context["review"] = get_or_none(Review, user=user, spell=spell)
             context["bookmark"] = get_or_none(Bookmark, user=user, spell=spell)
             with transaction.atomic():
@@ -152,6 +157,36 @@ class SpellPage(View, RPCView):
                     ).delete()
 
         return render(request, "spell.html", context)
+
+    def post(self, request: HttpRequest, spell_id: int) -> HttpResponseBase:
+        """Handle the user's rating submission or deletion."""
+        if not request.user.is_authenticated:
+            return redirect('/login/')
+
+        user = request.user
+        spell = get_or_none(Spell, pk=spell_id)
+        if spell is None:
+            return redirect("spezspellz:home")
+
+        if 'rating' in request.POST:
+            rating = int(request.POST.get('rating'))
+            user_rating = Success.objects.filter(user=user, spell=spell).first()
+
+            if user_rating:
+                user_rating.rating = rating
+                user_rating.save()
+            else:
+                Success.objects.create(user=user, spell=spell, rating=rating)
+
+            return redirect('spezspellz:spell', spell_id=spell.id)
+
+        if 'delete_rating' in request.POST:
+            user_rating = Success.objects.filter(user=user, spell=spell).first()
+            if user_rating:
+                user_rating.delete()
+            return redirect('spezspellz:spell', spell_id=spell.id)
+
+        return redirect('spezspellz:spell', spell_id=spell.id)
 
     @validate_user_and_text
     def rpc_comment(
