@@ -216,48 +216,79 @@
 </template>
     
 <div class="spell">
-    <h2>Have you ever tried this spell before? Please share your success rate with us!</h2>
-
-    <div class="rating-boxes">
-        <form action="{% url 'spezspellz:spell' spell.id %}" method="post">
-            {% csrf_token %}
-            <button name="rating" value="0" class="rating-box {% if user_rating.rating == 0 %}selected{% endif %}">
-                Never works for me
-            </button>
-        </form>
-        <form action="{% url 'spezspellz:spell' spell.id %}" method="post">
-            {% csrf_token %}
-            <button name="rating" value="1" class="rating-box {% if user_rating.rating == 1 %}selected{% endif %}">
-                Rarely works for me
-            </button>
-        </form>
-        <form action="{% url 'spezspellz:spell' spell.id %}" method="post">
-            {% csrf_token %}
-            <button name="rating" value="2" class="rating-box {% if user_rating.rating == 2 %}selected{% endif %}">
-                Sometimes works for me
-            </button>
-        </form>
-        <form action="{% url 'spezspellz:spell' spell.id %}" method="post">
-            {% csrf_token %}
-            <button name="rating" value="3" class="rating-box {% if user_rating.rating == 3 %}selected{% endif %}">
-                Usually works for me
-            </button>
-        </form>
-        <form action="{% url 'spezspellz:spell' spell.id %}" method="post">
-            {% csrf_token %}
-            <button name="rating" value="4" class="rating-box {% if user_rating.rating == 4 %}selected{% endif %}">
-                Always works for me
-            </button>
-        </form>
+    <h2>Have you ever tried this spell before? Please share your results with us!</h2>
+    {% if request.user.is_authenticated %}
+    <div id="rating_boxes" class="rating-boxes">
+      <button name="rating" value="0" class="rating-box" {% if user_rating.rating == 0 %}selected{% endif %}>
+        <img width="32" src="/assets/mood-angry.svg"/>
+        <span>Never works</span>
+      </button>
+      <button name="rating" value="1" class="rating-box" {% if user_rating.rating == 1 %}selected{% endif %}>
+        <img width="32" src="/assets/mood-confused.svg"/>
+        <span>Rarely work</span>
+      </button>
+      <button name="rating" value="2" class="rating-box" {% if user_rating.rating == 2 %}selected{% endif %}>
+        <img width="32" src="/assets/mood-empty.svg"/>
+        <span>Sometimes works</span>
+      </button>
+      <button name="rating" value="3" class="rating-box" {% if user_rating.rating == 3 %}selected{% endif %}>
+        <img width="32" src="/assets/mood-smile.svg"/>
+        <span>Usually works</span>
+      </button>
+      <button name="rating" value="4" class="rating-box" {% if user_rating.rating == 4 %}selected{% endif %}>
+        <img width="32" src="/assets/mood-happy.svg"/>
+        <span>Always works well</span>
+      </button>
     </div>
 
-    {% if user_rating %}
-        <div class="previous-choice">
-            <form action="{% url 'spezspellz:spell' spell.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit" name="delete_rating" class="delete-button">Remove Rating</button>
-            </form>
-        </div>
+    <div id="prev_succ" class="previous-choice" {% if not user_rating %}hidden{% endif %}>
+      <button id="delete_succ" class="delete-button">Remove Rating</button>
+    </div>
+    <script>
+      const buttons = window.rating_boxes.getElementsByTagName("button");
+      for(const ele of buttons) {
+        ele.addEventListener("click", (e) => {
+          const wasSelected = ele.hasAttribute("selected");
+          for(const btn of buttons)
+            btn.removeAttribute("selected");
+          fetch("{% url 'spezspellz:spell' spell.pk %}", {
+            method: "POST",
+            headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+              method: "rate_success",
+              spell_id: parseInt("{{ spell.pk }}"),
+              rating: (wasSelected ? -1 : parseInt(ele.getAttribute("value")))
+            })
+          }).then(() => {}).catch(() => window.reload());
+          if(!wasSelected) {
+            ele.setAttribute("selected", true);
+            window.prev_succ.removeAttribute("hidden");
+            return;
+          }
+          window.prev_succ.setAttribute("hidden", true);
+        });
+      }
+      window.delete_succ.addEventListener("click", () => {
+        window.prev_succ.setAttribute("hidden", true);
+        for(const btn of buttons)
+          btn.removeAttribute("selected");
+        fetch("{% url 'spezspellz:spell' spell.pk %}", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({
+            method: "rate_success",
+            spell_id: parseInt("{{ spell.pk }}"),
+            rating: -1
+          })
+        }).then(() => {}).catch(() => window.reload());
+      });
+    </script>
+    {% else %}
+    <a href="{% url 'login' %}?next={{ request.path }}">Login in to share your results</a>
     {% endif %}
 </div>
     

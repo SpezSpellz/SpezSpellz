@@ -158,35 +158,29 @@ class SpellPage(View, RPCView):
 
         return render(request, "spell.html", context)
 
-    def post(self, request: HttpRequest, spell_id: int) -> HttpResponseBase:
-        """Handle the user's rating submission or deletion."""
+    def rpc_rate_success(self, request: HttpRequest, spell_id: int, rating: int):
+        """Handle the user's success rate submission."""
+        if not isinstance(rating, int):
+            return HttpResponse("Parameter `rating` must be an int", status=400)
+        if rating < -1 or rating > 4:
+            return HttpResponse("Parameter `rating` must be in range 0-4 inclusive", status=400)
         if not request.user.is_authenticated:
-            return redirect('/login/')
-
-        user = request.user
+            return HttpResponse("Unauthenticated", status=401)
         spell = get_or_none(Spell, pk=spell_id)
         if spell is None:
-            return redirect("spezspellz:home")
-
-        if 'rating' in request.POST:
-            rating = int(request.POST.get('rating'))
-            user_rating = Success.objects.filter(user=user, spell=spell).first()
-
-            if user_rating:
-                user_rating.rating = rating
-                user_rating.save()
-            else:
-                Success.objects.create(user=user, spell=spell, rating=rating)
-
-            return redirect('spezspellz:spell', spell_id=spell.id)
-
-        if 'delete_rating' in request.POST:
-            user_rating = Success.objects.filter(user=user, spell=spell).first()
-            if user_rating:
-                user_rating.delete()
-            return redirect('spezspellz:spell', spell_id=spell.id)
-
-        return redirect('spezspellz:spell', spell_id=spell.id)
+            return HttpResponse("Spell not found", status=404)
+        user_rating = get_or_none(Success, user=request.user, spell=spell)
+        if rating == -1:
+            if user_rating is None:
+                return HttpResponse("Already deleted")
+            user_rating.delete()
+            return HttpResponse("OK")
+        if user_rating is not None:
+            user_rating.rating = rating
+            user_rating.save()
+            return HttpResponse("OK")
+        Success.objects.create(user=request.user, spell=spell, rating=rating)
+        return HttpResponse("OK")
 
     @validate_user_and_text
     def rpc_comment(

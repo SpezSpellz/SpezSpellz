@@ -139,6 +139,9 @@ hr {
 }
 
 .rating-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     flex: 1;
     padding: 15px;
     margin: 5px;
@@ -152,43 +155,49 @@ hr {
     margin-bottom: 10px;
 }
 
+.rating-box > span {
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 5px;
+}
+
 .rating-box[value="0"]:hover {
-    background-color: #ff4d4d;
+    background-color: #ff4d4d7f;
 }
 
 .rating-box[value="1"]:hover {
-    background-color: #ff9933;
+    background-color: #ff99337f;
 }
 
 .rating-box[value="2"]:hover {
-    background-color: #ffcc00;
+    background-color: #ffcc007f;
 }
 
 .rating-box[value="3"]:hover {
-    background-color: #ccff66;
+    background-color: #ccff667f;
 }
 
 .rating-box[value="4"]:hover {
-    background-color: #66cc66;
+    background-color: #66cc667f;
 }
 
-.rating-box.selected[value="0"] {
+.rating-box[value="0"][selected] {
     background-color: #ff4d4d;
 }
 
-.rating-box.selected[value="1"] {
+.rating-box[value="1"][selected] {
     background-color: #ff9933;
 }
 
-.rating-box.selected[value="2"] {
+.rating-box[value="2"][selected] {
     background-color: #ffcc00;
 }
 
-.rating-box.selected[value="3"] {
+.rating-box[value="3"][selected] {
     background-color: #ccff66;
 }
 
-.rating-box.selected[value="4"] {
+.rating-box[value="4"][selected] {
     background-color: #66cc66;
 }
 
