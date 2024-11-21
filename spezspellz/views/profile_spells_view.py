@@ -2,18 +2,19 @@
 from typing import cast, Any, Optional
 from django.http import HttpRequest, HttpResponseBase
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import redirect
 from spezspellz.utils import get_or_none
 
 
-@login_required
 def profile_spells_view(request: HttpRequest, user_id: Optional[int] = None) -> HttpResponseBase:
     """View for all created spell by current user."""
     user = request.user
     if user_id is None:
+        if not user.is_authenticated:
+            return redirect_to_login(request.get_full_path(), "login")
         focus_user = user
     else:
         if user_id == user.pk:
