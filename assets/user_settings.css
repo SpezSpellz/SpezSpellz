@@ -85,6 +85,12 @@ input:checked+.slider:before {
     background-color: #6B6B6B;
 }
 
+.generic-button[disabled] {
+    cursor: default;
+    background-color: #7B7B7B;
+    color: #999;
+}
+
 .profile-desc {
     color: #FFFFFF;
     background-color: #4B4B4B;

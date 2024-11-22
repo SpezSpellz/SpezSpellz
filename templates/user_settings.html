@@ -16,6 +16,7 @@
       <button onClick="change_tab(0)" id="0btn" class="tab-btn" style="color: #FFF;">General</button>
       <button onClick="change_tab(1)" id="1btn" class="tab-btn">Username</button>
       <button onClick="change_tab(2)" id="2btn" class="tab-btn">Password</button>
+      <button onClick="change_tab(3)" id="3btn" class="tab-btn">Delete Account</button>
     </div>
     <hr>
   </div>
@@ -114,6 +115,20 @@
     </table>
     <button id="change_password" class="generic-button" style="font-size: 16pt;margin: auto;display: block;margin-top: 16px;">Change password</button>
   </div>
+  <div id="3tab" class="tab" style="display: none;">
+    <table>
+      <tr>
+        <td><span style="margin-right: 30px;">Confirm Delete</span></td>
+        <td class="switch-td">
+          <label class="switch">
+            <input id="confirm_delete" type="checkbox">
+            <span class="slider round"></span>
+          </label>
+        </td>
+      </tr>
+    </table>
+    <button id="delete_account" class="generic-button" style="font-size: 16pt;margin: auto;display: block;margin-top: 16px;" disabled>Delete</button>
+  </div>
 </div>
 <script>
   function update_counter() {
@@ -121,7 +136,7 @@
       window.char_left.innerText = `${remain} characters left`;
   }
   function change_tab(tar) {
-    for(let i = 0;i < 3;++i) {
+    for(let i = 0;i < 4;++i) {
       window[`${i}tab`].style.display = (i != tar) ? 'none' : null;
       window[`${i}btn`].style.color = (i == tar) ? "#FFF" : null;
     }
@@ -129,6 +144,25 @@
   function display_generic_failure(msg = null) {
       window.popup_msg.style.color = "#F00";
       window.popup_msg.innerText = msg || "Failed to apply changes";
+  }
+  window.confirm_delete.onchange = (e) => {
+    if(e.target.checked)
+      window.delete_account.removeAttribute("disabled");
+    else window.delete_account.setAttribute("disabled", true);
+  }
+  window.delete_account.onclick = () => {
+    window.delete_account.innerText = "Deleting account...";
+    window.delete_account.setAttribute("disabled", true);
+    fetch("{% url 'spezspellz:usersettings' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: JSON.stringify({
+        method: "delete_account"
+      })
+    }).then(() => window.location = "{% url 'spezspellz:home' %}")
+    .catch(() => location.reload());
   }
   window.close_popup.onclick = () => window.popup_dlg.close();
   window.change_username.onclick = () => {

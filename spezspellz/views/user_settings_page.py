@@ -45,6 +45,14 @@ class UserSettingsPage(View, RPCView):
             return HttpResponse("Avatar updated")
         return super().post(request, **kwargs)
 
+    def rpc_delete_account(self, request: HttpRequest) -> HttpResponseBase:
+        """Handle account deletion."""
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        user.delete()
+        return HttpResponse("OK")
+
     def rpc_rate(
         self,
         request: HttpRequest,
