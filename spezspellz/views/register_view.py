@@ -12,7 +12,6 @@ class RegisterView(CreateView):
 
     def get_success_url(self):
         """Redirect user to this url after a successful registration."""
-
         next_url = self.request.GET.get('next')
         if next_url:
             # Resolve the URL to avoid invalid redirection
