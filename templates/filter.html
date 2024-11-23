@@ -23,7 +23,7 @@ Filter
   <input name="creator" value="{{ request.GET.creator }}" hidden/>
   {% endif %}
   <input id="page" name="page" value="{{ request.GET.page }}" hidden/>
-  <h1 style="margin: auto;text-align: center;">Search</h1>
+  <h1 style="margin: auto;text-align: center;">Search{% if creator %} {{ creator.username }}'s spell{% endif %}</h1>
   <input id="search_box" class="search-bar" type="text" name="s" placeholder="Cool spells" value="{{ request.GET.s }}"/>
   <div class="filter-box">
     <h2 style="margin-top: 0;margin: auto;text-align: center;">Filters</h2>
@@ -65,7 +65,7 @@ Filter
             const selected_tags = new Set();
             const tag_colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'];
             function reset_page() {
-                window.location.assign(`/filter/?s=${window.search_box.value}`);
+                window.location.assign(`/filter/?s=${window.search_box.value}{% if creator %}&creator={{ creator.pk }}{% endif %}`);
             }
             function hashStr(s) {
                 return s.split("").reduce(function(a, b) {
