@@ -9,12 +9,11 @@
   {% if request.resolver_match.url_name == 'tags_reqs' %}
   <div style="display: flex;text-align: center;flex-direction: row;justify-content: center;">
     <h1 style="margin-bottom: 0;margin-right: 8px">Tag Requests</h1>
-    <div style="display: flex;flex-direction: column;justify-content: flex-end;">
-      <a href="{% url 'spezspellz:tags' %}">View all tags here</a>
-    </div>
   </div>
-  
-  <button onclick="popup_tag_req()" class="btn-like create-button">Request a tag</button>
+  <div style="display: flex; width: 375px; margin: auto">
+    <button onclick="popup_tag_req()" class="btn-like create-button">Request a tag</button>
+    <a class="btn-like create-button" href="{% url 'spezspellz:tags' %}">View all tags</a>
+  </div>
   <div style="display: flex;flex-direction: column;">
     {% for tag_request in entries %}
     <div style="display: flex;flex-direction: row;padding: 10px;background-color: #333;border-radius: 8px;">
@@ -39,10 +38,8 @@
   {% else %}
   <div style="display: flex;text-align: center;flex-direction: row;justify-content: center;">
     <h1 style="margin-bottom: 0;margin-right: 8px">Tags</h1>
-    <div style="display: flex;flex-direction: column;justify-content: flex-end;">
-      <a href="{% url 'spezspellz:tags_reqs' %}">View all tag requests here</a>
-    </div>
   </div>
+  <a class="btn-like create-button" href="{% url 'spezspellz:tags_reqs' %}">View all tag requests</a>
 
   <div class="tag-wrapper">
   {% for tag in entries %}

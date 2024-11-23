@@ -9,8 +9,8 @@ from spezspellz.utils import get_or_none, safe_cast
 from .rpc_view import RPCView
 
 MAX_TAGS_RESULT = 100
-TAG_PER_PAGE = 5
-TAG_REQUESTS_PER_PAGE = 5
+TAG_PER_PAGE = 36
+TAG_REQUESTS_PER_PAGE = 36
 
 
 class TagsPage(View, RPCView):
