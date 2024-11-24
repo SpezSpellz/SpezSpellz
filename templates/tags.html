@@ -6,22 +6,16 @@
 {% block Body %}
 
 <div class="all-container">
-  <h1 style="display: block;text-align: center;">Tags</h1>
-
-
-  <div class="tag-wrapper">
-  {% for tag in tags %}
-    <div class="tag" style="background-color: {{ tag.color }}8e;   border-color: {{ tag.color }};">
-      <span style="color: white;margin-right: 4px;margin-left: 4px;">{{ tag.name }}</span>
-    </div>
-  {% endfor %}
+  {% if request.resolver_match.url_name == 'tags_reqs' %}
+  <div style="display: flex;text-align: center;flex-direction: row;justify-content: center;">
+    <h1 style="margin-bottom: 0;margin-right: 8px">Tag Requests</h1>
   </div>
-
-
-  <h1 style="display: block;text-align: center;">Tag Requests</h1>
-  <button onclick="popup_tag_req()" class="btn-like create-button">Request a tag</button>
+  <div style="display: flex; width: 375px; margin: auto">
+    <button onclick="popup_tag_req()" class="btn-like create-button">Request a tag</button>
+    <a class="btn-like create-button" href="{% url 'spezspellz:tags' %}">View all tags</a>
+  </div>
   <div style="display: flex;flex-direction: column;">
-    {% for tag_request in tag_requests %}
+    {% for tag_request in entries %}
     <div style="display: flex;flex-direction: row;padding: 10px;background-color: #333;border-radius: 8px;">
       <div style="display: inline-block;">
         <div class="tag" style="background-color: {{ tag_request.req.color }}4e; border-color: {{ tag_request.req.color }};">
@@ -41,16 +35,47 @@
     </div>
     {% endfor %}
   </div>
+  {% else %}
+  <div style="display: flex;text-align: center;flex-direction: row;justify-content: center;">
+    <h1 style="margin-bottom: 0;margin-right: 8px">Tags</h1>
+  </div>
+  <a class="btn-like create-button" href="{% url 'spezspellz:tags_reqs' %}">View all tag requests</a>
 
+  <div class="tag-wrapper">
+  {% for tag in entries %}
+    <div class="tag" style="background-color: {{ tag.color }}8e;   border-color: {{ tag.color }};">
+      <span style="color: white;margin-right: 4px;margin-left: 4px;">{{ tag.name }}</span>
+    </div>
+  {% endfor %}
+  </div>
+  {% endif %}
+  {% if max_page > 1 %}
+  <div class="nav-bar" style="display: flex;justify-content: center;"><ul style="padding: 0">
+    {% if cur_page != 1 %}
+    <a href="{{ request.path }}?page=1">&lt&lt</a>
+    <a href="{{ request.path }}?page={{ cur_page|add:'-1' }}">&lt</a>
+    {% endif %}
+    {% for page in pages %}
+    <a {% if page == cur_page %}class="cur"{% else %}href="{{ request.path }}?page={{ page }}"{% endif %}>{{ page }}</a>
+    {% endfor %}
+    {% if cur_page != max_page %}
+    <a href="{{ request.path }}?page={{ cur_page|add:1 }}">&gt</a>
+    <a href="{{ request.path }}?page={{ max_page }}">&gt&gt</a>
+    {% endif %}
+  </ul></div>
+  {% endif %}
 </div>
-
+{% if request.resolver_match.url_name == 'tags_reqs' %}
 <dialog id="create_request_dlg">
   <h1>Create a tag request</h1>
   <hr>
   <div id="input_part">
     <span>Name</span><br><input maxlength="30" id="tag_name"/><br>
     <span>Description</span><br><textarea maxlength="512" id="tag_desc"></textarea><br>
-    <button onclick="submit_req()">Submit</button>
+    <div style="display: flex">
+      <button onclick="submit_req()">Submit</button>
+      <button onclick="window.create_request_dlg.close()" id="close_btn">Close</button>
+    </div>
   </div>
   <div id="msg_part" style="display: none;">
     <p id="out_msg">This is a test message</p>
@@ -133,4 +158,5 @@
     });
   }
 </script>
+{% endif %}
 {% endblock %}

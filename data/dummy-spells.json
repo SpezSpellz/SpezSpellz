@@ -400,7 +400,7 @@
   "model": "spezspellz.userinfo",
   "pk": 8,
   "fields": {
-    "user": 10,
+    "user": 9,
     "private": false,
     "timed_notification": true,
     "review_comment_notification": true,

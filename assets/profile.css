@@ -182,8 +182,13 @@ li:empty {
 .spell-text-box {
     display: flex;
     flex-direction: column;
-    min-width: 150px;
-    width: 15%;
+    width: 20%;
+}
+
+.spell-big-box {
+    display: flex;
+    flex-direction: column;
+    max-width: 30%;
 }
 
 .overflow {
