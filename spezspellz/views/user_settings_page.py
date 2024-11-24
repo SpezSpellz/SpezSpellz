@@ -81,20 +81,21 @@ class UserSettingsPage(View, RPCView):
         obj = get_or_none(obj_class, pk=obj_id)
         if obj is None:
             return HttpResponse("Object not found", status=404)
-        rate = get_or_none(rate_class, subject=obj, user=user)
-        if rate is None:
-            if vote is None:
+        with transaction.atomic():
+            rate = get_or_none(rate_class, subject=obj, user=user)
+            if rate is None:
+                if vote is None:
+                    return HttpResponse(
+                        rate_class.calc_rating(subject=obj), status=200
+                    )
+                rate = rate_class(user=user, subject=obj)
+            elif vote is None:
+                rate.delete()
                 return HttpResponse(
                     rate_class.calc_rating(subject=obj), status=200
                 )
-            rate = rate_class(user=user, subject=obj)
-        elif vote is None:
-            rate.delete()
-            return HttpResponse(
-                rate_class.calc_rating(subject=obj), status=200
-            )
-        cast(Any, rate).positive = vote
-        rate.save()
+            cast(Any, rate).positive = vote
+            rate.save()
         return HttpResponse(rate_class.calc_rating(subject=obj), status=200)
 
     @staticmethod
