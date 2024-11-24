@@ -17,5 +17,3 @@ document.addEventListener("DOMContentLoaded", function () {
         element.style.color = getSuccessRateColor(successRate);
     });
 });
-
-console.log("Script loaded!");
