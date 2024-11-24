@@ -4,7 +4,6 @@ from django.http import HttpRequest, HttpResponseBase
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib import messages
 from spezspellz.models import Spell, Bookmark
 from spezspellz.utils import get_or_none
 

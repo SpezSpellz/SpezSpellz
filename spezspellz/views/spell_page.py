@@ -103,7 +103,7 @@ class SpellPage(View, RPCView):
         user = request.user
         spell = get_or_none(Spell, pk=spell_id)
         if spell is None:
-            return redirect("spezspellz:home")
+            return redirect('spezspellz:404')
         context: dict = {"spell": spell, "star_range": range(0, 10, 2)}
         context["reviews"] = Review.objects.filter(spell=spell).all()
         context["comments"] = cast(Any, spell).spellcomment_set.all()
