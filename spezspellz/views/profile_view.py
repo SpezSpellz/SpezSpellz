@@ -1,9 +1,10 @@
 """Implements the profile page."""
 from typing import Any, cast
-from django.http import HttpRequest, HttpResponseBase, HttpResponse
+from django.http import HttpRequest, HttpResponseBase
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib import messages
 from spezspellz.models import Spell, Bookmark
 from spezspellz.utils import get_or_none
 
@@ -21,7 +22,6 @@ def profile_view(request: HttpRequest) -> HttpResponseBase:
         'bookmarks': bookmarks,
         'history': history
     }
-
     return render(request, 'profile.html', context)
 
 
@@ -32,7 +32,7 @@ def other_profile_view(request: HttpRequest, user_id: int) -> HttpResponseBase:
         return redirect("spezspellz:profile")
     other_user = get_or_none(User, pk=user_id)
     if other_user is None:
-        return HttpResponse("User not found", status=404)
+        return redirect('spezspellz:404')
     return render(request, 'profile.html', {
         'other_user': other_user,
         'spells': cast(Any, other_user).spell_set.all(),

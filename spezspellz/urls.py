@@ -1,6 +1,6 @@
 """This file contains urls of SpezSpellz."""
 from django.urls import path
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 import spezspellz.views as views
 
 
@@ -24,7 +24,8 @@ urlpatterns = [
     path("profile/spells/<int:user_id>/", views.profile_spells_view, name="profile_spells"),
     path("filter/", views.FilterPage.as_view(), name="filter"),
     path("avatar/<int:user_id>/", views.profile_picture_view, name="avatar"),
-    path("notifications/", views.NotificationView.as_view(), name="notifications")
+    path("notifications/", views.NotificationView.as_view(), name="notifications"),
+    path("404/", lambda request: render(request, "404.html"), name="404")
 ]
 
 websocket_urlpatterns = [
