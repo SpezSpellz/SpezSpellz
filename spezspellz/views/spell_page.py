@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from spezspellz.models import Spell, Bookmark, \
-    SpellHistoryEntry, Review, ReviewComment, SpellComment, CommentComment, Notification, Success
+    SpellHistoryEntry, Review, ReviewComment, SpellComment, CommentComment, Notification, SuccessRate
 from spezspellz.utils import get_or_none
 from .rpc_view import RPCView
 
@@ -105,8 +105,6 @@ class SpellPage(View, RPCView):
         if spell is None:
             return redirect('spezspellz:404')
         context: dict = {"spell": spell, "star_range": range(0, 10, 2)}
-        context["success_rate"] = Success.spell_successrate(spell)
-        context["success_count"] = Success.objects.filter(spell=spell).count()
         context["reviews"] = Review.objects.filter(spell=spell).all()
         context["comments"] = cast(Any, spell).spellcomment_set.all()
         context["avg_star"] = spell.calc_avg_stars() or 5.0
@@ -126,12 +124,12 @@ class SpellPage(View, RPCView):
         context["category_vote"] = cast(Any, spell).ratecategory_set.filter(
             user=user
         ).first() if user.is_authenticated else None
-        context["success_vote"] = cast(Any, spell).ratesuccess_set.filter(
+        context["success_vote"] = cast(Any, spell).successrate_set.filter(
             user=user
         ).first() if user.is_authenticated else None
 
         if user.is_authenticated:
-            context["user_rating"] = Success.objects.filter(user=user, spell=spell).first()
+            context["user_rating"] = SuccessRate.objects.filter(user=user, spell=spell).first()
             context["review"] = get_or_none(Review, user=user, spell=spell)
             context["bookmark"] = get_or_none(Bookmark, user=user, spell=spell)
             with transaction.atomic():
@@ -168,7 +166,7 @@ class SpellPage(View, RPCView):
         spell = get_or_none(Spell, pk=spell_id)
         if spell is None:
             return HttpResponse("Spell not found", status=404)
-        user_rating = get_or_none(Success, user=request.user, spell=spell)
+        user_rating = get_or_none(SuccessRate, user=request.user, spell=spell)
         if rating == -1:
             if user_rating is None:
                 return HttpResponse("Already deleted")
@@ -178,7 +176,7 @@ class SpellPage(View, RPCView):
             user_rating.rating = rating
             user_rating.save()
             return HttpResponse("OK")
-        Success.objects.create(user=request.user, spell=spell, rating=rating)
+        SuccessRate.objects.create(user=request.user, spell=spell, rating=rating)
         return HttpResponse("OK")
 
     @validate_user_and_text

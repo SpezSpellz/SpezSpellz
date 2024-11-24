@@ -54,12 +54,13 @@ class Spell(models.Model):
     @property
     def tried(self) -> int:
         """Returns the spell tried."""
-        return cast(Any, self).ratesuccess_set.all().count()
+        return cast(Any, self).successrate_set.all().count()
 
     @property
     def success_rate(self) -> float:
         """Calculates percentage of positive of total."""
-        rate_count = self.tried
-        return ((cast(Any, self).ratesuccess_set.filter(
-            positive=True,
-        ).count()/rate_count) if rate_count != 0 else 1) * 100
+        avg_rating = cast(Any, self).successrate_set.filter(spell=self) \
+            .aggregate(Avg('rating'))['rating__avg']
+        if avg_rating is None:
+            return 100.0
+        return (avg_rating / 4) * 100
