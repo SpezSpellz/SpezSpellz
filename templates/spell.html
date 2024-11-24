@@ -233,9 +233,11 @@
             </a>
             <p></p>
           </div>
+          {% if user.is_authenticated %}
           <div style="display: flex;flex-direction: column;justify-content: flex-end;">
             <input onclick="window.addReviewReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, parseInt(this.getAttribute('rid')))" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/reply.svg"/>
           </div>
+          {% endif %}
         </div>
       </div>
       <div coms></div>
@@ -263,9 +265,11 @@
             </a>
             <p></p>
           </div>
+          {% if user.is_authenticated %}
           <div style="display: flex;flex-direction: column;justify-content: flex-end;">
             <input onclick="window.addCommentReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, parseInt(this.getAttribute('rid')))" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
           </div>
+          {% endif %}
         </div>
       </div>
       <div coms></div>
@@ -500,12 +504,14 @@
             </a>
             <p>{{ review.desc }}</p>
           </div>
+          {% if user.is_authenticated %}
           <div style="display: flex;flex-direction: column;justify-content: flex-end;">
             {% if review.user == user %}
             <input onclick="window.delete_obj('review', {{ review.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
             {% endif %}
             <input onclick="window.addReviewReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, {{ review.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/reply.svg"/>
           </div>
+          {% endif %}
         </div>
       </div>
       <div id="review-{{ review.pk }}-comments">
@@ -606,12 +612,14 @@
             </a>
             <p>{{ comment.text }}</p>
           </div>
+          {% if user.is_authenticated %}
           <div style="display: flex;flex-direction: column;justify-content: flex-end;">
             {% if comment.commenter == user %}
             <input onclick="window.delete_obj('comment', {{ comment.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
             {% endif %}
             <input onclick="window.addCommentReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, {{ comment.pk }})" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
           </div>
+          {% endif %}
         </div>
       </div>
       <div id="comment-{{ comment.pk }}-comments">
