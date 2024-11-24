@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% block Title %}Register - SpezSpellz{% endblock %}
 {% block BeforeBody %}
 <link rel="stylesheet" href="/assets/login.css">
 {% endblock %}
@@ -8,35 +8,44 @@
 <form method="post" action="?next={{ request.GET.next }}">
   <h3>Register</h3>
 
-  {% if form.non_field_errors %}
-    <div class="custom-error-box">
-        {% for error in form.non_field_errors %}
-            <p class="text-danger">{{ error }}</p>
-        {% endfor %}
-    </div>
-  {% endif %}
-
-  {% if form.errors %}
-    <div class="custom-error-box">
-    {% for field in form %}
-      {% for error in field.errors %}
-        <p class="text-danger">{{ error }}</p>
-      {% endfor %}
-    {% endfor %}
-    </div>
-  {% endif %}
-
   <div style="display: flex;flex-direction: column; padding: 0;">
     {% csrf_token %}
 
     <label for="id_username" style="margin-top: 0;">Username</label>
     <input type="text" placeholder="Username" name="username" maxlength="150" autocapitalize="none" autocomplete="username" autofocus="" required="" aria-describedby="id_username_helptext" id="id_username">
 
+    {% if form.errors %}
+        {% for error in form.username.errors %}
+          <p class="text-danger">{{ error }}</p>
+        {% endfor %}
+    {% endif %}
+
     <label for="id_password1">Password</label>
     <input type="password" placeholder="Password" name="password1" autocomplete="new-password" id="id_password1" required="">
+
+    {% if form.errors %}
+        {% for error in form.password1.errors %}
+          <p class="text-danger">{{ error }}</p>
+        {% endfor %}
+    {% endif %}
+
     <input type="password" placeholder="Confirm Password" name="password2" autocomplete="new-password" aria-describedby="id_password2_helptext" required="" id="id_password2">
 
-    <p class="noacc" >Already have an account? <a href="/custom_login/">Login Here</a></p>
+    {% if form.errors %}
+        {% for error in form.password2.errors %}
+          <p class="text-danger">{{ error }}</p>
+        {% endfor %}
+    {% endif %}
+
+    {% if form.non_field_errors %}
+      <div class="custom-error-box">
+          {% for error in form.non_field_errors %}
+              <p class="text-danger">{{ error }}</p>
+          {% endfor %}
+      </div>
+    {% endif %}
+
+    <p class="noacc" >Already have an account? <a href="{% url 'spezspellz:login' %}?next={{ request.GET.next }}">Login Here</a></p>
   </div>
 
   <button type="submit" style="margin-top: 20px;">Register</button>

@@ -117,7 +117,7 @@ class SimpleTest(TestCase):
             res.status_code, 200, msg="Final url's status code is not OK"
         )
         self.assertIn(
-            reverse("login"), final_url, msg="Login path is not in final url."
+            reverse("spezspellz:login"), final_url, msg="Login path is not in final url."
         )
         self.assertIn(
             reverse("spezspellz:upload"),

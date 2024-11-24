@@ -96,7 +96,7 @@ input{
 ::placeholder{
     color: #e5e5e5;
 }
-button{
+button {
     margin-top: 10px;
     width: 100%;
     background-color: #ffffff;
@@ -107,9 +107,18 @@ button{
     border-radius: 5px;
     cursor: pointer;
 }
+button:hover {
+    background-color: #EEE
+}
+button:active {
+    background-color: #ddd
+}
 .social{
   margin-top: 30px;
   display: flex;
+}
+.text-danger {
+    color: #F55;
 }
 .social div{
   background: red;
