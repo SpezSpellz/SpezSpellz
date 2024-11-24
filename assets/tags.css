@@ -79,12 +79,46 @@
     box-sizing: border-box;
 }
 
+.tag-req {
+    width: max-content;
+    font-family: monospace;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 20px;
+    margin: 2px;
+    display: flex;
+    padding: 2px;
+    user-select: none;
+}
+
 /* for color display, not used in the moment. */
 .round-square {
     margin-left: auto;
     width: 20px;
     border-radius: 5px;
     background-color: red;
+}
+
+.accept-btn {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    background-color: #50bb4b;
+}
+
+.accept-btn:hover {
+    background-color: #489743;
+}
+
+.reject-btn {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    background-color: #ff000a;
+}
+
+.reject-btn:hover {
+    background-color: #ae000a;
 }
 
 .create-button {
