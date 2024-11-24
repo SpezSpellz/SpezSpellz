@@ -63,8 +63,12 @@
               </div>
               <div class="spell-big-box">
                 <span class="all-spell-category"> Used by: {{ spell.tried }} people</span>
+                {% if spell.tried != 0 %}
                 <span class="all-spell-category success-rate" data-rate="{{ spell.success_rate }}">
-                  Success rate: {{ spell.success_rate }}%</span>
+                      Success rate: {{ spell.success_rate }}%</span>
+                {% else %}
+                <span class="all-spell-category">Not tried</span>
+                {% endif %}
               </div>
               <div class="spell-text-box" style="margin-left: auto; margin-right: 20px;">
                 <span class="all-spell-category"> Creation date: {{ spell.date }}</span>
@@ -108,8 +112,12 @@
               </div>
               <div class="spell-big-box">
                 <span class="all-spell-category"> Used by: {{ bookmark.spell.tried }} people</span>
+                {% if bookmark.spell.tried != 0 %}
                 <span class="all-spell-category success-rate" data-rate="{{ bookmark.spell.success_rate }}">
-                  Success rate: {{ bookmark.spell.success_rate }}%</span>
+                      Success rate: {{ bookmark.spell.success_rate }}%</span>
+                {% else %}
+                <span class="all-spell-category">Not tried</span>
+                {% endif %}
               </div>
               <div class="spell-text-box" style="margin-left: auto; margin-right: 20px;">
                 <span class="all-spell-category"> Creation date: {{ bookmark.spell.date }}</span>
@@ -141,8 +149,12 @@
               </div>
               <div class="spell-big-box">
                 <span class="all-spell-category"> Used by: {{ historyObj.spell.tried }} people</span>
+                {% if historyObj.spell.tried != 0 %}
                 <span class="all-spell-category success-rate" data-rate="{{ historyObj.spell.success_rate }}">
-                  Success rate: {{ historyObj.spell.success_rate }}%</span>
+                      Success rate: {{ historyObj.spell.success_rate }}%</span>
+                {% else %}
+                <span class="all-spell-category">Not tried</span>
+                {% endif %}
               </div>
               <span style="color: #AAA; margin-left: auto; margin-right: 20px;"> {{ historyObj.time|date:"d/m/Y" }} <br> {{ historyObj.time|date:"H:i A" }} </span>
             </a>
@@ -222,30 +234,11 @@
     </script>
 
     <!--Script for getting color depending on the success rate -->
-    <script>
-        function getSuccessRateColor(successRate) {
-      if (successRate >= 80) {
-          return "green";
-      } else if (successRate >= 60) {
-          return "yellow";
-      } else if (successRate >= 40) {
-          return "orange";
-      } else {
-          return "red";
-      }
-    }
+    {% load static %}
+    <script src="{% static 'js/successRate.js' %}"></script>
 
-    document.addEventListener("DOMContentLoaded", function () {
-            // Apply color directly
-            document.querySelectorAll(".success-rate").forEach((element) => {
-                const successRate = parseInt(element.dataset.rate, 10);
-                element.style.color = getSuccessRateColor(successRate); // Call directly
-            });
-        });
-    </script>
 
   </div>
-
 
   {% else %}
   <div class="centered-container">
