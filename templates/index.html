@@ -67,6 +67,9 @@
         </div>
         <p class="all-spell-data">{{ spell.title }} {{ spell.summary|slice:":100" }}...</p>
       </div>
+      <div class="spell-text-box" style="margin-left: auto; margin-right: 20px;">
+        <span class="all-spell-category"> Creation date: {{ spell.date }}</span>
+      </div>
     </div></a>
   {% empty %}
   <a href="{% url 'spezspellz:upload' %}" style="text-decoration: underline;">No posts yet, why not create one?</a>

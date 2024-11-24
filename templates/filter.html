@@ -189,6 +189,9 @@ Filter
         </div>
         <p class="all-spell-data">{{ spell.title }} {{ spell.summary|slice:":100" }}...</p>
       </div>
+      <div class="spell-text-box" style="margin-left: auto; margin-right: 20px;">
+        <span class="all-spell-category"> Creation date: {{ spell.date }}</span>
+      </div>
     </div></a>
   {% endfor %}
   {% if max_page != 1 %}
