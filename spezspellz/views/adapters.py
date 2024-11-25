@@ -3,6 +3,7 @@ import requests
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from django.core.files.base import ContentFile
 from spezspellz.models import UserInfo
+from django.urls import reverse
 
 
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
@@ -23,3 +24,6 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
                 user_info.avatar = ContentFile(response.content, f"{user.username}.png")
                 user_info.save()
         return user
+
+    def respond_to_login_cancelled(self, request):
+        return reverse('login')

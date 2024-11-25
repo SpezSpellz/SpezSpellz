@@ -191,5 +191,7 @@ SOCIALACCOUNT_PROVIDERS = {
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 ACCOUNT_LOGOUT_REDIRECT_ULR = 'login'
+SOCIALACCOUNT_LOGIN_ON_CANCEL = 'login'
 SOCIALACCOUNT_LOGIN_ON_GET = True  # To make google authentication skip the unnecessary page
 SOCIALACCOUNT_ADAPTER = 'spezspellz.views.adapters.CustomSocialAccountAdapter'
+
