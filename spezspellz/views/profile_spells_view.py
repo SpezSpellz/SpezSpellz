@@ -17,7 +17,7 @@ def profile_spells_view(request: HttpRequest, user_id: Optional[int] = None) -> 
         focus_user = user
     else:
         if user_id == user.pk:
-            return redirect("spezspellz:profile_spell")
+            return redirect("spezspellz:profile_spells")
         other_user = get_or_none(User, pk=user_id)
         if other_user is None:
             return redirect('spezspell:404')
