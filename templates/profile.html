@@ -10,9 +10,9 @@
   <div id="aboutMe" class="profile-container">
     <div id="ProfilePic" style="margin: 0 50px 0 0;">
       {% if not other_user %}
-      <img class="profile-pic" src="{% url 'spezspellz:avatar' user.pk %}"/>
+      <img style="border-radius: 50%; width: 200px; height: 200px" class="default_img" src="{% url 'spezspellz:avatar' user.pk %}"/>
       {% else %}
-      <img class="profile-pic" src="{% url 'spezspellz:avatar' other_user.pk %}"/>
+      <img style="border-radius: 50%; width: 200px; height: 200px" class="default_img" src="{% url 'spezspellz:avatar' other_user.pk %}"/>
       {% endif %}
     </div>
 
@@ -56,7 +56,7 @@
           {% for spell in spells %}
           <li my_spell="{{ spell.pk }}">
             <a href="{% url 'spezspellz:spell' spell.pk %}" class="spell-row">
-              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' spell.pk %}">
+              <img class="default_img" style="height: 100px; width: 100px" src="{% url 'spezspellz:spell_thumbnail' spell.pk %}">
               <div class="spell-text-box">
                 <span class="all-spell-title"> {{ spell.title }} </span>
                 <span class="all-spell-category" style="margin-top: 20px;"> {{ spell.category }} </span>
@@ -105,7 +105,7 @@
           {% for bookmark in bookmarks %}
           <li bookmark_spell="{{ bookmark.spell.pk }}">
             <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" class="spell-row">
-              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' bookmark.spell.pk %}">
+              <img class="default_img" style="height: 100px; width: 100px" src="{% url 'spezspellz:spell_thumbnail' bookmark.spell.pk %}">
               <div class="spell-text-box">
                 <span class="all-spell-title"> {{ bookmark.spell.title }} </span>
                 <span class="all-spell-category" style="margin-top: 20px;"> {{ bookmark.spell.category }} </span>
@@ -142,7 +142,7 @@
           {% for historyObj in history %}
           <li>
             <a href="{% url 'spezspellz:spell' historyObj.spell.pk %}" class="spell-row">
-              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' historyObj.spell.pk %}">
+              <img class="default_img" style="height: 100px; width: 100px" src="{% url 'spezspellz:spell_thumbnail' historyObj.spell.pk %}">
               <div class="spell-text-box">
                 <span class="all-spell-title"> {{ historyObj.spell.title }} </span>
                 <span class="all-spell-category" style="margin-top: 20px;"> {{ historyObj.spell.category }} </span>

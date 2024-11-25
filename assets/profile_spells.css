@@ -1,3 +1,41 @@
+.spell {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    background-color: #1C1C1C;
+    border-radius: 6px;
+    padding: 5px;
+    transition: background-color 0.1s;
+}
+.spell:hover {
+    background-color: #2C2C2C;
+}
+.spell-img {
+    width: 128px;
+    height: 128px;
+    object-fit: contain;
+    margin-right: 10px;
+}
+.spell-title {
+    color: #FFF;
+    font-size: 16pt;
+    margin: 0;
+}
+.spell-category {
+    color: #AAA;
+    font-size: 12pt;
+    margin: 2px 0;
+}
+.spell-creator {
+    color: #979797;
+    font-size: 11pt;
+    margin: 2px 0;
+}
+.spell-data {
+    color: #dcdcdc;
+    font-size: 12pt;
+}
+
 .spell-container {
     position: relative;
     align-items: center;
@@ -11,22 +49,6 @@
 }
 .spell-container:hover {
     background-color: #3B3B3B;
-}
-.spell-info {
-    display: flex;
-    align-items: center;
-}
-.spell-info img {
-    width: 100px;
-    height: 100px;
-    border-radius: 10px;
-    margin-right: 10px;
-}
-.spell-title {
-    font-size: 18px;
-    font-weight: bold;
-    overflow-wrap: break-word;
-    text-align: center;
 }
 .actions {
     display: flex;

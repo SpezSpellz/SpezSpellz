@@ -140,11 +140,6 @@ li:empty {
     border: 0px solid black;
 }
 
-.profile-pic {
-    border-radius: 50%;
-    width: 200px;
-}
-
 .spell {
     position: relative;
     display: block;
@@ -152,10 +147,6 @@ li:empty {
     color: #FFFFFF;
     padding: 1%;
     border-radius: 20px;
-}
-
-.spell-pic {
-    width: 100px;
 }
 
 .spell-row {

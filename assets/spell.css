@@ -122,3 +122,8 @@ hr {
     padding: 2px;
     user-select: none;
 }
+
+.mini-avatar {
+    margin-right: 10px;
+    border-radius: 50%
+}
