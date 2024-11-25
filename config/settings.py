@@ -57,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "spezspellz.middlewares.check_request.CheckRequest"
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -159,3 +160,12 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
+
+# File upload handlers
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 4096 * 2500
+MAX_UPLOAD_SIZE = 4096 * 24414
+FILE_UPLOAD_HANDLERS = [
+    "django.core.files.uploadhandler.MemoryFileUploadHandler",
+    "django.core.files.uploadhandler.TemporaryFileUploadHandler",
+]
