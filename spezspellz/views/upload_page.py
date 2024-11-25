@@ -5,12 +5,13 @@ import os
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login
-from django.http import HttpRequest, HttpResponse, HttpResponseBase
+from django.http import HttpRequest, HttpResponse, HttpResponseBase, Http404
 from django.shortcuts import render
 from django.views import View
 from django.urls import reverse
 from django.utils.dateparse import parse_datetime
 from django.db import transaction
+from django.core.exceptions import PermissionDenied
 from spezspellz.models import Spell, Tag, Category, HasTag, SpellNotification, Attachment
 from spezspellz.utils import safe_cast, get_or_none
 
@@ -52,9 +53,9 @@ class UploadPage(View):
         if spell_id is not None:
             spell = get_or_none(Spell, pk=spell_id)
             if spell is None:
-                return HttpResponse("No such spell", status=404)
+                raise Http404
             if spell.creator != request.user:
-                return HttpResponse("Forbidden", status=403)
+                raise PermissionDenied
             any_spell = cast(Any, spell)
             json_data = json.dumps(
                 {

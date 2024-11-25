@@ -1,6 +1,6 @@
 """Implements the myspell page."""
 from typing import cast, Any, Optional
-from django.http import HttpRequest, HttpResponseBase
+from django.http import HttpRequest, HttpResponseBase, Http404
 from django.shortcuts import render
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.auth.models import User
@@ -20,7 +20,7 @@ def profile_spells_view(request: HttpRequest, user_id: Optional[int] = None) -> 
             return redirect("spezspellz:profile_spells")
         other_user = get_or_none(User, pk=user_id)
         if other_user is None:
-            return redirect('spezspell:404')
+            raise Http404
         focus_user = other_user
     spells = cast(Any, focus_user).spell_set.all()
     return render(request, "profile_spells.html", {
