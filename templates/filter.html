@@ -181,7 +181,7 @@ Filter
             <span class="all-spell-category"> Used by: {{ spell.tried }} people</span>
             {% if spell.tried != 0 %}
             <span class="all-spell-category success-rate" data-rate="{{ spell.success_rate }}">
-                  Success rate: {{ spell.success_rate }}%</span>
+                  Success rate: {{ spell.success_rate|floatformat:2 }}%</span>
             {% else %}
             <span class="all-spell-category">Not tried</span>
             {% endif %}
