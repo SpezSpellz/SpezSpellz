@@ -3,7 +3,7 @@ from typing import Any, cast
 from functools import wraps
 from django.utils import timezone
 from django.urls import reverse
-from django.http import HttpRequest, HttpResponse, HttpResponseBase
+from django.http import HttpRequest, HttpResponse, HttpResponseBase, Http404
 from django.shortcuts import render, redirect
 from django.views import View
 from django.db import transaction
@@ -103,7 +103,7 @@ class SpellPage(View, RPCView):
         user = request.user
         spell = get_or_none(Spell, pk=spell_id)
         if spell is None:
-            return redirect('spezspellz:404')
+            raise Http404
         context: dict = {"spell": spell, "star_range": range(0, 10, 2)}
         context["reviews"] = Review.objects.filter(spell=spell).all()
         context["comments"] = cast(Any, spell).spellcomment_set.all()

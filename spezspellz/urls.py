@@ -24,8 +24,7 @@ urlpatterns = [
     path("profile/spells/<int:user_id>/", views.profile_spells_view, name="profile_spells"),
     path("filter/", views.FilterPage.as_view(), name="filter"),
     path("avatar/<int:user_id>/", views.profile_picture_view, name="avatar"),
-    path("notifications/", views.NotificationView.as_view(), name="notifications"),
-    path("404/", lambda request: render(request, "404.html"), name="404")
+    path("notifications/", views.NotificationView.as_view(), name="notifications")
 ]
 
 websocket_urlpatterns = [
