@@ -84,12 +84,12 @@
     <span>Description</span><br><textarea maxlength="512" id="tag_desc"></textarea><br>
     <div style="display: flex">
       <button onclick="submit_req()">Submit</button>
-      <button onclick="window.create_request_dlg.close()" id="close_btn">Close</button>
+      <button onclick="window.create_request_dlg.close()">Close</button>
     </div>
   </div>
   <div id="msg_part" style="display: none;">
     <p id="out_msg">This is a test message</p>
-    <button onclick="window.create_request_dlg.close()" id="close_btn">Close</button>
+    <button onclick="close_req_dlg()" id="close_btn">Close</button>
   </div>
 </dialog>
 <script>
@@ -144,6 +144,12 @@
     window.tag_name.value = "";
     window.tag_desc.value = "";
   }
+  let should_reload = false;
+  function close_req_dlg() {
+    if(should_reload)
+      location.reload();
+    window.create_request_dlg.close();
+  }
   function submit_req() {
     window.input_part.style.display = 'none';
     window.msg_part.style.display = null;
@@ -162,6 +168,7 @@
     }).then(res => res.text()).then(text => {
       window.out_msg.innerText = text;
       window.close_btn.removeAttribute("disabled");
+      should_reload = true;
     }).catch(() => {
       window.out_msg.innerText = "An unexpected error occurred";
       window.close_btn.removeAttribute("disabled");
