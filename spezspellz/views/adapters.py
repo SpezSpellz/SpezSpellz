@@ -5,7 +5,6 @@ from allauth.core.internal.httpkit import redirect
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from django.core.files.base import ContentFile
 from spezspellz.models import UserInfo
-from django.urls import reverse
 
 
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
@@ -36,7 +35,7 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
             extra_context=None,
     ):
         """
-        Invoked when there is an error in the authentication cycle. In this
+        Invoke when there is an error in the authentication cycle. In this
         case, pre_social_login will not be reached.
 
         You can use this hook to intervene, e.g. redirect to an
@@ -45,5 +44,4 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         If there is any error, redirect to login page right away
         If the user press cancel, the error is "cancelled"
         """
-
         raise ImmediateHttpResponse(redirect('login'))
