@@ -418,6 +418,9 @@
             });
         }
         window.submit_review.onclick = () => {
+            window.dlg_header.innerText = "Review Submission";
+            window.dlg_text.innerText = "Submitting review...";
+            window.base_dlg.showModal();
             fetch("{% url 'spezspellz:spell' spell.pk %}", {
                 method: "POST",
                 headers: {
@@ -545,6 +548,9 @@
       </div>
       <script>
         window.submit_comment.onclick = () => {
+            window.dlg_header.innerText = "Comment Submission";
+            window.dlg_text.innerText = "Submitting comment...";
+            window.base_dlg.showModal();
             fetch("{% url 'spezspellz:spell' spell.pk %}", {
                 method: "POST",
                 headers: {
@@ -557,7 +563,12 @@
             }).then(res => {
                 if(!res.ok)
                     return res.text().then(msg => Promise.reject(msg));
-                return res.text().then(_ => {location.reload();});
+                return res.text().then(text => {
+                    window.dlg_header.innerText = "Comment Submission";
+                    window.dlg_text.innerText = text;
+                    window.base_dlg.showModal();
+                    window.base_dlg.addEventListener("close", () => location.reload());
+                });
             }).catch((res) => {
                 window.dlg_header.innerText = "Review Submission Error";
                 window.dlg_text.innerText = res;
