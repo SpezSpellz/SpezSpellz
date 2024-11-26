@@ -36,8 +36,8 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
     ):
         """
         Invoke when there is an error in the authentication cycle.
-        In this case, pre_social_login will not be reached.
 
+        In this case, pre_social_login will not be reached.
         If there is any error, redirect to login page right away
         If the user press cancel, the error is "cancelled"
         """
