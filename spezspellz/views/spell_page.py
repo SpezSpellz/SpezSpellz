@@ -4,7 +4,7 @@ from functools import wraps
 from django.utils import timezone
 from django.urls import reverse
 from django.http import HttpRequest, HttpResponse, HttpResponseBase, Http404
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.views import View
 from django.db import transaction
 from django.contrib.auth.models import User
@@ -32,7 +32,10 @@ def validate_user_and_text(view_func):
         Return: None if no issue
         """
         user = request.user
-        text = kwargs.get('text') or kwargs.get('desc')  # In case of the "desc" of rpc_review
+        text = kwargs.get('text')
+        # In case of the "desc" of rpc_review
+        if text is None:
+            text = kwargs.get('desc')
         if not user.is_authenticated:
             return HttpResponse("Unauthenticated", status=401)
         if not isinstance(text, str):
@@ -163,7 +166,8 @@ class SpellPage(View, RPCView):
         """Handle review comment requests."""
         _ = spell_id
         user = cast(User, request.user)
-
+        if not text:
+            return HttpResponse("You must put some comment", status=400)
         if len(text) > int(SpellComment.text.field.max_length or 0):
             return HttpResponse("Text too long", status=400)
         spell = get_or_none(Spell, pk=spell_id)
@@ -213,6 +217,8 @@ class SpellPage(View, RPCView):
             return HttpResponse(
                 "Parameter `comment_id` must be an int", status=400
             )
+        if not text:
+            return HttpResponse("You put some comment", status=400)
         if len(text) > int(CommentComment.text.field.max_length or 0):
             return HttpResponse("Text too long", status=400)
         comment = get_or_none(SpellComment, pk=comment_id)
@@ -267,6 +273,8 @@ class SpellPage(View, RPCView):
             return HttpResponse(
                 "Parameter `review_id` must be an int", status=400
             )
+        if not text:
+            return HttpResponse("You put some comment", status=400)
         if len(text) > int(ReviewComment.text.field.max_length or 0):
             return HttpResponse("Text too long", status=400)
         review = get_or_none(Review, pk=review_id)
@@ -315,11 +323,12 @@ class SpellPage(View, RPCView):
     ) -> HttpResponseBase:
         """Handle review requests."""
         user = cast(User, request.user)
-
         if not isinstance(stars, int):
             return HttpResponse(
                 "Parameter `stars` must be an integer", status=400
             )
+        if not desc:
+            return HttpResponse("You put some description", status=400)
         if len(desc) > int(Review.desc.field.max_length or 0):
             return HttpResponse("Description too long", status=400)
         if stars < 0 or stars > 19:

@@ -7,9 +7,11 @@ class CheckRequest:
     """Checks request size."""
 
     def __init__(self, response):
+        """Initialize CheckRequest."""
         self.get_response = response
 
     def __call__(self, request):
+        """Handle such requests."""
         try:
             _ = request.body
         except RequestDataTooBig:
