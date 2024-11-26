@@ -570,7 +570,7 @@
                     window.base_dlg.addEventListener("close", () => location.reload());
                 });
             }).catch((res) => {
-                window.dlg_header.innerText = "Review Submission Error";
+                window.dlg_header.innerText = "Comment Submission Error";
                 window.dlg_text.innerText = res;
                 window.base_dlg.showModal();
             });
