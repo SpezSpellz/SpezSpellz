@@ -12,6 +12,26 @@ h1, h2, li, a {
     align-self: center;
 }
 
+.red {
+    color: #FFF;
+    border-style: none;
+    border-radius: 8px;
+    background-color: #ff000a;
+    margin: auto;
+    cursor: pointer;
+    display: inline-block;
+    padding: 2px;
+    transition: background-color 0.1s ease;
+}
+
+.red:hover {
+    background-color: #ae000a;
+}
+
+.red:active {
+    background-color: #93000a;
+}
+
 .badge {
     position: absolute;
     top: -8px;

@@ -60,13 +60,25 @@
     margin: 5px;
     color: white;
     text-decoration: none;
-    background-color: #404040;
     border-radius: 5px;
 }
-.actions button:hover {
+.action-btn {
+    display: grid;
+}
+.img-btn{
+    padding: 2px;
+    width: 32px;
+    height: 32px;
+    align-self: center;
+    justify-self: center;
+}
+.edit-btn {
+    background-color: #404040;
+}
+.edit-btn:hover {
     background-color: #4B4B4B;
 }
-.actions button:active {
+.edit-btn:active {
     background-color: #5B5B5B;
 }
 .search-bar {

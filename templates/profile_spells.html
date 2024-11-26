@@ -26,8 +26,8 @@
     </a>
     {% if user == focus_user %}
     <div class="actions">
-      <button onclick="edit_spell({{ spell.pk }})" class="btn-like"><img width="32" src="/assets/edit.svg"/></button>
-      <button onclick="window.delete_spell({{ spell.pk }})" class="btn-like"><img width="32" src="/assets/delete.svg"/></button>
+      <button onclick="edit_spell({{ spell.pk }})" class="edit-btn btn-like action-btn"><img class="img-btn" src="/assets/edit.svg"/></button>
+      <button onclick="window.delete_spell({{ spell.pk }})" class="red action-btn"><img class="img-btn" src="/assets/delete.svg"/></button>
     </div>
     {% endif %}
   </div>

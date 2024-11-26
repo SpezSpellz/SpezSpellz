@@ -75,8 +75,8 @@
               </div>
             </a>
             {% if not other_user %}
-            <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
-            <a onclick="window.delete_spell({{spell.pk}})" class="btn-like edit-btn"><img width="32" src="/assets/delete.svg"/></a>
+            <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn base-btn"><img class="base-img" src="/assets/edit.svg"/></a>
+            <a onclick="window.delete_spell({{spell.pk}})" class="red base-btn" style="flex: 0 0 36px"><img class="base-img" src="/assets/delete.svg"/></a>
             {% endif %}
           </li>
           {% empty %}
@@ -124,7 +124,7 @@
               </div>
             </a>
             {% if not other_user %}
-            <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="btn-like bookmark" width="32" src="/assets/bookmark_remove.svg"/>
+            <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="red base-btn" src="/assets/bookmark_remove.svg"/>
             {% endif %}
           </li>
           {% empty %}
