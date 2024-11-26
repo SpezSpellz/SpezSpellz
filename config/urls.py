@@ -25,7 +25,6 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
     path("signin/", lambda request: redirect(f"{reverse('spezspellz:login')}?next={request.GET.get('next', '')}"), name="login"),
-    path("accounts/social/login/cancelled/", lambda request: redirect('login')),
     path('', include("spezspellz.urls", namespace="spsp")),
     re_path(r"^assets/(?P<path>.*)$", serve, {
         'document_root':

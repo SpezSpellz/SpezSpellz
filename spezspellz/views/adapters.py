@@ -1,5 +1,7 @@
 """Implement own custom social adapter."""
 import requests
+from allauth.core.exceptions import ImmediateHttpResponse
+from allauth.core.internal.httpkit import redirect
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from django.core.files.base import ContentFile
 from spezspellz.models import UserInfo
@@ -25,5 +27,23 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
                 user_info.save()
         return user
 
-    def respond_to_login_cancelled(self, request):
-        return reverse('login')
+    def on_authentication_error(
+            self,
+            request,
+            provider,
+            error=None,
+            exception=None,
+            extra_context=None,
+    ):
+        """
+        Invoked when there is an error in the authentication cycle. In this
+        case, pre_social_login will not be reached.
+
+        You can use this hook to intervene, e.g. redirect to an
+        educational flow by raising an ImmediateHttpResponse.
+
+        If there is any error, redirect to login page right away
+        If the user press cancel, the error is "cancelled"
+        """
+
+        raise ImmediateHttpResponse(redirect('login'))
