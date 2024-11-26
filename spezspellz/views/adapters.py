@@ -35,8 +35,8 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
             extra_context=None,
     ):
         """
-        Invoke when there is an error in the authentication cycle. In this
-        case, pre_social_login will not be reached.
+        Invoke when there is an error in the authentication cycle.
+        In this case, pre_social_login will not be reached.
 
         You can use this hook to intervene, e.g. redirect to an
         educational flow by raising an ImmediateHttpResponse.
