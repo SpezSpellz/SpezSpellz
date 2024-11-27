@@ -69,16 +69,19 @@
   {% endif %}
   {% if request.resolver_match.url_name == 'profile' %}
   <a href="{% url 'spezspellz:usersettings' %}" class="btn-like right-top-btn"><img width="32" src="/assets/cog.svg"/></a>
-  <form action="{% url 'logout' %}?next={% url 'spezspellz:home' %}" method="POST">
+  <form action="{% url 'account_logout' %}?next={{ request.get_full_path }}" method="POST">
     {% csrf_token %}
     <input type="image" alt="Logout" name="submit" width="32" class="btn-like right-top-btn" src="/assets/logout.svg"/>
   </form>
   {% else %}
+
+  {% load socialaccount %}
   {% if user.is_authenticated %}
   <a href="{% url 'spezspellz:profile' %}" class="btn-like right-top-btn"><img width="32" src="/assets/profile.svg"/></a>
   {% elif request.resolver_match.url_name != 'login' %}
-  <a href="{% url 'login' %}?next={% url 'spezspellz:home' %}" class="btn-like right-top-btn"><img width="32" src="/assets/login.svg"/></a>
+  <a href="{% url 'spezspellz:login' %}?next={{ request.get_full_path }}" class="btn-like right-top-btn"><img width="32" src="/assets/login.svg"/></a>
   {% endif %}
+
   {% endif %}
 </div>
 </body>
