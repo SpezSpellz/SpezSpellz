@@ -65,8 +65,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware'
-    "spezspellz.middlewares.check_request.CheckRequest"
+    'allauth.account.middleware.AccountMiddleware',
+    "spezspellz.middlewares.check_request.CheckRequest",
 ]
 
 ROOT_URLCONF = 'config.urls'
