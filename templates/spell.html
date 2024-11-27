@@ -11,12 +11,12 @@
   <button class="btn-like" style="display: block;margin: auto;padding: 10px;font-size: 12pt;" onclick="window.base_dlg.close()">Close</button>
 </dialog>
 <div class="spell-title">
-  <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img">
+  <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="default_img" style="width: 200px; height: 200px">
   <text>
     <h1>{{ spell.title }}</h1>
     <a style="display: flex;text-decoration: none;" href="{% url 'spezspellz:other_profile' spell.creator.pk %}">
       <h3 style="color: #FFF;margin: 0;">by:</h3>
-      <img style="margin-right: 8px;margin-left: 10px;" src="{% url 'spezspellz:avatar' spell.creator.pk %}" width="24" height="24"/>
+      <img class="mini-avatar" style="margin-right: 8px;margin-left: 10px;" src="{% url 'spezspellz:avatar' spell.creator.pk %}" width="24" height="24"/>
       <h3 style="color: #FFF;margin: 0;">{{ spell.creator.username }}</h3>
     </a>
     <h3 style="color: #FFF;margin: 0;margin-top: 5px;margin-right: 8px;">{{ avg_star }} stars</h3>
@@ -55,9 +55,7 @@
             <input dv_btn onclick="window.vote_obj(this.parentElement, 'tag', false, {{ tag.pk }})" type="image" src="{% if tag.vote is not None and not tag.vote.positive %}/assets/down_filled.svg{% else %}/assets/down_outline.svg{% endif %}" height="15"/>
             {% endif %}
           </div>
-          <span style="color: {{ tag.tag.color }};margin-right: 4px;">
-                        {{ tag.tag.name }}
-                    </span>
+          <span style="color: {{ tag.tag.color }};margin-right: 4px;">{{ tag.tag.name }}</span>
         </div>
       </div>
       {% endfor %}
@@ -148,7 +146,7 @@
   <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like" style="margin: 0;margin-left: 8px">
     <img width="32" src="/assets/edit.svg"/>
   </a>
-  <a class="btn-like" style="margin: 0;margin-left: 8px" onclick="window.delete_spell({{ spell.pk }})">
+  <a class="red" style="margin: 0;margin-left: 8px" onclick="window.delete_spell({{ spell.pk }})">
     <img width="32" src="/assets/delete.svg"/>
   </a>
   <script>
@@ -235,9 +233,11 @@
             </a>
             <p></p>
           </div>
+          {% if user.is_authenticated %}
           <div style="display: flex;flex-direction: column;justify-content: flex-end;">
             <input onclick="window.addReviewReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, parseInt(this.getAttribute('rid')))" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/reply.svg"/>
           </div>
+          {% endif %}
         </div>
       </div>
       <div coms></div>
@@ -265,9 +265,11 @@
             </a>
             <p></p>
           </div>
+          {% if user.is_authenticated %}
           <div style="display: flex;flex-direction: column;justify-content: flex-end;">
             <input onclick="window.addCommentReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, parseInt(this.getAttribute('rid')))" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
           </div>
+          {% endif %}
         </div>
       </div>
       <div coms></div>
@@ -416,6 +418,9 @@
             });
         }
         window.submit_review.onclick = () => {
+            window.dlg_header.innerText = "Review Submission";
+            window.dlg_text.innerText = "Submitting review...";
+            window.base_dlg.showModal();
             fetch("{% url 'spezspellz:spell' spell.pk %}", {
                 method: "POST",
                 headers: {
@@ -486,7 +491,7 @@
         <div style="display: flex;justify-content: space-between;">
           <div>
             <a style="display: flex; text-decoration: none" href="{% url 'spezspellz:other_profile' review.user.pk %}">
-              <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' review.user.pk %}" width="32" height="32"/>
+              <img class="mini-avatar" src="{% url 'spezspellz:avatar' review.user.pk %}" width="32" height="32"/>
               <h2 style="margin: 0;margin-right: 10px;">{{ review.user }}</h2>
               <div style="display: flex;">
                 {% for star in star_range %}
@@ -502,19 +507,21 @@
             </a>
             <p>{{ review.desc }}</p>
           </div>
+          {% if user.is_authenticated %}
           <div style="display: flex;flex-direction: column;justify-content: flex-end;">
             {% if review.user == user %}
             <input onclick="window.delete_obj('review', {{ review.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
             {% endif %}
             <input onclick="window.addReviewReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, {{ review.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/reply.svg"/>
           </div>
+          {% endif %}
         </div>
       </div>
       <div id="review-{{ review.pk }}-comments">
         {% for comment in review.reviewcomment_set.all %}
         <div class="review-entry" style="margin-left: 50px;" id="reviewcomment-{{ comment.pk }}">
           <a style="display: flex; text-decoration: none" href="{% url 'spezspellz:other_profile' comment.commenter.pk %}">
-            <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment.commenter.pk %}" width="24" height="24"/>
+            <img class="mini-avatar" src="{% url 'spezspellz:avatar' comment.commenter.pk %}" width="24" height="24"/>
             <h3 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h3>
           </a>
           <div style="display: flex;justify-content: space-between;">
@@ -541,6 +548,9 @@
       </div>
       <script>
         window.submit_comment.onclick = () => {
+            window.dlg_header.innerText = "Comment Submission";
+            window.dlg_text.innerText = "Submitting comment...";
+            window.base_dlg.showModal();
             fetch("{% url 'spezspellz:spell' spell.pk %}", {
                 method: "POST",
                 headers: {
@@ -553,9 +563,14 @@
             }).then(res => {
                 if(!res.ok)
                     return res.text().then(msg => Promise.reject(msg));
-                return res.text().then(_ => {location.reload();});
+                return res.text().then(text => {
+                    window.dlg_header.innerText = "Comment Submission";
+                    window.dlg_text.innerText = text;
+                    window.base_dlg.showModal();
+                    window.base_dlg.addEventListener("close", () => location.reload());
+                });
             }).catch((res) => {
-                window.dlg_header.innerText = "Review Submission Error";
+                window.dlg_header.innerText = "Comment Submission Error";
                 window.dlg_text.innerText = res;
                 window.base_dlg.showModal();
             });
@@ -603,24 +618,26 @@
         <div style="display: flex;justify-content: space-between;">
           <div style="display: flex;flex-direction: column;">
             <a style="display: flex; text-decoration: none" href="{% url 'spezspellz:other_profile' comment.commenter.pk %}">
-              <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment.commenter.pk %}" width="32" height="32"/>
+              <img class="mini-avatar" src="{% url 'spezspellz:avatar' comment.commenter.pk %}" width="32" height="32"/>
               <h2 style="margin: 0;margin-right: 16px;">{{ comment.commenter.username }}</h2>
             </a>
             <p>{{ comment.text }}</p>
           </div>
+          {% if user.is_authenticated %}
           <div style="display: flex;flex-direction: column;justify-content: flex-end;">
             {% if comment.commenter == user %}
             <input onclick="window.delete_obj('comment', {{ comment.pk }})" class="btn-like reply-btn" style="margin: 8px;" type="image" width="28" src="/assets/delete.svg"/>
             {% endif %}
             <input onclick="window.addCommentReplyWindow(this, this.parentElement.parentElement.parentElement.parentElement, {{ comment.pk }})" class="btn-like reply-btn" style="flex: 0 0 28px;margin-right: 8px;" type="image" width="28" src="/assets/reply.svg"/>
           </div>
+          {% endif %}
         </div>
       </div>
       <div id="comment-{{ comment.pk }}-comments">
         {% for comment_comment in comment.commentcomment_set.all %}
         <div class="review-entry" style="margin-left: 50px;" id="commentcomment-{{ comment_comment.pk }}">
           <a style="display: flex; text-decoration: none" href="{% url 'spezspellz:other_profile' comment_comment.commenter.pk %}">
-            <img style="margin-right: 10px;" src="{% url 'spezspellz:avatar' comment_comment.commenter.pk %}" width="24" height="24"/>
+            <img class="mini-avatar" src="{% url 'spezspellz:avatar' comment_comment.commenter.pk %}" width="24" height="24"/>
             <h3 style="margin: 0;margin-right: 16px;">{{ comment_comment.commenter.username }}</h3>
           </a>
           <div style="display: flex;justify-content: space-between;">

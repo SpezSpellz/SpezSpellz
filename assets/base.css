@@ -7,6 +7,33 @@ h1, h2, li, a {
     color: #FFFFFF;
 }
 
+.default_img {
+    width: 128px;
+    height: 128px;
+    object-fit: contain;
+    align-self: center;
+}
+
+.red {
+    color: #FFF;
+    border-style: none;
+    border-radius: 8px;
+    background-color: #ff000a;
+    margin: auto;
+    cursor: pointer;
+    display: inline-block;
+    padding: 2px;
+    transition: background-color 0.1s ease;
+}
+
+.red:hover {
+    background-color: #ae000a;
+}
+
+.red:active {
+    background-color: #93000a;
+}
+
 .badge {
     position: absolute;
     top: -8px;
@@ -140,6 +167,32 @@ h1, h2, li, a {
 .left-top-btn > img, .right-top-btn > img {
     display: block;
     margin: auto;
+}
+
+.nav-bar a {
+    display: inline-block;
+    border-width: 1px;
+    border-color: #6B6B6B;
+    border-style: solid;
+    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    cursor: pointer;
+    background-color: #2B2B2B;
+    text-align: center;
+    user-select: none;
+    text-decoration: none;
+}
+.nav-bar a:hover:not(.cur) {
+    background-color: #4B4B4B;
+}
+.nav-bar a:active:not(.cur) {
+    background-color: #5B5B5B;
+}
+.nav-bar a.cur {
+    border-color: #FFF;
+    cursor: default;
 }
 
 dialog::backdrop {

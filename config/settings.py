@@ -66,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware'
+    "spezspellz.middlewares.check_request.CheckRequest"
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -195,3 +196,14 @@ SOCIALACCOUNT_LOGIN_ON_CANCEL = 'login'
 SOCIALACCOUNT_LOGIN_ON_GET = True  # To make google authentication skip the unnecessary page
 SOCIALACCOUNT_ADAPTER = 'spezspellz.views.adapters.CustomSocialAccountAdapter'
 
+
+LOGIN_REDIRECT_URL = '/'
+
+# File upload handlers
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 4096 * 2500
+MAX_UPLOAD_SIZE = 4096 * 24414
+FILE_UPLOAD_HANDLERS = [
+    "django.core.files.uploadhandler.MemoryFileUploadHandler",
+    "django.core.files.uploadhandler.TemporaryFileUploadHandler",
+]

@@ -8,7 +8,8 @@ from django.contrib.auth.models import User
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from spezspellz.models import Spell, HasTag, UserInfo, Bookmark, \
-    Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory, RateSuccess
+    Review, ReviewComment, SpellComment, CommentComment, RateTag, \
+    RateCategory, RateSuccess, TagRequest, RateTagRequest
 from spezspellz.utils import get_or_none
 from .rpc_view import RPCView
 
@@ -44,6 +45,14 @@ class UserSettingsPage(View, RPCView):
             return HttpResponse("Avatar updated")
         return super().post(request, **kwargs)
 
+    def rpc_delete_account(self, request: HttpRequest) -> HttpResponseBase:
+        """Handle account deletion."""
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        user.delete()
+        return HttpResponse("OK")
+
     def rpc_rate(
         self,
         request: HttpRequest,
@@ -64,7 +73,8 @@ class UserSettingsPage(View, RPCView):
         obj_types = {
             "tag": (HasTag, RateTag),
             "category": (Spell, RateCategory),
-            "success": (Spell, RateSuccess)
+            "success": (Spell, RateSuccess),
+            "tag_req": (TagRequest, RateTagRequest),
         }
         obj_class, rate_class = obj_types.get(obj_type, (None, None))
         if obj_class is None or rate_class is None:
@@ -72,20 +82,21 @@ class UserSettingsPage(View, RPCView):
         obj = get_or_none(obj_class, pk=obj_id)
         if obj is None:
             return HttpResponse("Object not found", status=404)
-        rate = get_or_none(rate_class, subject=obj, user=user)
-        if rate is None:
-            if vote is None:
+        with transaction.atomic():
+            rate = get_or_none(rate_class, subject=obj, user=user)
+            if rate is None:
+                if vote is None:
+                    return HttpResponse(
+                        rate_class.calc_rating(subject=obj), status=200
+                    )
+                rate = rate_class(user=user, subject=obj)
+            elif vote is None:
+                rate.delete()
                 return HttpResponse(
                     rate_class.calc_rating(subject=obj), status=200
                 )
-            rate = rate_class(user=user, subject=obj)
-        elif vote is None:
-            rate.delete()
-            return HttpResponse(
-                rate_class.calc_rating(subject=obj), status=200
-            )
-        cast(Any, rate).positive = vote
-        rate.save()
+            cast(Any, rate).positive = vote
+            rate.save()
         return HttpResponse(rate_class.calc_rating(subject=obj), status=200)
 
     @staticmethod
@@ -152,11 +163,12 @@ class UserSettingsPage(View, RPCView):
         spell = get_or_none(Spell, pk=spell_id)
         if spell is None:
             return HttpResponse("Spell not found", status=404)
-        bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
-        if bookmark is None:
-            Bookmark.objects.create(user=request.user, spell=spell)
-        else:
-            bookmark.delete()
+        with transaction.atomic():
+            bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
+            if bookmark is None:
+                Bookmark.objects.create(user=request.user, spell=spell)
+            else:
+                bookmark.delete()
         return HttpResponse(
             "Bookmarked" if bookmark is None else "Unbookmarked"
         )

@@ -8,3 +8,6 @@ django-allauth==65.2.0
 requests==2.32.3
 pyjwt==2.9.0
 types-requests==2.32.0.20241016
+uvicorn==0.32.1
+websockets==13.1
+wsproto==1.2.0

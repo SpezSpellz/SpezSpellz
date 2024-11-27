@@ -5,12 +5,13 @@ import os
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login
-from django.http import HttpRequest, HttpResponse, HttpResponseBase
+from django.http import HttpRequest, HttpResponse, HttpResponseBase, Http404
 from django.shortcuts import render
 from django.views import View
 from django.urls import reverse
 from django.utils.dateparse import parse_datetime
 from django.db import transaction
+from django.core.exceptions import PermissionDenied
 from spezspellz.models import Spell, Tag, Category, HasTag, SpellNotification, Attachment
 from spezspellz.utils import safe_cast, get_or_none
 
@@ -52,9 +53,9 @@ class UploadPage(View):
         if spell_id is not None:
             spell = get_or_none(Spell, pk=spell_id)
             if spell is None:
-                return HttpResponse("No such spell", status=404)
+                raise Http404
             if spell.creator != request.user:
-                return HttpResponse("Forbidden", status=403)
+                raise PermissionDenied
             any_spell = cast(Any, spell)
             json_data = json.dumps(
                 {
@@ -183,9 +184,14 @@ class UploadPage(View):
         title = request.POST.get("title", "No Title")
         if not title.strip():
             return HttpResponse("Title must not be empty", status=400)
+        if len(title) > cast(int, Spell.title.field.max_length):
+            return HttpResponse(f"Title length must be lower than or equal to {Spell.title.field.max_length}", status=400)
         category = get_or_none(Category, name=category_name)
         if category is None:
             return HttpResponse("Unknown category", status=404)
+        data = request.POST.get("data", "")
+        if len(data) > cast(int, Spell.data.field.max_length):
+            return HttpResponse(f"Content length must be lower than or equal to {Spell.data.field.max_length}", status=400)
         if spell_id is not None:
             spell = get_or_none(Spell, pk=spell_id)
             if spell is None:
@@ -205,7 +211,7 @@ class UploadPage(View):
             any_spell.hastag_set.all().delete()
             any_spell.spellnotification_set.all().delete()
             spell.title = title
-            spell.data = request.POST.get("data", "")
+            spell.data = data
             spell.category = category
             if thumbnail is not None:
                 spell.thumbnail = thumbnail
@@ -213,7 +219,7 @@ class UploadPage(View):
             spell = Spell(
                 creator=request.user,
                 title=title,
-                data=request.POST.get("data", ""),
+                data=data,
                 category=category,
                 thumbnail=thumbnail
             )

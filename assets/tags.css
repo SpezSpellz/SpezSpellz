@@ -1,0 +1,131 @@
+
+#create_request_dlg {
+    border-radius: 10px;
+    background-color: #444;
+    border-style: none;
+    outline: none;
+}
+
+#create_request_dlg h1 {
+    margin: 0px;
+}
+
+#create_request_dlg span, #create_request_dlg p {
+    color: #FFF;
+    font-size: 15pt;
+}
+
+#create_request_dlg input, #create_request_dlg textarea {
+    background-color: #333;
+    border-style: solid;
+    border-radius: 8px;
+    outline: none;
+    color: #FFF;
+    font-size: 12pt;
+    padding: 5px;
+    border-width: 1px;
+    width: 275px;
+}
+
+#create_request_dlg button {
+    font-size: 15pt;
+    display: block;
+    margin: auto;
+    margin-top: 5px;
+    background-color: #333;
+    color: #FFF;
+    border-radius: 8px;
+    border-style: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#create_request_dlg button:hover {
+    background-color: #555;
+}
+
+#create_request_dlg button:active {
+    background-color: #666;
+}
+
+.all-container {
+    display: flex;
+    flex-direction: column;
+    padding: 0 10% 0 10%;
+}
+
+.main-container {
+    display: flex;
+    justify-content: center;
+}
+
+.tag-wrapper {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 10px;
+    margin-bottom: 50px;
+}
+
+.tag {
+    max-width: 320px;
+    font-size: 25px;
+    font-family: monospace;
+    border: 2px solid;
+    border-radius: 5px;
+    margin: 2px;
+    padding: 5px;
+    user-select: none;
+    box-sizing: border-box;
+}
+
+.tag-req {
+    width: max-content;
+    font-family: monospace;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 20px;
+    margin: 2px;
+    display: flex;
+    padding: 2px;
+    user-select: none;
+}
+
+/* for color display, not used in the moment. */
+.round-square {
+    margin-left: auto;
+    width: 20px;
+    border-radius: 5px;
+    background-color: red;
+}
+
+.accept-btn {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    background-color: #50bb4b;
+}
+
+.accept-btn:hover {
+    background-color: #489743;
+}
+
+.reject-btn {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    background-color: #ff000a;
+}
+
+.reject-btn:hover {
+    background-color: #ae000a;
+}
+
+.create-button {
+    padding: 10px;
+    font-size:25px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    text-decoration: none;
+    font-family: Arial;
+}

@@ -20,11 +20,15 @@ from allauth.core.internal.httpkit import redirect
 from django.contrib import admin
 from django.views.static import serve
 from django.urls import path, re_path, include, reverse
+from django.urls import path, re_path, include
+from django.http.response import HttpResponse
+
 
 urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
     path("signin/", lambda request: redirect(f"{reverse('spezspellz:login')}?next={request.GET.get('next', '')}"), name="login"),
+    path('health', lambda _: HttpResponse("Healthy")),
     path('', include("spezspellz.urls", namespace="spsp")),
     re_path(r"^assets/(?P<path>.*)$", serve, {
         'document_root':

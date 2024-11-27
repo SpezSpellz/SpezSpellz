@@ -156,7 +156,8 @@
     "title": "Fireball",
     "data": "# Fireball Spell\r\n\r\n## Overview\r\nThe **Fireball** spell is a powerful offensive magic used by many spellcasters. It harnesses the elemental force of fire to create a devastating explosion, causing damage to all enemies within its radius.\r\n\r\n## Description\r\nWhen cast, Fireball ignites a volatile orb of fire that can be hurled towards a target. Upon impact, it detonates in a fiery explosion, dealing significant damage to all creatures within the blast radius. This spell is particularly effective against groups of enemies.\r\n\r\n## Chant\r\nTo invoke the Fireball spell, the caster recites the following chant:\r\n\r\n```\r\n\"Flammae, in ignem, ad hostes meos!\"\r\n```\r\n\r\n### Translation\r\n\"Flames, into fire, against my foes!\"\r\n\r\n## Components\r\n- **Verbal**: The chant must be spoken aloud.\r\n- **Somatic**: A specific hand gesture is required to shape the fireball.\r\n- **Material**: A small piece of sulfur or a fire-related gem (optional).\r\n\r\n## Range\r\n- **Distance**: 150 feet\r\n- **Radius of Explosion**: 20-foot sphere\r\n\r\n## Damage\r\n- **Base Damage**: 8hp/s for 6 seconds of fire damage\r\n- **Saving Throw**: Dexterity (half damage on a successful save)\r\n\r\n## Duration\r\n- Instantaneous\r\n\r\n## Use in Combat\r\nFireball is best utilized in tactical situations where enemies cluster together. It can turn the tide of battle, but caution is advised to avoid harming allies.\r\n\r\n## Spell Level\r\n- **Level**: 3rd-level Evocation\r\n\r\n## Additional Notes\r\n- Fireball can ignite flammable objects in the area, potentially causing further destruction.\r\n- Some creatures may have resistance or immunity to fire damage, making it less effective in certain encounters.\r\n\r\n## Conclusion\r\nThe Fireball spell is a staple for many spell casters, embodying the destructive power of fire in a compact, versatile form. Its ability to deal massive damage makes it a favorite in both offensive strategies and crowd control.",
     "thumbnail": "content/fireball.png",
-    "category": 1
+    "category": 1,
+    "date": "2024-11-13"
   }
 },
 {
@@ -167,7 +168,8 @@
     "title": "Icicle lance",
     "data": "# Icicle Lance Spell\r\n\r\n## Overview\r\nThe **Icicle Lance** spell is a chilling projectile spell that conjures sharp icicles to impale enemies, embodying the elemental power of ice. It is favored by frost mages and those who harness the cold to subdue their foes.\r\n\r\n## Description\r\nWhen cast, Icicle Lance creates a long, spear-like icicle that shoots toward a target at high speed. Upon impact, it deals piercing damage and can potentially slow the target, reducing their movement speed.\r\n\r\n## Chant\r\nTo invoke the Icicle Lance spell, the caster recites the following chant:\r\n\r\n```\r\n\"Glacies, telum, in adversarium!\"\r\n```\r\n\r\n### Translation\r\n\"Ice, spear, against my adversary!\"\r\n\r\n## Components\r\n- **Verbal**: The chant must be spoken aloud.\r\n- **Somatic**: A specific hand gesture is required to form the icicle.\r\n- **Material**: A small shard of ice or a snowflake (optional).\r\n\r\n## Range\r\n- **Distance**: 120 feet\r\n\r\n## Damage\r\n- **Base Damage**: 38 piercing damage\r\n- **Additional Effect**: Target must succeed on a Constitution saving throw or have their speed reduced by 10 feet until the end of their next turn.\r\n\r\n## Duration\r\n- Instantaneous\r\n\r\n## Use in Combat\r\nIcicle Lance is effective for both direct damage and control in battle. It is particularly useful against fast-moving enemies, as it not only inflicts damage but may also hinder their ability to escape or engage.\r\n\r\n## Spell Level\r\n- **Level**: 2nd-level Evocation\r\n\r\n## Additional Notes\r\n- The spells icy nature may also freeze flammable surfaces it touches.\r\n- Creatures with resistance or immunity to cold damage may negate some effects of this spell.\r\n\r\n## Conclusion\r\nThe Icicle Lance spell combines precision and elemental force, making it a formidable choice for those who wish to wield the cold against their enemies. Its ability to slow foes adds a tactical layer, allowing spellcasters to control the battlefield effectively.",
     "thumbnail": "content/a_witch_using_the_icicle_lance_spell.png",
-    "category": 1
+    "category": 1,
+    "date": "2024-11-13"
   }
 },
 {
@@ -178,7 +180,8 @@
     "title": "Health Potion",
     "data": "# Health Potion\r\n\r\n## Overview\r\nThe **Health Potion** is a vital consumable item used by adventurers and adventurers alike to restore health and vitality during or after combat. It is a staple in many fantasy realms, providing a quick way to recover from injuries.\r\n\r\n## Description\r\nHealth Potions are typically brewed from a combination of medicinal herbs, magical ingredients, and often some form of alchemical base. When consumed, they quickly rejuvenate the drinker, healing wounds and revitalizing energy.\r\n\r\n## Components\r\n- **Ingredients**: Common ingredients include:\r\n  - Healing herbs (e.g., aloe, ginseng)\r\n  - Magical essences (e.g., pixie dust, elemental water)\r\n  - Alchemical reagents (e.g., distilled spirits)\r\n\r\n## Effects\r\n- **Healing**: Restores a specified number of hit points (commonly 2d4 + 2).\r\n- **Duration**: Instantaneous effect upon consumption.\r\n\r\n## Usage\r\nHealth Potions can be used:\r\n- During combat to recover from injuries.\r\n- Between encounters to prepare for upcoming challenges.\r\n\r\n## Rarity\r\n- **Common**: Widely available in potion shops and from alchemists.\r\n- **Greater Health Potions**: More potent versions that restore additional hit points (e.g., 4d4 + 4).\r\n\r\n## Additional Notes\r\n- Health Potions may have side effects if consumed in excess, such as temporary nausea or a reduced healing effect.\r\n- They can be combined with other potions for enhanced effects, but caution is advised to avoid adverse reactions.\r\n\r\n## Conclusion\r\nThe Health Potion is an essential item for any adventurer, providing a quick and effective means to recover health in the heat of battle. Its accessibility and effectiveness make it a cornerstone of survival in challenging quests and adventures.\r\n\r\n## Thanks for reading!\r\n<img width=\"128\" src=\"/attachment/1/\"/>\r\n",
     "thumbnail": "content/health_potion.png",
-    "category": 3
+    "category": 3,
+    "date": "2024-11-13"
   }
 },
 {
@@ -189,7 +192,8 @@
     "title": "Hollow Purple",
     "data": "\r\n# Hollow Purple\r\n\r\n## Level\r\n*Spell Level*: Secret Gojo Clan technique\r\n\r\n## Casting Time\r\n*Casting Time*: 3 seconds\r\n\r\n## Range\r\n*Range*: 2 Kilometers\r\n\r\n## Components\r\n*Components*: take the amplified and the reversal. then smash those two different expression of infinity to create and push out imaginary mass.\r\n\r\n## Duration\r\n*Duration*: will disappear soon after cast\r\n\r\n## Description\r\n\"sorry, Amanai. I'm not even angry over you right now. I bear no grudges against anyone. it's just that the world feels so, so wonderful right now. \"throughout heaven and earth i alone am the honoured one.\" the merit of having a technique that's passed down for generations. is having a user's manual the demerit is that information about the technique is easily leaked. you were a member of the zen'in clan, weren't you? that's why you know so much about the limitless technique. however, even in the Gojo clan, only a scant few know about this. take the amplified and the reversal. then smash those two different expression of infinity to create and push out imaginary mass. imaginary technique: Purple. \" \r\n\r\nGomen, amanai. Ore wa ima, omae no\r\ntameni wakotenai. Daremoni kunjai iinai.\r\nimawa tada tada..... Kono sekai wa kokochi\r\ntenjo tengen, yui hatokson.\r\ndai dai tsudaru-sodeno jujutsuki no merito\r\nwa, torisetsuna koto.\r\ndemerito wa, jujutsukino joho ga ore wa\r\nsui-koto\r\nanta, zen'in keto nengen daro\r\nmukagen jujutsu no koto yo~kushderu\r\nakeda\r\ndaga -kore wa, gojo\r\nkeno-naka-no-koku-ichibun-no-negen\r\nshikAshirinai\r\njunten to hanten soro soro no mugen wosho-totsu saseru koto desu se se sareru, kaso hitsuruyo oshidasu\r\nkiyoshiki. Murasaki.\r\n\r\n<img src=\"/attachment/3/\" width=\"1024\">\r\n\r\n\r\n\r\n\r\n\r\n",
     "thumbnail": "content/HollowPurple.png",
-    "category": 1
+    "category": 1,
+    "date": "2024-11-13"
   }
 },
 {
@@ -200,7 +204,8 @@
     "title": "Moonlit Protection Spell",
     "data": "# Moonlit Protection Spell\nThis spell is meant to protect the home and its occupants from negative energies.\n\n## Materials Needed:\n - Dried lavender petals\n - A small bowl of pure water\n - A pinch of salt\n - A candle (preferably white or pale blue) \n\n## Instructions:\n1. Set up your altar with the materials needed above.2. Light the candle and take a few deep breaths to center yourself.\n3. Recite the following incantation:\n\"By moonlight, I call upon thee, Guardian of my home, protect me from harm and negativity.\" \n\n## Chant\nAstridMoon's Moonlit Protection Spell\nProtection and peace, under the light of the moon",
     "thumbnail": "content/Moonlit_Protection_Spell.png",
-    "category": 2
+    "category": 2,
+    "date": "2024-11-13"
   }
 },
 {
@@ -211,7 +216,8 @@
     "title": "Shadow Weaver Spell",
     "data": "# Shadow Weaver Spell\nThis spell allows you to manipulate shadows and create illusions.\n\n## Materials Needed:\n* A piece of black cloth or fabric\n* A small mirror \n* A pinch of moonstone dust (optional) \n\n## Instructions:\n1. Hold the mirror in front of you, with the reflection of your face facing away from you.\n2. Take a few deep breaths and focus on the shadow around yourself.\n3. Recite the following incantation:\n\"By darkness, I weave my spell, shadows dance upon the wall.\" \n\n## Chant\nLunaNightshade's Shadow Weaver Spell\nWeave your magic in the shadows",
     "thumbnail": "content/Shadow_Weaver_Spell.png",
-    "category": 1
+    "category": 1,
+    "date": "2024-11-13"
   }
 },
 {
@@ -222,7 +228,8 @@
     "title": "Shadow Step Spell",
     "data": "# Shadow Step Spell\nThis spell allows you to teleport short distances through shadows.\n\n## Materials Needed:\n* A piece of black fabric or cloth\n* A small vial of oil (preferably olive or coconut) \n* A pinch of moonstone dust (optional) \n\n## Instructions:\n1. Find a dark and quiet place to cast the spell.\n2. Hold the black fabric in front of you, with one end touching the ground.\n3. Take a few deep breaths and focus on your target destination.\n4. Recite the following incantation:\n\"By shadows, I step across, to another place.\" \n\n## Chant\nEryndorThorne's Shadow Step Spell\nStep into the darkness",
     "thumbnail": "content/Shadow_Step_Spell.png",
-    "category": 1
+    "category": 1,
+    "date": "2024-11-13"
   }
 },
 {
@@ -233,7 +240,8 @@
     "title": "Lunar Empowerment Ritual",
     "data": "# Lunar Empowerment Ritual\nThis ritual is designed to tap into the energies of the full moon and amplify your inner power.\n\n## Materials Needed:\n* A small crystal or stone associated with the moon phase (e.g. moonstone, black tourmaline) \n* A bowl of pure water \n* A candle in a silver holder \n\n## Instructions:\n1. Find a quiet and peaceful space to cast the ritual.\n2. Light the candle and burn incense made from dried herbs like lavender or chamomile.\n3. Hold the crystal in your dominant hand and focus on your intentions for empowerment.\n4. Recite the following incantation:\n\"By the light of the moon, I call upon my inner strength.\" \n\n## Chant\nPiperWitchwood's Lunar Empowerment Ritual\nEmpower yourself under the full moon",
     "thumbnail": "content/Lunar_Empowerment_Ritual.png",
-    "category": 2
+    "category": 2,
+    "date": "2024-11-13"
   }
 },
 {
@@ -244,7 +252,8 @@
     "title": "Moon Phase Potion",
     "data": "# Moon Phase Potion\nThis potion is infused with the energies of the full moon, amplifying your magical abilities.\n\n## Ingredients:\n* 1 cup of pure water \n* 1/2 cup of dried chamomile flowers \n* 1 tablespoon of moonstone dust \n* 1 teaspoon of honey \n\n## Instructions:\n1. Mix all ingredients together in a small bowl.\n2. Stir clockwise for 7 times, then counterclockwise for 3 times.\n3. Place the vial under the full moon and let it charge for at least 2 hours.",
     "thumbnail": "content/Moon_Phase_Potion.png",
-    "category": 3
+    "category": 3,
+    "date": "2024-11-13"
   }
 },
 {
@@ -266,7 +275,8 @@
     "title": "Dreamweaver's Journey",
     "data": "# Dreamweaver's Journey\nEmbark on a journey through the realms of your subconscious to uncover hidden truths and desires.  \n\n## Preparation\nFind a quiet and comfortable space to sit and meditate.\n## Materials needed\nA crystal ball, a journal, and a pen.",
     "thumbnail": "content/Dreamweavers_Journey.png",
-    "category": 2
+    "category": 2,
+    "date": "2024-11-13"
   }
 },
 {
@@ -277,7 +287,8 @@
     "title": "Glimmering Grotto Creation",
     "data": "# Glimmering Grotto Creation\nCreate a shimmering oasis in the heart of your home to foster creativity and inspiration.  \n\n## Chant\nAquas, lux, animus: bring forth the light\n\n## Amplitude\nTo use this spell, you must have amplitude for the water element and be able to envision your desired outcome.",
     "thumbnail": "content/Glimmering_Grotto_Creation.png",
-    "category": 1
+    "category": 1,
+    "date": "2024-11-13"
   }
 },
 {
@@ -288,7 +299,8 @@
     "title": "Witch's Brew of Dreams",
     "data": "A rare and mysterious blend of herbs, said to induce vivid and prophetic dreams.  \n\n## Ingredients:\n* 1 tablespoon of dried chamomile flowers\n* 1 tablespoon of dried lavender petals\n* 1 teaspoon of moonstone dust\n",
     "thumbnail": "content/Witchs_Brew_of_Dreams.png",
-    "category": 3
+    "category": 3,
+    "date": "2024-11-13"
   }
 },
 {
@@ -299,7 +311,8 @@
     "title": "Ember Shielding Spell",
     "data": "# Ember Shielding Spell\nCreate a protective barrier of sparks to deflect negative energy and harm.  \n\n## Chant\nFlames, defend my soul: shield me from the cold\n\n## Amplitude\nTo use this spell, you must have amplitude for the fire element and be able to focus your intentions.",
     "thumbnail": "content/Ember_Shielding_Spell.png",
-    "category": 1
+    "category": 1,
+    "date": "2024-11-13"
   }
 },
 {
@@ -310,7 +323,8 @@
     "title": "Witch's Blessing of Protection",
     "data": "A sacred ritual to invoke the power of the universe and secure your protection from harm.  \n\n## Preparation:\n* Set up a sacred space in your home or outdoor area\n* Light a white candle and burn sage for purification\n* Wear protective charms or talismans",
     "thumbnail": "content/Witchs_Blessing_of_Protection.png",
-    "category": 2
+    "category": 2,
+    "date": "2024-11-13"
   }
 },
 {
@@ -321,7 +335,8 @@
     "title": "Moonlight Healing Potion",
     "data": "A rare and precious potion that can accelerate healing and mend wounds.  \n\n## Ingredients:\n* Moonstone dust\n* Dried chamomile flowers\n* Honey from a pure bee hive\n\n## Brewing: Combine the ingredients in a silver cauldron and heat under the light of a full moon.",
     "thumbnail": "content/Moonlight_Healing_Potion.png",
-    "category": 3
+    "category": 3,
+    "date": "2024-11-13"
   }
 },
 {
@@ -332,7 +347,8 @@
     "title": "Dreamweaver's Lullaby Spell",
     "data": "# Dreamweaver's Lullaby\nA soothing spell that allows you to enter the dreams of others and uncover hidden truths.  \n\n## Chant\nIn slumber, find the key: listen to the whispers of the night\n\n## Amplitude\nTo use this spell, you must have amplitude for the moonlight element and be able to calm your mind.",
     "thumbnail": "content/Dreamweavers_Lullaby_Spell.png",
-    "category": 1
+    "category": 1,
+    "date": "2024-11-13"
   }
 },
 {
@@ -343,7 +359,8 @@
     "title": "Moonstone Amulet Ritual",
     "data": "A ritual to create a powerful moonstone amulet that offers protection, healing, and magical enhancements.  \n\n## Ingredients:\n* Moonstone gemstone\n* Dried chamomile flowers\n* Honey from a pure bee hive\n\n## Brewing: Combine the ingredients in a silver cauldron and heat under the light of a full moon.",
     "thumbnail": "content/Moonstone_Amulet_Ritual.png",
-    "category": 2
+    "category": 2,
+    "date": "2024-11-13"
   }
 },
 {
@@ -354,7 +371,8 @@
     "title": "Shadowwalk Spell",
     "data": "# Shadowwalk\nA spell that allows you to walk through shadows and traverse vast distances in an instant.  \n\n## Chant\nIn darkness, find the path: step into the unknown, and let your spirit be free\n\n## Amplitude\nTo use this spell, you must have amplitude for the darkness element and a clear mind.",
     "thumbnail": "content/Shadowwalk_Spell.png",
-    "category": 1
+    "category": 1,
+    "date": "2024-11-13"
   }
 },
 {
@@ -365,7 +383,8 @@
     "title": "Healing Oak Ritual",
     "data": "A ritual to connect with the healing energy of ancient oak trees and bring prosperity and well-being to those who participate.  \n\n## Ingredients:\n* Oak leaves and acorns from a sacred oak tree\n* Honey from a pure bee hive\n* A small crystal of clear quartz\n\n## Brewing: Combine the ingredients in a wooden bowl and place under the light of a full moon.",
     "thumbnail": "content/Healing_Oak_Ritual.png",
-    "category": 2
+    "category": 2,
+    "date": "2024-11-13"
   }
 },
 {
@@ -376,7 +395,8 @@
     "title": "LET THE BASS KICK",
     "data": "Brainpower, Let the bass kick,\r\n\r\nO-oooooooooo AAAAE-A-A-I-A-U-\r\nJO-oooooooooooo AAE-O-A-A-U-U-A-\r\nE-eee-ee-eee AAAAE-A-E-I-E-A-\r\nJO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA\r\n\r\nO-oooooooooo AAAAE-A-A-I-A-U-\r\nJO-oooooooooooo AAE-O-A-A-U-U-A-\r\nE-eee-ee-eee AAAAE-A-E-I-E-A-\r\nJO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA\r\n\r\nO-oooooooooo AAAAE-A-A-I-A-U-\r\nJO-oooooooooooo AAE-O-A-A-U-U-A-\r\nE-eee-ee-eee AAAAE-A-E-I-E-A-\r\nJO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA-\r\n",
     "thumbnail": "content/brain_power.jpg",
-    "category": 1
+    "category": 1,
+    "date": "2024-11-13"
   }
 },
 {
@@ -387,7 +407,136 @@
     "title": "P'Boom Spell",
     "data": "WEAR THAT GLASSES LIKE A G\r\n",
     "thumbnail": "content/black-guy-with-glasses.jpg",
-    "category": 1
+    "category": 1,
+    "date": "2024-11-13"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "I AM THE DEMO, I AM THE FIRST USER EVER CREATED, EVER!!",
+    "avatar": "content/BlackbeardPeak.jpg",
+    "last_notified": "2024-11-13T04:44:56.021Z"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 2,
+  "fields": {
+    "user": 3,
+    "private": true,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "I'm an edgy private user. Nobody can visit my profile because I hate people.",
+    "avatar": "",
+    "last_notified": "2024-10-26T10:58:37.532Z"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 3,
+  "fields": {
+    "user": 4,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "Hi there! I'm Astrid Moon, a witch with a love for the earthy and mysterious. When I'm not sharing my knowledge, you can find me tending to my garden or brewing potions.",
+    "avatar": "content/AstridMoon.png",
+    "last_notified": "2024-10-16T04:23:20.445Z"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 4,
+  "fields": {
+    "user": 5,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "Greetings, I'm Eryndor Thorne. I'm on a quest for understanding the mysteries of the universe. If you're looking for someone to share their insights with, I might be your guide.",
+    "avatar": "content/EryndorThorne.png",
+    "last_notified": "2024-10-16T04:23:20.445Z"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 5,
+  "fields": {
+    "user": 6,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "Hey there! I'm Luna Nightshade, a witch with a passion for magic and mayhem. If you're looking for someone to shake things up, I might be your person.",
+    "avatar": "content/LunaNightshade.png",
+    "last_notified": "2024-10-16T04:23:20.445Z"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 6,
+  "fields": {
+    "user": 7,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "Hello, I'm Rowan Wystan. I've been on this journey for many years, sharing my knowledge with those who seek wisdom. Take a seat by the fire and let's have a chat.",
+    "avatar": "content/RowanWystan.png",
+    "last_notified": "2024-10-16T04:23:20.445Z"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 7,
+  "fields": {
+    "user": 8,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "Hey, I'm Piper Witchwood! I'm all about spreading magic and positivity wherever I go. Join me on my journey of discovery and let's make some witchy memories!",
+    "avatar": "content/PiperWitchwood.png",
+    "last_notified": "2024-10-16T04:23:20.445Z"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 8,
+  "fields": {
+    "user": 9,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "",
+    "avatar": "content/images_6dWK57z_vxxBLIf.jfif",
+    "last_notified": "2024-11-13T01:25:53.069Z"
   }
 },
 {
@@ -1424,7 +1573,7 @@
   "fields": {
     "user": 2,
     "spell": 1,
-    "time": "2024-10-16T04:03:29.756Z"
+    "time": "2024-11-13T02:46:52.439Z"
   }
 },
 {
@@ -1496,7 +1645,7 @@
   "fields": {
     "user": 1,
     "spell": 2,
-    "time": "2024-10-16T04:23:13.319Z"
+    "time": "2024-11-13T04:28:17.492Z"
   }
 },
 {
@@ -1644,15 +1793,6 @@
   }
 },
 {
-  "model": "spezspellz.reviewcomment",
-  "pk": 4,
-  "fields": {
-    "review": 17,
-    "commenter": 1,
-    "text": "hey"
-  }
-},
-{
   "model": "spezspellz.spellcomment",
   "pk": 1,
   "fields": {
@@ -1776,15 +1916,6 @@
     "spell": 19,
     "commenter": 6,
     "text": "Has anyone else tried using this spell with multiple people? I'd love to try it out with my coven"
-  }
-},
-{
-  "model": "spezspellz.spellcomment",
-  "pk": 15,
-  "fields": {
-    "spell": 1,
-    "commenter": 1,
-    "text": "hey"
   }
 },
 {

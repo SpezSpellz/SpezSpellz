@@ -47,7 +47,7 @@
     {% for noti in user.notification_set.all|dictsortreversed:"timestamp" %}
     <a href="{{ noti.ref }}" style="text-decoration: none">
       <div class="popup-notif" {% if not noti.is_read %} onmouseover="mark_as_read({{ noti.pk }}, this)" {% endif %} style="position: relative">
-        <img class="popup-img" src="{{ noti.icon }}">
+        <img class="popup-img" {% if '#' in noti.ref %}style="border-radius: 50%"{% endif %} src="{{ noti.icon }}">
         <div>
           <h3 class="popup-title">{{ noti.title }}</h3>
           {% if noti.additional != "" %}
