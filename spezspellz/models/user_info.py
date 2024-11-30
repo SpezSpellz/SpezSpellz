@@ -4,6 +4,8 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db.models import Avg
+from .success_rate import SuccessRate
 
 
 class UserInfo(models.Model):
@@ -36,6 +38,20 @@ class UserInfo(models.Model):
     def is_private(self):
         """Checks whether user is private."""
         return self.private
+
+    @property
+    def spells_tried(self) -> int:
+        """Returns the spell tried."""
+        return SuccessRate.objects.filter(spell__creator=self.user).count()
+
+    @property
+    def success_rate(self):
+        """Calculates the success rate of all their spells."""
+        avg_success = SuccessRate.objects.filter(spell__creator=self.user) \
+            .aggregate(Avg('rating'))['rating__avg']
+        if avg_success is None:
+            return 100
+        return (avg_success / 4) * 100
 
     @property
     def unread_badge(self):

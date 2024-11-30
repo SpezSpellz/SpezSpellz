@@ -24,6 +24,7 @@ text {
     background-color: #3B3B3B;
     margin-left: 5%;
     margin-right: 5%;
+    margin-bottom: 50px;
     color: #FFFFFF;
     overflow-wrap: break-word;
     overflow-y: auto;
@@ -123,4 +124,93 @@ hr {
     display: flex;
     padding: 2px;
     user-select: none;
+}
+
+.rating-container {
+        text-align: center;
+        margin: 20px;
+}
+
+.rating-boxes {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.rating-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex: 1;
+    padding: 15px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    background-color: #333;
+    transition: background-color 0.3s;
+    margin-bottom: 10px;
+}
+
+.rating-box > span {
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 5px;
+}
+
+.rating-box[value="0"]:hover {
+    background-color: #ff4d4d7f;
+}
+
+.rating-box[value="1"]:hover {
+    background-color: #ff99337f;
+}
+
+.rating-box[value="2"]:hover {
+    background-color: #ffcc007f;
+}
+
+.rating-box[value="3"]:hover {
+    background-color: #ccff667f;
+}
+
+.rating-box[value="4"]:hover {
+    background-color: #66cc667f;
+}
+
+.rating-box[value="0"][selected] {
+    background-color: #ff4d4d;
+}
+
+.rating-box[value="1"][selected] {
+    background-color: #ff9933;
+}
+
+.rating-box[value="2"][selected] {
+    background-color: #ffcc00;
+}
+
+.rating-box[value="3"][selected] {
+    background-color: #ccff66;
+}
+
+.rating-box[value="4"][selected] {
+    background-color: #66cc66;
+}
+
+.delete-button {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.delete-button:hover {
+    background-color: #e60000;
 }

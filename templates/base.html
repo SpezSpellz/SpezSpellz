@@ -16,6 +16,9 @@
   {% endfor %}
 </ul>
 {% endif %}
+<script>
+  window.ws = new WebSocket({% if request.resolver_match.url_name == 'spell' %}'/spell_{{ spell.pk }}/'{% else %}'/'{% endif %});
+</script>
 {% block BeforeBody %}
 {% endblock %}
 <body>
@@ -43,7 +46,7 @@
     {% if user.notification_set.count > 0 %}
     {% for noti in user.notification_set.all|dictsortreversed:"timestamp" %}
     <a href="{{ noti.ref }}" style="text-decoration: none">
-      <div class="popup-notif" onmouseover="mark_as_read({{ noti.pk }}, this)" style="position: relative">
+      <div class="popup-notif" {% if not noti.is_read %} onmouseover="mark_as_read({{ noti.pk }}, this)" {% endif %} style="position: relative">
         <img class="popup-img" src="{{ noti.icon }}">
         <div>
           <h3 class="popup-title">{{ noti.title }}</h3>
@@ -74,7 +77,7 @@
   {% if user.is_authenticated %}
   <a href="{% url 'spezspellz:profile' %}" class="btn-like right-top-btn"><img width="32" src="/assets/profile.svg"/></a>
   {% elif request.resolver_match.url_name != 'login' %}
-  <a href="{% url 'login' %}?next={% url 'spezspellz:home' %}" class="btn-like right-top-btn"><img width="32" src="/assets/login.svg"/></a>
+  <a href="{% url 'login' %}?next={{ request.path }}" class="btn-like right-top-btn"><img width="32" src="/assets/login.svg"/></a>
   {% endif %}
   {% endif %}
 </div>
@@ -82,269 +85,281 @@
 {% block AfterBody %}
 {% endblock %}
 <script>
-    if ("Notification" in window &&Notification.permission !== "granted")
-        Notification.requestPermission().then(() => {});
-    {% if user.is_authenticated %}
-    const bell_button = window.document.getElementById("bell_button");
-    const badge = window.document.getElementById("notif_count");
-    const popup_box = window.document.getElementById("popup_box");
-    const no_noti = window.document.getElementById("no_noti");
-    let notifications = {};
-    let unread_count = {{ user.userinfo.unread_badge }};
-    let noti_count = {{ user.notification_set.count }};
-    popup = () => {
-        if (popup_box != null) {
-            if (popup_box.style.display === "block") {
-                popup_box.style.display = "none";
-            } else {
-                popup_box.style.display = "block";
-            }
-        }
-        if (badge != null) {
-            if (unread_count > 0) {
-                unread_count = 0;
-                window.update_badge(unread_count);
-                fetch("{% url 'spezspellz:notifications' %}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": "{{ csrf_token }}"
-                    },
-                    body: JSON.stringify({
-                        method: "set_badge_count",
-                    })
-                })
-            }
-        }
-    }
-    document.addEventListener('click', function(event) {
-            if (!bell_button.contains(event.target) &&
-                !popup_box.contains(event.target)) {
-                popup_box.style.display = 'none';
-            }
-        });
-    mark_as_read = (pk, element) => {
-        element.onmouseover = null;
-        const unread_badge = window.document.getElementById(`unread-${pk}`);
-        if (unread_badge !== null){
-            unread_badge.remove();
-        }
-        fetch("{% url 'spezspellz:notifications' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
-            body: JSON.stringify({
-                method: "mark_as_read",
-                unread: pk
-            })
-        })
-    }
-    window.create_li = (noti) => {
-        if (no_noti != null) {
-            no_noti.remove();
-        }
-        if (popup_box != null) {
-            const ref = document.createElement("a");
-            ref.href = noti.ref
-            ref.style.textDecoration = "none";
-            const noti_box = document.createElement("div");
-            noti_box.classList.add("popup-notif");
-            noti_box.style.position = "relative"
-            noti_box.onmouseover = function() {mark_as_read(noti.pk, noti_box);};
-            const img = document.createElement("img");
-            img.classList.add("popup-img");
-            img.src = noti.icon;
-            const info = document.createElement("div");
-            const title = document.createElement("h3");
-            title.classList.add("popup-title");
-            title.innerText = noti.title;
-            const message = document.createElement("p");
-            message.classList.add("popup-message");
-            message.innerText = noti.message;
-            const time = document.createElement("p");
-            time.classList.add("popup-time");
-            const time_obj = new Date(noti.time);
-            time.innerText = `${time_obj.toLocaleString("en-US", {day:"numeric"})}/\
+  if ("Notification" in window &&Notification.permission !== "granted")
+      Notification.requestPermission().then(() => {});
+  {% if user.is_authenticated %}
+  const bell_button = window.document.getElementById("bell_button");
+  const badge = window.document.getElementById("notif_count");
+  const popup_box = window.document.getElementById("popup_box");
+  const no_noti = window.document.getElementById("no_noti");
+  let notifications = {};
+  let unread_count = {{ user.userinfo.unread_badge }};
+  let noti_count = {{ user.notification_set.count }};
+  popup = () => {
+      if (popup_box != null) {
+          if (popup_box.style.display === "block") {
+              popup_box.style.display = "none";
+          } else {
+              popup_box.style.display = "block";
+          }
+      }
+      if (badge != null) {
+          if (unread_count > 0) {
+              unread_count = 0;
+              window.update_badge(unread_count);
+              fetch("{% url 'spezspellz:notifications' %}", {
+                  method: "POST",
+                  headers: {
+                      "X-CSRFToken": "{{ csrf_token }}"
+                  },
+                  body: JSON.stringify({
+                      method: "set_badge_count",
+                  })
+              })
+          }
+      }
+  }
+  document.addEventListener('click', function(event) {
+          if (!bell_button.contains(event.target) &&
+              !popup_box.contains(event.target)) {
+              popup_box.style.display = 'none';
+          }
+      });
+  mark_as_read = (pk, element) => {
+      element.onmouseover = null;
+      const unread_badge = window.document.getElementById(`unread-${pk}`);
+      if (unread_badge !== null){
+          unread_badge.remove();
+      }
+      fetch("{% url 'spezspellz:notifications' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({
+              method: "mark_as_read",
+              unread: pk
+          })
+      })
+  }
+  window.create_li = (noti) => {
+      if (no_noti != null) {
+          no_noti.remove();
+      }
+      if (popup_box != null) {
+          const ref = document.createElement("a");
+          ref.href = noti.ref
+          ref.style.textDecoration = "none";
+          const noti_box = document.createElement("div");
+          noti_box.classList.add("popup-notif");
+          noti_box.style.position = "relative"
+          noti_box.onmouseover = function() {mark_as_read(noti.pk, noti_box);};
+          const img = document.createElement("img");
+          img.classList.add("popup-img");
+          img.src = noti.icon;
+          const info = document.createElement("div");
+          const title = document.createElement("h3");
+          title.classList.add("popup-title");
+          title.innerText = noti.title;
+          const message = document.createElement("p");
+          message.classList.add("popup-message");
+          message.innerText = noti.message;
+          const time = document.createElement("p");
+          time.classList.add("popup-time");
+          const time_obj = new Date(noti.time);
+          time.innerText = `${time_obj.toLocaleString("en-US", {day:"numeric"})}/\
 ${time_obj.toLocaleString("en-US", {month:"numeric"})}/\
 ${time_obj.toLocaleString("en-US", {year:"numeric"})} at \
 ${time_obj.toLocaleString("en-US", {hour:"numeric", minute:"numeric"})}`;
-            const span = document.createElement("span");
-            span.classList.add("badge");
-            span.id = `unread-${noti.pk}`
-            span.style.display = "block";
-            span.innerText = "New";
-            popup_box.prepend(ref);
-            ref.append(noti_box);
-            noti_box.append(img);
-            noti_box.append(info);
-            info.append(title);
-            if (noti.additional !== "") {
-                const additional = document.createElement("p");
-                additional.classList.add("popup-additional")
-                additional.innerText = `${noti.additional}:`
-                info.append(additional)
-            }
-            info.append(message);
-            info.append(time);
-            noti_box.append(span);
-        }
-    }
-    window.create_notification = (noti) => {
-        fetch("{% url 'spezspellz:notifications' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
-            body: JSON.stringify({
-                method: "create_notification",
-                target_user_id: noti.target,
-                sender_obj_id: noti.sender_id,
-                sender_obj_type: noti.type,
-                body: noti.message,
-                additional: noti.additional,
-                ref: noti.ref
-            })
-        }).then(res => {
-            res.text().then(_ => {
-                noti.pk = res.headers.get("pk");
-                create_li(noti);
-                unread_count++;
-            });
-        });
-    }
-    window.update_badge = (unread_count) => {
-        if (badge != null) {
-            if (unread_count > 0) {
-                badge.innerText = unread_count.toString();
-                badge.style.display = "block";
-            } else {
-                badge.style.display = "none";
-            }
-        }
-    }
-    {% endif %}
-    {% if user.userinfo.timed_notification %}
-    window.refetch_noti = () => {
-        fetch("{% url 'spezspellz:notifications' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
-            body: JSON.stringify({
-                method: "get_timed_noti",
-                time: new Date(Date.now()).toISOString()
-            })
-        }).then(response => response.json())
-            .then(data => notifications = data)
-            .catch(() => {});
-    }
-    window.refetch_noti();
-    setInterval(() => {
-        const cur_time = new Date(Date.now());
-        if(notifications.last_notified == null)
-            notifications.last_notified = new Date(0);
-        for(const bookmark of notifications.bookmarks) {
-            for(const noti of bookmark.notifications) {
-                const date = new Date(noti.time);
-                noti.target = "{{ user.pk }}";
-                noti.sender_id = noti.spell_id
-                noti.type = "spell";
-                noti.additional = "";
-                noti.ref = `/spell/${noti.spell_id}`;
-                noti.title = bookmark.title;
-                noti.icon = `/spell/thumbnail/${noti.spell_id}/`;
-                switch(noti.every) {
-                    case 'D': {
-                        const cur_year = cur_time.getFullYear();
-                        const cur_month = cur_time.getMonth();
-                        const cur_date = cur_time.getDate();
-                        const new_date = new Date(date);
-                        new_date.setFullYear(cur_year);
-                        new_date.setMonth(cur_month);
-                        const new_old_date = new Date(new_date);
-                        new_date.setDate(cur_date);
-                        new_old_date.setDate(cur_date);
-                        if(notifications.last_notified <= new_date && new_date <= cur_time ||
-                            notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
-                            create_notification(noti);
-                            const n = new Notification(bookmark.title, {
-                                body: noti.message,
-                                icon: bookmark.icon
-                            });
-                        }
-                        break;
-                    }
-                    case 'W': {
-                        const cur_year = cur_time.getFullYear();
-                        const cur_month = cur_time.getMonth();
-                        const cur_date = cur_time.getDate();
-                        const cur_day = cur_time.getDay();
-                        const new_date = new Date(date);
-                        new_date.setFullYear(cur_year);
-                        new_date.setMonth(cur_month);
-                        const new_old_date = new Date(new_date);
-                        new_date.setDate(cur_date-cur_day+new_date.getDay())
-                        new_old_date.setDate(cur_date-cur_day-7+new_date.getDay())
-                        if(notifications.last_notified <= new_date && new_date <= cur_time ||
-                            notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
-                            create_notification(noti);
-                            const n = new Notification(bookmark.title, {
-                                body: noti.message,
-                                icon: bookmark.icon
-                            });
-                        }
-                        break;
-                    }
-                    case 'M': {
-                        const cur_year = cur_time.getFullYear();
-                        const cur_month = cur_time.getMonth();
-                        const new_date = new Date(date);
-                        new_date.setFullYear(cur_year);
-                        const new_old_date = new Date(new_date);
-                        new_date.setMonth(cur_month);
-                        new_old_date.setMonth(cur_month - 1);
-                        if(notifications.last_notified <= new_date && new_date <= cur_time ||
-                            notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
-                            create_notification(noti);
-                            const n = new Notification(bookmark.title, {
-                                body: noti.message,
-                                icon: bookmark.icon
-                            });
-                        }
-                        break;
-                    }
-                    case 'Y': {
-                        const cur_year = cur_time.getFullYear();
-                        const new_date = new Date(date);
-                        new_date.setFullYear(cur_year);
-                        const new_old_date = new Date(date);
-                        new_old_date.setFullYear(cur_year - 1);
-                        if(notifications.last_notified <= new_date && new_date <= cur_time ||
-                            notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
-                            create_notification(noti);
-                            const n = new Notification(bookmark.title, {
-                                body: noti.message,
-                                icon: bookmark.icon
-                            });
-                        }
-                        break;
-                    }
-                    case 'S': {
-                        if(notifications.last_notified <= date && date <= cur_time) {
-                            create_notification(noti);
-                            const n = new Notification(bookmark.title, {
-                                body: noti.message,
-                                icon: bookmark.icon
-                            });
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-        notifications.last_notified = cur_time;
-        window.update_badge(unread_count);
-    }, 1000);
-    {% endif %}
+          const span = document.createElement("span");
+          span.classList.add("badge");
+          span.id = `unread-${noti.pk}`
+          span.style.display = "block";
+          span.innerText = "New";
+          popup_box.prepend(ref);
+          ref.append(noti_box);
+          noti_box.append(img);
+          noti_box.append(info);
+          info.append(title);
+          if (noti.additional !== "") {
+              const additional = document.createElement("p");
+              additional.classList.add("popup-additional")
+              additional.innerText = `${noti.additional}:`
+              info.append(additional)
+          }
+          info.append(message);
+          info.append(time);
+          noti_box.append(span);
+      }
+  }
+  {% if user.userinfo.review_comment_notification or user.userinfo.spell_review_notification or user.userinfo.spell_comment_notification or user.userinfo.comment_reply_notifications %}
+  window.ws.addEventListener("message", (event) => {
+      const data = JSON.parse(event.data);
+      if(data.type != "noti")
+          return;
+      const n = new Notification(data.title, {
+          body: data.message,
+          icon: data.icon
+      })
+      window.create_li(data);
+      window.update_badge(++unread_count);
+  });
+  {% endif %}
+  window.create_notification = (noti) => {
+      fetch("{% url 'spezspellz:notifications' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({
+              method: "create_notification",
+              target_user_id: noti.target,
+              sender_obj_id: noti.sender_id,
+              sender_obj_type: noti.type,
+              body: noti.message,
+              additional: noti.additional,
+              ref: noti.ref
+          })
+      }).then(res => {
+          res.text().then(_ => {
+              noti.pk = res.headers.get("pk");
+              create_li(noti);
+              window.update_badge(++unread_count);
+          });
+      });
+  }
+  window.update_badge = (unread_count) => {
+      if (badge != null) {
+          if (unread_count > 0) {
+              badge.innerText = unread_count.toString();
+              badge.style.display = "block";
+          } else {
+              badge.style.display = "none";
+          }
+      }
+  }
+  {% endif %}
+  {% if user.userinfo.timed_notification %}
+  window.refetch_noti = () => {
+      fetch("{% url 'spezspellz:notifications' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({
+              method: "get_timed_noti",
+              time: new Date(Date.now()).toISOString()
+          })
+      }).then(response => response.json())
+          .then(data => notifications = data)
+          .catch(() => {});
+  }
+  window.refetch_noti();
+  setInterval(() => {
+      const cur_time = new Date(Date.now());
+      if(notifications.last_notified == null)
+          notifications.last_notified = new Date(0);
+      for(const bookmark of notifications.bookmarks) {
+          for(const noti of bookmark.notifications) {
+              const date = new Date(noti.time);
+              noti.target = "{{ user.pk }}";
+              noti.sender_id = noti.spell_id
+              noti.type = "spell";
+              noti.additional = "";
+              noti.ref = `/spell/${noti.spell_id}`;
+              noti.title = bookmark.title;
+              noti.icon = `/spell/thumbnail/${noti.spell_id}/`;
+              switch(noti.every) {
+                  case 'D': {
+                      const cur_year = cur_time.getFullYear();
+                      const cur_month = cur_time.getMonth();
+                      const cur_date = cur_time.getDate();
+                      const new_date = new Date(date);
+                      new_date.setFullYear(cur_year);
+                      new_date.setMonth(cur_month);
+                      const new_old_date = new Date(new_date);
+                      new_date.setDate(cur_date);
+                      new_old_date.setDate(cur_date);
+                      if(notifications.last_notified <= new_date && new_date <= cur_time ||
+                          notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
+                          create_notification(noti);
+                          const n = new Notification(bookmark.title, {
+                              body: noti.message,
+                              icon: bookmark.icon
+                          });
+                      }
+                      break;
+                  }
+                  case 'W': {
+                      const cur_year = cur_time.getFullYear();
+                      const cur_month = cur_time.getMonth();
+                      const cur_date = cur_time.getDate();
+                      const cur_day = cur_time.getDay();
+                      const new_date = new Date(date);
+                      new_date.setFullYear(cur_year);
+                      new_date.setMonth(cur_month);
+                      const new_old_date = new Date(new_date);
+                      new_date.setDate(cur_date-cur_day+new_date.getDay())
+                      new_old_date.setDate(cur_date-cur_day-7+new_date.getDay())
+                      if(notifications.last_notified <= new_date && new_date <= cur_time ||
+                          notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
+                          create_notification(noti);
+                          const n = new Notification(bookmark.title, {
+                              body: noti.message,
+                              icon: bookmark.icon
+                          });
+                      }
+                      break;
+                  }
+                  case 'M': {
+                      const cur_year = cur_time.getFullYear();
+                      const cur_month = cur_time.getMonth();
+                      const new_date = new Date(date);
+                      new_date.setFullYear(cur_year);
+                      const new_old_date = new Date(new_date);
+                      new_date.setMonth(cur_month);
+                      new_old_date.setMonth(cur_month - 1);
+                      if(notifications.last_notified <= new_date && new_date <= cur_time ||
+                          notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
+                          create_notification(noti);
+                          const n = new Notification(bookmark.title, {
+                              body: noti.message,
+                              icon: bookmark.icon
+                          });
+                      }
+                      break;
+                  }
+                  case 'Y': {
+                      const cur_year = cur_time.getFullYear();
+                      const new_date = new Date(date);
+                      new_date.setFullYear(cur_year);
+                      const new_old_date = new Date(date);
+                      new_old_date.setFullYear(cur_year - 1);
+                      if(notifications.last_notified <= new_date && new_date <= cur_time ||
+                          notifications.last_notified <= new_old_date && new_old_date <= cur_time) {
+                          create_notification(noti);
+                          const n = new Notification(bookmark.title, {
+                              body: noti.message,
+                              icon: bookmark.icon
+                          });
+                      }
+                      break;
+                  }
+                  case 'S': {
+                      if(notifications.last_notified <= date && date <= cur_time) {
+                          create_notification(noti);
+                          const n = new Notification(bookmark.title, {
+                              body: noti.message,
+                              icon: bookmark.icon
+                          });
+                      }
+                      break;
+                  }
+              }
+          }
+      }
+      notifications.last_notified = cur_time;
+  }, 1000);
+  {% endif %}
 </script>
 </html>

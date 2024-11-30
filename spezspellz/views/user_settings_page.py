@@ -5,8 +5,11 @@ from django.shortcuts import render
 from django.views import View
 from django.db import transaction
 from django.contrib.auth.models import User
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 from spezspellz.models import Spell, HasTag, UserInfo, Bookmark, \
-    Review, ReviewComment, SpellComment, CommentComment, RateTag, RateCategory
+    Review, ReviewComment, SpellComment, CommentComment, RateTag, \
+    RateCategory, TagRequest, RateTagRequest
 from spezspellz.utils import get_or_none
 from .rpc_view import RPCView
 
@@ -16,7 +19,13 @@ class UserSettingsPage(View, RPCView):
 
     def get(self, request: HttpRequest) -> HttpResponseBase:
         """Handle GET requests for this view."""
-        return render(request, "user_settings.html")
+        return render(
+            request,
+            "user_settings.html",
+            {
+                "max_desc": UserInfo.user_desc.field.max_length
+            }
+        )
 
     def post(self, request: HttpRequest, **kwargs) -> HttpResponseBase:
         """
@@ -35,6 +44,14 @@ class UserSettingsPage(View, RPCView):
             user_info.save()
             return HttpResponse("Avatar updated")
         return super().post(request, **kwargs)
+
+    def rpc_delete_account(self, request: HttpRequest) -> HttpResponseBase:
+        """Handle account deletion."""
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse("Unauthenticated", status=401)
+        user.delete()
+        return HttpResponse("OK")
 
     def rpc_rate(
         self,
@@ -56,6 +73,7 @@ class UserSettingsPage(View, RPCView):
         obj_types = {
             "tag": (HasTag, RateTag),
             "category": (Spell, RateCategory),
+            "tag_req": (TagRequest, RateTagRequest),
         }
         obj_class, rate_class = obj_types.get(obj_type, (None, None))
         if obj_class is None or rate_class is None:
@@ -63,21 +81,39 @@ class UserSettingsPage(View, RPCView):
         obj = get_or_none(obj_class, pk=obj_id)
         if obj is None:
             return HttpResponse("Object not found", status=404)
-        rate = get_or_none(rate_class, subject=obj, user=user)
-        if rate is None:
-            if vote is None:
+        with transaction.atomic():
+            rate = get_or_none(rate_class, subject=obj, user=user)
+            if rate is None:
+                if vote is None:
+                    return HttpResponse(
+                        rate_class.calc_rating(subject=obj), status=200
+                    )
+                rate = rate_class(user=user, subject=obj)
+            elif vote is None:
+                rate.delete()
                 return HttpResponse(
                     rate_class.calc_rating(subject=obj), status=200
                 )
-            rate = rate_class(user=user, subject=obj)
-        elif vote is None:
-            rate.delete()
-            return HttpResponse(
-                rate_class.calc_rating(subject=obj), status=200
-            )
-        cast(Any, rate).positive = vote
-        rate.save()
+            cast(Any, rate).positive = vote
+            rate.save()
         return HttpResponse(rate_class.calc_rating(subject=obj), status=200)
+
+    @staticmethod
+    def send_deleted(channel_name: str, obj_type: str, obj_id: int, exclude: Optional[User]):
+        """Send signal to client that the object is deleted."""
+        channel = get_channel_layer()
+        async_to_sync(channel.group_send)(
+            channel_name,
+            {
+                "type": "realtime",
+                "except": exclude,
+                "data": {
+                    "type": "deleted",
+                    "obj": obj_type,
+                    "id": obj_id
+                }
+            }
+        )
 
     def rpc_delete(
         self,
@@ -96,18 +132,20 @@ class UserSettingsPage(View, RPCView):
         if not isinstance(obj_id, int):
             return HttpResponse("Parameter `id` must be a string", status=400)
         obj_types = {
-            "spell": (Spell, "creator"),
-            "review": (Review, "user"),
-            "comment": (SpellComment, "commenter"),
-            "review_comment": (ReviewComment, "commenter"),
-            "comment_comment": (CommentComment, "commenter")
+            "spell": (Spell, "creator", None),
+            "review": (Review, "user", lambda obj, usr: self.send_deleted(f"spell_{obj.spell.pk}", "review", obj.pk, usr)),
+            "comment": (SpellComment, "commenter", lambda obj, usr: self.send_deleted(f"spell_{obj.spell.pk}", "comment", obj.pk, usr)),
+            "review_comment": (ReviewComment, "commenter", lambda obj, usr: self.send_deleted(f"spell_{obj.review.spell.pk}", "reviewcomment", obj.pk, usr)),
+            "comment_comment": (CommentComment, "commenter", lambda obj, usr: self.send_deleted(f"spell_{obj.comment.spell.pk}", "commentcomment", obj.pk, usr))
         }
-        obj_class, user_attr = obj_types.get(obj_type, (None, None))
+        obj_class, user_attr, callback = obj_types.get(obj_type, (None, None, None))
         if obj_class is None:
             return HttpResponse("Parameter `obj_type` is invalid", status=400)
         obj = get_or_none(obj_class, pk=obj_id, **{cast(str, user_attr): user})
         if obj is None:
             return HttpResponse("Object not found", status=404)
+        if callback is not None:
+            callback(obj, user)
         obj.delete()
         return HttpResponse("Object deleted", status=200)
 
@@ -140,6 +178,7 @@ class UserSettingsPage(View, RPCView):
         re_coms_noti: bool = True,
         sp_re_noti: bool = True,
         sp_coms_noti: bool = True,
+        coms_rep_noti: bool = True,
         private: bool = False,
         desc: str = ""
     ) -> HttpResponse:
@@ -154,8 +193,9 @@ class UserSettingsPage(View, RPCView):
             user_info.review_comment_notification = bool(re_coms_noti)
             user_info.spell_review_notification = bool(sp_re_noti)
             user_info.spell_comment_notification = bool(sp_coms_noti)
+            user_info.comment_reply_notifications = bool(coms_rep_noti)
             user_info.private = bool(private)
-            user_info.user_desc = str(desc)
+            user_info.user_desc = str(desc)[:UserInfo.user_desc.field.max_length]
             user_info.save()
         return HttpResponse("OK")
 
