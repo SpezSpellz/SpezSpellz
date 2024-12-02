@@ -3,7 +3,7 @@ from enum import Enum
 from functools import partial
 from django.shortcuts import render
 from django.views import View
-from django.db.models import Count, Avg, QuerySet
+from django.db.models import Count, Avg, QuerySet, Q
 from django.contrib.auth.models import User
 from spezspellz.models import Spell, Tag, Category
 from spezspellz.utils import safe_cast, get_or_none
@@ -92,9 +92,12 @@ class FilterPage(View):
                     hastag__tag__name=safe_cast(str, selected_tag, '')
                 )
 
-        query = request.GET.get("s")
-        if query:
-            spells = spells.filter(title__icontains=query.strip())
+        search_text: str | None = request.GET.get("s")
+        if search_text:
+            query = Q()
+            for i in search_text.split():
+                query &= Q(title__icontains=i) | Q(creator__username__icontains=i)
+            spells = spells.filter(query)
 
         creator_pk = safe_cast(int, request.GET.get("creator"), None)
         creator = get_or_none(User, pk=creator_pk)

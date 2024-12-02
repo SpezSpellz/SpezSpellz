@@ -1,6 +1,6 @@
 """Implements the profile page."""
 from typing import Any, cast
-from django.http import HttpRequest, HttpResponseBase
+from django.http import HttpRequest, HttpResponseBase, Http404
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -31,7 +31,7 @@ def other_profile_view(request: HttpRequest, user_id: int) -> HttpResponseBase:
         return redirect("spezspellz:profile")
     other_user = get_or_none(User, pk=user_id)
     if other_user is None:
-        return redirect('spezspellz:404')
+        raise Http404
     return render(request, 'profile.html', {
         'other_user': other_user,
         'spells': cast(Any, other_user).spell_set.all(),

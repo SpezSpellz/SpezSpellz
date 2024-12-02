@@ -23,7 +23,7 @@
   <div id="0tab" class="tab">
     <h2>Avatar</h2>
     <hr>
-    <input id="upload_avatar_btn" type="image" width="128" src="{% url 'spezspellz:avatar' user.pk %}"/>
+    <input id="upload_avatar_btn" type="image" class="default_img" src="{% url 'spezspellz:avatar' user.pk %}"/>
     <input id="upload_avatar_input" accept="image/png, image/jpeg" name="pp" type="file" hidden/>
     <h2>About me</h2>
     <hr>
@@ -127,7 +127,7 @@
         </td>
       </tr>
     </table>
-    <button id="delete_account" class="generic-button" style="font-size: 16pt;margin: auto;display: block;margin-top: 16px;" disabled>Delete</button>
+    <button id="delete_account" class="delete-btn" style="font-size: 16pt;margin: auto;display: block;margin-top: 16px;" disabled>Delete</button>
   </div>
 </div>
 <script>

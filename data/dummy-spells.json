@@ -21,6 +21,134 @@
   }
 },
 {
+  "model": "spezspellz.userinfo",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "I AM THE DEMO, I AM THE FIRST USER EVER CREATED, EVER!!",
+    "avatar": "content/BlackbeardPeak.jpg",
+    "last_notified": "2024-11-12T13:14:01.617Z"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 2,
+  "fields": {
+    "user": 3,
+    "private": true,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "I'm an edgy private user. Nobody can visit my profile because I hate people.",
+    "avatar": "",
+    "last_notified": "2024-10-26T10:58:37.532Z"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 3,
+  "fields": {
+    "user": 4,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "Hi there! I'm Astrid Moon, a witch with a love for the earthy and mysterious. When I'm not sharing my knowledge, you can find me tending to my garden or brewing potions.",
+    "avatar": "content/AstridMoon.png",
+    "last_notified": "2024-10-16T04:23:20.445Z"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 4,
+  "fields": {
+    "user": 5,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "Greetings, I'm Eryndor Thorne. I'm on a quest for understanding the mysteries of the universe. If you're looking for someone to share their insights with, I might be your guide.",
+    "avatar": "content/EryndorThorne.png",
+    "last_notified": "2024-10-16T04:23:20.445Z"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 5,
+  "fields": {
+    "user": 6,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "Hey there! I'm Luna Nightshade, a witch with a passion for magic and mayhem. If you're looking for someone to shake things up, I might be your person.",
+    "avatar": "content/LunaNightshade.png",
+    "last_notified": "2024-10-16T04:23:20.445Z"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 6,
+  "fields": {
+    "user": 7,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "Hello, I'm Rowan Wystan. I've been on this journey for many years, sharing my knowledge with those who seek wisdom. Take a seat by the fire and let's have a chat.",
+    "avatar": "content/RowanWystan.png",
+    "last_notified": "2024-10-16T04:23:20.445Z"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 7,
+  "fields": {
+    "user": 8,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "Hey, I'm Piper Witchwood! I'm all about spreading magic and positivity wherever I go. Join me on my journey of discovery and let's make some witchy memories!",
+    "avatar": "content/PiperWitchwood.png",
+    "last_notified": "2024-10-16T04:23:20.445Z"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 8,
+  "fields": {
+    "user": 10,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "",
+    "avatar": "content/images_6dWK57z_vxxBLIf.jfif",
+    "last_notified": "2024-11-13T01:12:13.526Z"
+  }
+},
+{
   "model": "spezspellz.spell",
   "pk": 1,
   "fields": {
@@ -136,8 +264,7 @@
     "title": "Whispering Winds Summoning",
     "data": "# Whispering Winds Summoning\nSummon the whispers of the wind to reveal hidden truths and fortunes.  \n\n## Chant\nAstra, aera, mentis: hear our plea\n\n##Amplitude\nTo use this spell, you must have amplitude for the wind element and be able to focus your mind.",
     "thumbnail": "content/Whispering_Winds_Summoning.png",
-    "category": 1,
-    "date": "2024-11-13"
+    "category": 1
   }
 },
 {
@@ -267,7 +394,7 @@
     "creator": 1,
     "title": "LET THE BASS KICK",
     "data": "Brainpower, Let the bass kick,\r\n\r\nO-oooooooooo AAAAE-A-A-I-A-U-\r\nJO-oooooooooooo AAE-O-A-A-U-U-A-\r\nE-eee-ee-eee AAAAE-A-E-I-E-A-\r\nJO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA\r\n\r\nO-oooooooooo AAAAE-A-A-I-A-U-\r\nJO-oooooooooooo AAE-O-A-A-U-U-A-\r\nE-eee-ee-eee AAAAE-A-E-I-E-A-\r\nJO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA\r\n\r\nO-oooooooooo AAAAE-A-A-I-A-U-\r\nJO-oooooooooooo AAE-O-A-A-U-U-A-\r\nE-eee-ee-eee AAAAE-A-E-I-E-A-\r\nJO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA-\r\n",
-    "thumbnail": "content/brain_power_QBkB6XC.jpg",
+    "thumbnail": "content/brain_power.jpg",
     "category": 1,
     "date": "2024-11-13"
   }
@@ -279,7 +406,7 @@
     "creator": 1,
     "title": "P'Boom Spell",
     "data": "WEAR THAT GLASSES LIKE A G\r\n",
-    "thumbnail": "content/images_6dWK57z.jfif",
+    "thumbnail": "content/black-guy-with-glasses.jpg",
     "category": 1,
     "date": "2024-11-13"
   }
@@ -1639,15 +1766,6 @@
   }
 },
 {
-  "model": "spezspellz.spellhistoryentry",
-  "pk": 24,
-  "fields": {
-    "user": 2,
-    "spell": 7,
-    "time": "2024-11-13T03:02:45.658Z"
-  }
-},
-{
   "model": "spezspellz.reviewcomment",
   "pk": 1,
   "fields": {
@@ -1672,15 +1790,6 @@
     "review": 16,
     "commenter": 4,
     "text": "Thank you for your kind words, dear! I'm happy to share more about the ritual and provide guidance on how to connect with the energy of the oak tree."
-  }
-},
-{
-  "model": "spezspellz.reviewcomment",
-  "pk": 4,
-  "fields": {
-    "review": 17,
-    "commenter": 1,
-    "text": "hey"
   }
 },
 {
@@ -1807,15 +1916,6 @@
     "spell": 19,
     "commenter": 6,
     "text": "Has anyone else tried using this spell with multiple people? I'd love to try it out with my coven"
-  }
-},
-{
-  "model": "spezspellz.spellcomment",
-  "pk": 15,
-  "fields": {
-    "spell": 1,
-    "commenter": 1,
-    "text": "hey"
   }
 },
 {

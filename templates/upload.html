@@ -28,7 +28,7 @@
   <div style="bottom: 15px;left: 0;right: 0;display:flex;flex-direction: row;justify-content: space-evenly; margin-top: 20px; margin-bottom: 20px;">
     <button id="close_add_tag_dlg">Close</button>
   </div>
-  <span style="margin-top: 50px; margin-left: 40px; color:white">No tag you were looking for? Request one <a href="/tags">here</a></span>
+  <span style="margin-top: 50px; margin-left: 40px; color:white">No tag you were looking for? Request one <a href="{% url 'spezspellz:tags_reqs' %}">here</a></span>
 </dialog>
 <dialog id="add_noti_dlg">
   <h1 class="section dlgheader">Add Notification</h1>
@@ -64,7 +64,7 @@
         <li>
           <h2 class="section">Thumbnail</h2>
           <input type="file" id="thumbnail_file" style="position: fixed; top: -100em" accept="image/png, image/jpeg"/>
-          <input id="change_thumbnail" type="image" width="128" src="/assets/default_thumbnail.jpg"/>
+          <input id="change_thumbnail" type="image" class="default_img" src="/assets/default_thumbnail.jpg"/>
         </li>
         <li>
           <h2 class="section">Category</h2>

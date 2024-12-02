@@ -119,8 +119,6 @@ hr {
     border-style: solid;
     border-radius: 20px;
     margin: 2px;
-    padding-left: 5px;
-    padding-right: 5px;
     display: flex;
     padding: 2px;
     user-select: none;
@@ -213,4 +211,8 @@ hr {
 
 .delete-button:hover {
     background-color: #e60000;
+  
+.mini-avatar {
+    margin-right: 10px;
+    border-radius: 50%
 }

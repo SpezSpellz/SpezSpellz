@@ -162,11 +162,12 @@ class UserSettingsPage(View, RPCView):
         spell = get_or_none(Spell, pk=spell_id)
         if spell is None:
             return HttpResponse("Spell not found", status=404)
-        bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
-        if bookmark is None:
-            Bookmark.objects.create(user=request.user, spell=spell)
-        else:
-            bookmark.delete()
+        with transaction.atomic():
+            bookmark = get_or_none(Bookmark, user=request.user, spell=spell)
+            if bookmark is None:
+                Bookmark.objects.create(user=request.user, spell=spell)
+            else:
+                bookmark.delete()
         return HttpResponse(
             "Bookmarked" if bookmark is None else "Unbookmarked"
         )

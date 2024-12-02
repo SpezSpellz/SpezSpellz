@@ -16,23 +16,33 @@
   </div>
   <div style="display: flex;flex-direction: column;">
     {% for tag_request in entries %}
-    <div style="display: flex;flex-direction: row;padding: 10px;background-color: #333;border-radius: 8px;">
-      <div style="display: inline-block;">
-        <div class="tag" style="background-color: {{ tag_request.req.color }}4e; border-color: {{ tag_request.req.color }};">
-          <div state="{% if tag_request.vote is None %}N{% else %}{% if tag_request.vote.positive %}U{% else %}D{% endif %}{% endif %}" style="display: flex;margin-right: 4px; margin-left: 3px;">
-            {% if user.is_authenticated %}
-            <input uv_btn onclick="rate(this.parentElement, true, {{ tag_request.req.pk }})" type="image" src="{% if tag_request.vote is not None and tag_request.vote.positive %}/assets/up_filled.svg{% else %}/assets/up_outline.svg{% endif %}" height="15"/>
-            {% endif %}
-            <span v_rt style="color: #FFF">{{ tag_request.req.rating }}</span>
-            {% if user.is_authenticated %}
-            <input dv_btn onclick="rate(this.parentElement, false, {{ tag_request.req.pk }})" type="image" src="{% if tag_request.vote is not None and not tag_request.vote.positive %}/assets/down_filled.svg{% else %}/assets/down_outline.svg{% endif %}" height="15"/>
-            {% endif %}
+    <div style="padding: 10px;background-color: #333;border-radius: 8px;">
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr)">
+        <div style="display: inline-block;">
+          <div class="tag-req" style="background-color: {{ tag_request.req.color }}4e; border-color: {{ tag_request.req.color }};">
+            <div state="{% if tag_request.vote is None %}N{% else %}{% if tag_request.vote.positive %}U{% else %}D{% endif %}{% endif %}" style="display: flex;margin-right: 4px; margin-left: 3px;">
+              {% if user.is_authenticated %}
+              <input uv_btn onclick="rate(this.parentElement, true, {{ tag_request.req.pk }})" type="image" src="{% if tag_request.vote is not None and tag_request.vote.positive %}/assets/up_filled.svg{% else %}/assets/up_outline.svg{% endif %}" height="15"/>
+              {% endif %}
+              <span v_rt style="color: #FFF">{{ tag_request.req.rating }}</span>
+              {% if user.is_authenticated %}
+              <input dv_btn onclick="rate(this.parentElement, false, {{ tag_request.req.pk }})" type="image" src="{% if tag_request.vote is not None and not tag_request.vote.positive %}/assets/down_filled.svg{% else %}/assets/down_outline.svg{% endif %}" height="15"/>
+              {% endif %}
+            </div>
+            <span style="color: {{ tag_request.req.color }};margin-right: 4px;">{{ tag_request.req.name }}</span>
           </div>
-          <span style="color: {{ tag_request.req.color }};margin-right: 4px;">{{ tag_request.req.name }}</span>
         </div>
+        {% if user.is_superuser %}
+        <div style="display: flex; gap: 5px; justify-self: right; align-items: center">
+            <button class="btn-like accept-btn"><img style="align-self: center; justify-self: center" width="25" src="/assets/checkmark.svg" alt="Accept"></button>
+            <button class="btn-like reject-btn"><img style="align-self: center; justify-self: center" width="25" src="/assets/cross.svg" alt="Reject"></button>
+        </div>
+        {% endif %}
       </div>
+      <br>
       <p style="color: #FFF;margin: 0;margin-left: 5px;">{{ tag_request.req.desc }}</p>
     </div>
+    <br>
     {% endfor %}
   </div>
   {% else %}
@@ -74,12 +84,12 @@
     <span>Description</span><br><textarea maxlength="512" id="tag_desc"></textarea><br>
     <div style="display: flex">
       <button onclick="submit_req()">Submit</button>
-      <button onclick="window.create_request_dlg.close()" id="close_btn">Close</button>
+      <button onclick="window.create_request_dlg.close()">Close</button>
     </div>
   </div>
   <div id="msg_part" style="display: none;">
     <p id="out_msg">This is a test message</p>
-    <button onclick="window.create_request_dlg.close()" id="close_btn">Close</button>
+    <button onclick="close_req_dlg()" id="close_btn">Close</button>
   </div>
 </dialog>
 <script>
@@ -134,6 +144,12 @@
     window.tag_name.value = "";
     window.tag_desc.value = "";
   }
+  let should_reload = false;
+  function close_req_dlg() {
+    if(should_reload)
+      location.reload();
+    window.create_request_dlg.close();
+  }
   function submit_req() {
     window.input_part.style.display = 'none';
     window.msg_part.style.display = null;
@@ -152,6 +168,7 @@
     }).then(res => res.text()).then(text => {
       window.out_msg.innerText = text;
       window.close_btn.removeAttribute("disabled");
+      should_reload = true;
     }).catch(() => {
       window.out_msg.innerText = "An unexpected error occurred";
       window.close_btn.removeAttribute("disabled");

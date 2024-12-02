@@ -74,21 +74,21 @@ li:empty {
     max-width: 800px;
 }
 
-.bookmark {
+.base-btn {
+    width: 36px;
+    height: 36px;
     margin-right: 8px;
-    background-color: #A00000;
+    display: grid;
 }
 
-.bookmark:hover {
-    background-color: #E00000;
-}
-
-.bookmark:active {
-    background-color: #F00;
+.base-img {
+    width: 32px;
+    height: 32px;
+    justify-self: center;
+    align-self: center;
 }
 
 .edit-btn {
-    margin-right: 8px;
     flex: 0 0 36px;
     background-color: #5B5B5B;
 }
@@ -140,11 +140,6 @@ li:empty {
     border: 0px solid black;
 }
 
-.profile-pic {
-    border-radius: 50%;
-    width: 200px;
-}
-
 .spell {
     position: relative;
     display: block;
@@ -152,10 +147,6 @@ li:empty {
     color: #FFFFFF;
     padding: 1%;
     border-radius: 20px;
-}
-
-.spell-pic {
-    width: 100px;
 }
 
 .spell-row {

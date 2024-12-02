@@ -24,3 +24,7 @@ class TagRequest(Model):
             h = (((h << 5) - h) + ord(ch))
         h &= 0xFFFFFFFF
         return TAG_COLORS[h % len(TAG_COLORS)]
+
+    def __str__(self):
+        """Return tag name."""
+        return str(self.name)

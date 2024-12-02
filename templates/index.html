@@ -61,11 +61,18 @@
           </div>
           <div id="success-box" style="display: flex; flex-direction: column; margin-top: 21px;">
             <span class="all-spell-category"> Used by: {{ spell.tried }} people</span>
-            <span class="all-spell-category success-rate" data-rate="{{ bookmark.spell.success_rate }}">
-                  Success rate: {{ spell.success_rate }}%</span>
+            {% if spell.tried != 0 %}
+            <span class="all-spell-category success-rate" data-rate="{{ spell.success_rate }}">
+                  Success rate: {{ spell.success_rate|floatformat:2 }}%</span>
+            {% else %}
+            <span class="all-spell-category">Not tried</span>
+            {% endif %}
           </div>
         </div>
         <p class="all-spell-data">{{ spell.title }} {{ spell.summary|slice:":100" }}...</p>
+      </div>
+      <div class="spell-text-box" style="margin-left: auto; margin-right: 20px;">
+        <span class="all-spell-category"> Creation date: {{ spell.date }}</span>
       </div>
     </div></a>
   {% empty %}
@@ -89,26 +96,6 @@
 </div>
 
 <!--Script for getting color depending on the success rate -->
-    <script>
-        function getSuccessRateColor(successRate) {
-      if (successRate >= 80) {
-          return "green";
-      } else if (successRate >= 60) {
-          return "yellow";
-      } else if (successRate >= 40) {
-          return "orange";
-      } else {
-          return "red";
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-            // Apply color directly
-            document.querySelectorAll(".success-rate").forEach((element) => {
-                const successRate = parseInt(element.dataset.rate, 10);
-                element.style.color = getSuccessRateColor(successRate); // Call directly
-            });
-        });
-    </script>
+<script src="/assets/js/successRate.js"></script>
 
 {% endblock %}
