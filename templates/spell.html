@@ -20,17 +20,8 @@
       <h3 style="color: #FFF;margin: 0;">{{ spell.creator.username }}</h3>
     </a>
     <h3 style="color: #FFF;margin: 0;margin-top: 5px;margin-right: 8px;">{{ avg_star }} stars</h3>
-    <div style="display: flex;" state="{% if success_vote is None %}N{% else %}{% if success_vote.positive %}U{% else %}D{% endif %}{% endif %}">
-      <h3 style="color: #FFF;margin: 0;margin-right: 8px;">Success rate: {{ spell.success_rate|floatformat:2 }}%</h3>
-      <input v_rt hidden/>
-      {% if user.is_authenticated %}
-      <input uv_btn onclick="window.vote_obj(this.parentElement, 'success', true, {{ spell.pk }})" type="image" src="{% if success_vote is not None and success_vote.positive %}/assets/up_filled.svg{% else %}/assets/up_outline.svg{% endif %}"/>
-      {% endif %}
-      {% if user.is_authenticated %}
-      <input dv_btn onclick="window.vote_obj(this.parentElement, 'success', false, {{ spell.pk }})" type="image" src="{% if success_vote is not None and not success_vote.positive %}/assets/down_filled.svg{% else %}/assets/down_outline.svg{% endif %}"/>
-      {% endif %}
-    </div>
-    <h3 style="color: #FFF;margin: 0;margin-top: 5px;margin-right: 8px;">Used by {{ spell.tried }} user(s)</h3>
+    <h3 style="color: #FFF;margin: 0;margin-right: 8px;">Success rate: <span id="succ_rate">{{ spell.success_rate|floatformat:2 }}</span>%</h3>
+    <h3 style="color: #FFF;margin: 0;margin-top: 5px;margin-right: 8px;">Used by <span id="used_by">{{ spell.tried }}</span> user(s)</h3>
     <div style="display: flex;" state="{% if category_vote is None %}N{% else %}{% if category_vote.positive %}U{% else %}D{% endif %}{% endif %}">
       <h3 style="color: #FFF;margin: 0;margin-right: 8px;">Category: {{ spell.category.name }}</h3>
       {% if user.is_authenticated %}
@@ -214,6 +205,96 @@
     <input c_send class="btn-like send-btn" style="margin-left: 8px;" width="32" type="image" src="/assets/send.svg"/>
   </div>
 </template>
+    
+<div class="spell">
+    <h2>Have you ever tried this spell before? Please share your results with us!</h2>
+    {% if request.user.is_authenticated %}
+    <div id="rating_boxes" class="rating-boxes">
+      <button name="rating" value="0" class="rating-box" {% if user_rating.rating == 0 %}selected{% endif %}>
+        <img width="32" src="/assets/mood-angry.svg"/>
+        <span>Never works</span>
+      </button>
+      <button name="rating" value="1" class="rating-box" {% if user_rating.rating == 1 %}selected{% endif %}>
+        <img width="32" src="/assets/mood-confused.svg"/>
+        <span>Rarely work</span>
+      </button>
+      <button name="rating" value="2" class="rating-box" {% if user_rating.rating == 2 %}selected{% endif %}>
+        <img width="32" src="/assets/mood-empty.svg"/>
+        <span>Sometimes works</span>
+      </button>
+      <button name="rating" value="3" class="rating-box" {% if user_rating.rating == 3 %}selected{% endif %}>
+        <img width="32" src="/assets/mood-smile.svg"/>
+        <span>Usually works</span>
+      </button>
+      <button name="rating" value="4" class="rating-box" {% if user_rating.rating == 4 %}selected{% endif %}>
+        <img width="32" src="/assets/mood-happy.svg"/>
+        <span>Always works well</span>
+      </button>
+    </div>
+
+    <div id="prev_succ" class="previous-choice" {% if not user_rating %}hidden{% endif %}>
+      <button id="delete_succ" class="delete-button">Remove Rating</button>
+    </div>
+    <script>
+      const buttons = window.rating_boxes.getElementsByTagName("button");
+      for(const ele of buttons) {
+        ele.addEventListener("click", (e) => {
+          const wasSelected = ele.hasAttribute("selected");
+          let used_by = parseInt(window.used_by.innerText);
+          let cur_weight = parseFloat(window.succ_rate.innerText);
+          const weight = parseInt(ele.getAttribute("value"));
+          let last_selected;
+          for(const btn of buttons) {
+            if(btn.hasAttribute("selected"))
+              last_selected = btn;
+            btn.removeAttribute("selected");
+          }
+          fetch("{% url 'spezspellz:spell' spell.pk %}", {
+            method: "POST",
+            headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+              method: "rate_success",
+              spell_id: parseInt("{{ spell.pk }}"),
+              rating: (wasSelected ? -1 : weight)
+            })
+          }).then(() => {}).catch(() => window.reload());
+          if(last_selected !== undefined) {
+            if(used_by == 1) 
+              cur_weight = 100;
+            else
+              cur_weight = (cur_weight*used_by-parseInt(last_selected.getAttribute("value"))*25)/(used_by - 1);
+            window.succ_rate.innerText = cur_weight.toFixed(2);
+            --used_by;
+            window.used_by.innerText = used_by;
+          }
+          if(!wasSelected) {
+            window.used_by.innerText = used_by + 1;
+            const new_weight = (cur_weight*used_by+weight*25)/(used_by + 1);
+            window.succ_rate.innerText = new_weight.toFixed(2);
+            ele.setAttribute("selected", true);
+            window.prev_succ.removeAttribute("hidden");
+            return;
+          }
+          window.prev_succ.setAttribute("hidden", true);
+        });
+      }
+      window.delete_succ.addEventListener("click", () => {
+        window.prev_succ.setAttribute("hidden", true);
+        for(const btn of buttons) {
+          if(btn.hasAttribute("selected")) {
+            btn.click();
+            continue;
+          }
+        }
+      });
+    </script>
+    {% else %}
+    <a href="{% url 'login' %}?next={{ request.path }}">Login in to share your results</a>
+    {% endif %}
+</div>
+    
 <div class="spell">
   <div style="display: flex;justify-content: space-evenly;">
     <button id="reviews_btn" style="font-size: 28pt;background-color: transparent;border-style: none;color: #FFF;cursor: pointer;" onclick="window.show_tab(false)">Reviews</button>

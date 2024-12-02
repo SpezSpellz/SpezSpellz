@@ -1,0 +1,41 @@
+name: Bug report
+description: File a bug report. If this doesn't look right, choose another template.
+title: '[Bug]: '
+body:
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What happened?
+      description: What happens that you do not expect to happen
+      placeholder: Something doesn't display something I want
+    validations:
+      required: true
+  - type: textarea
+    id: what_done
+    attributes:
+      label: What did you do to make it happen?
+      description: Detailed steps of what you did to cause the behavior above to happen
+      placeholder: I went to this link and clicked something here
+    validations:
+      required: true
+  - type: textarea
+    id: what_expect
+    attributes:
+      label: What did you expect to happen?
+      description: What you actually expect to happen when you did the steps above
+      placeholder: It should've show something instead
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: What browser are you seeing this problem on?
+      description: >-
+        Specify the version as well as the name. If you are using the mobile
+        version, please specify that as well. If this occurs on multiple
+        browsers, you may separate the browser names with semicolon `;`
+      placeholder: >-
+        Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101
+        Firefox/132.0
+    validations:
+      required: true

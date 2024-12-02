@@ -4,7 +4,8 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .rate_success import RateSuccess
+from django.db.models import Avg
+from .success_rate import SuccessRate
 
 
 class UserInfo(models.Model):
@@ -41,16 +42,16 @@ class UserInfo(models.Model):
     @property
     def spells_tried(self) -> int:
         """Returns the spell tried."""
-        return RateSuccess.objects.filter(subject__creator=self.user).count()
+        return SuccessRate.objects.filter(spell__creator=self.user).count()
 
     @property
     def success_rate(self):
         """Calculates the success rate of all their spells."""
-        rate_count = self.spells_tried
-        return ((RateSuccess.objects.filter(
-            subject__creator=self.user,
-            positive=True
-        ).count()/rate_count) if rate_count != 0 else 1) * 100
+        avg_success = SuccessRate.objects.filter(spell__creator=self.user) \
+            .aggregate(Avg('rating'))['rating__avg']
+        if avg_success is None:
+            return 100
+        return (avg_success / 4) * 100
 
     @property
     def unread_badge(self):
