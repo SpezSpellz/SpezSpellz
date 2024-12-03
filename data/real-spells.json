@@ -175,9 +175,9 @@
     "spell_review_notification": true,
     "spell_comment_notification": true,
     "comment_reply_notifications": true,
-    "user_desc": "",
-    "avatar": "",
-    "last_notified": "2024-12-03T03:27:21.383Z"
+    "user_desc": "It's me agile_man, I can speak Thai a little bit.",
+    "avatar": "content/download_1_VEdu5XZ.jpg",
+    "last_notified": "2024-12-03T04:05:13.305Z"
   }
 },
 {
@@ -191,9 +191,9 @@
     "spell_review_notification": true,
     "spell_comment_notification": true,
     "comment_reply_notifications": true,
-    "user_desc": "",
-    "avatar": "",
-    "last_notified": "2024-12-03T03:27:03.176Z"
+    "user_desc": "I love refactoring code. Code doesn't have smell, but it can be stinky.",
+    "avatar": "content/download_2.jpg",
+    "last_notified": "2024-12-03T04:04:46.756Z"
   }
 },
 {
@@ -653,6 +653,15 @@
     "user": 12,
     "spell": 34,
     "time": "2024-12-03T03:26:58.310Z"
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 39,
+  "fields": {
+    "user": 12,
+    "spell": 30,
+    "time": "2024-12-03T03:48:41.609Z"
   }
 }
 ]

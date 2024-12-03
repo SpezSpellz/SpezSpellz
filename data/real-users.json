@@ -4,7 +4,7 @@
   "pk": 11,
   "fields": {
     "password": "pbkdf2_sha256$870000$uVHkCkM3HfMlRiFL7DvBPR$c4pjlzVCN74Twxrcx5TjOtTTgPPEWj36cTykzJy2Qrk=",
-    "last_login": "2024-12-03T03:27:20.987Z",
+    "last_login": "2024-12-03T04:05:07.037Z",
     "is_superuser": false,
     "username": "Agile_man",
     "first_name": "",
