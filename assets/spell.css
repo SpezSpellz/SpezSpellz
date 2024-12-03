@@ -211,7 +211,8 @@ hr {
 
 .delete-button:hover {
     background-color: #e60000;
-  
+}
+
 .mini-avatar {
     margin-right: 10px;
     border-radius: 50%
