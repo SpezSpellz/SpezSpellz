@@ -1,0 +1,658 @@
+[
+{
+  "model": "spezspellz.category",
+  "pk": 1,
+  "fields": {
+    "name": "Spell"
+  }
+},
+{
+  "model": "spezspellz.category",
+  "pk": 2,
+  "fields": {
+    "name": "Ritual"
+  }
+},
+{
+  "model": "spezspellz.category",
+  "pk": 3,
+  "fields": {
+    "name": "Item"
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 23,
+  "fields": {
+    "creator": 11,
+    "title": "คาถาเงินล้าน / Million spell",
+    "data": "# คาถาเงินล้าน (หลวงพ่อฤาษีลิงดำ วัดท่าซุง จ.อุทัยธานี)  \r\n\r\n**เริ่มต้น ตั้งนะโม 3 จบ และกล่าว**  \r\nสัมปจิตฉามิ นาสังสิโม  \r\nพรหมา จะ มหาเทวา สัพเพยักขา ปะรายันติ  \r\nพรหมา จะ มหาเทวา อภิลาภา ภะวันตุ เม  \r\nมหาปุญโญ มหาลาโภ ภะวันตุ เม มิเตพาหุหะติ  \r\nพุทธะ มะอะอุ นะโมพุทธายะ  \r\nวิระทะโย วิระโคนายัง วิระหิงสา  \r\nวิระทาสี วิระทาสา วิระอิตถิโย  \r\nพุทธัสสะ มานีมามะ พุทธัสสะ สวาโหม  \r\nสัมปติจฉามิ เพ็ง ๆ พา ๆ หา ๆ ฤา ๆ  \r\nสวดบูชา 9 จบ และอธิษฐานขอให้มีเงินมีทองไหลมาเทมา พร้อมกับแผ่เมตตา อุทิศส่วนบุญส่วนกุศลให้กับเจ้ากรรมนายเวรเรื่องการเงิน  \r\n\r\n---\r\n\r\n# Million spell (Luang Por Ruesi Ling Dam, Wat Tha Sung, Uthai Thani Province)  \r\n\r\n**Begin with chanting Namo 3 times and said**  \r\nSampajit Chami Nasangsimo  \r\nBrahma ja Mahadeva Sappeyak Parayanti  \r\nBrahma ja mahadeva apilapa bhavantume  \r\nMahapuño Mahalapho Bhavantu Me Mite Pahuhati  \r\nBuddha, Maau, Namoputthaya.  \r\nWiratayo Wirakonayang Wirahinsa  \r\nViratasi Viratasa Viraittiyo  \r\nBuddhasa Manimama Buddhasa Swahom  \r\nSampatichami Peng Peng Pa Pa Ha Ha Rue Rue  \r\nRepeat 9 times and pray for money flowing in along with show mercy, merit and generosity for your financial enemies from a former life.",
+    "thumbnail": "content/rh.jpg",
+    "category": 1,
+    "date": "2024-12-03"
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 24,
+  "fields": {
+    "creator": 11,
+    "title": "คาถาเรียกทรัพย์  / Wealthy spell",
+    "data": "# คาถาเรียกทรัพย์ (หลวงพ่อปาน วัดบางนมโค จ.พระนครศรีอยุธยา) \r\n**เริ่มต้น ตั้งนะโม 3 จบ และกล่าว**  \r\nพุทธะ มะอะอุ นะโมพุทธายะ (1 จบ)  \r\nวิระทะโย วิระโคนายัง วิระหิงสา  \r\nวิระทาสี วิระทาสา วิระอิตถิโย  \r\nพุทธัสสะ มาณีมามะ พุทธัสสะ สะวาโหม  \r\nสวดบูชา 3 จบ 5 จบ 7 จบ 9 จบก็ได้ค่ะ คาถานี้นิยมสวดตอนตื่นนอน ก่อนนอนหรือสวดก่อนเปิดร้านให้ทำมาค้าขายให้เงินไหลมาเทมา  \r\n\r\n---\r\n\r\n# Wealthy spell (Luang Por Pan Wat Bang Nom Kho, Phra Nakhon Si Ayutthaya Province)\r\n**Begin with chanting Namo 3 times and said**  \r\nBuddha Maau Namo Puttaya (1 time)  \r\nWiratayo Wirakonayang Wirahinsa  \r\nViratasi Viratasa Viraittiyo  \r\nBuddhassa, Manimama, Buddhassa, Savahom  \r\nRepeat 3, 5, 7 or 9 times. This spell is commonly chanted when waking up. Before going to bed or praying before opening a shop, make a trade so that money flows in.  \r\n",
+    "thumbnail": "content/1200x720-01.jpg",
+    "category": 1,
+    "date": "2024-12-03"
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 25,
+  "fields": {
+    "creator": 11,
+    "title": "คาถามหาลาภ / Great fortune spell ",
+    "data": "# คาถามหาลาภ (หลวงพ่อรวย ปาสาทิโก วัดตะโก จ.พระนครศรีอยุธยา) \r\n**เริ่มต้น ตั้งนะโม 3 จบ และกล่าว**  \r\nสัมพุทธชิตา จะสัจจานิ  \r\nเกรัตสะ พระพุทธชิตา  \r\nสัพพโส คุณะวิภา  \r\nสัมปัจโต นะรุตตะโม  \r\nมหาลาภัง สัพพะสิทธิ  \r\nภะวันตุ เม  \r\nสวดภาวนาเพื่อขอโชคขอลาภ เพื่อให้ทำมาหากินร่ำรวยเงินทอง  \r\n\r\n---\r\n\r\n# Great fortune spell (Luang Por Ruai Pasatiko, Wat Tako Phra Nakhon Si Ayutthaya)\r\n**Begin with chanting Namo 3 times and said**\r\nSambuddhachita Jasajjani.  \r\nGeratsa Buddha Chita  \r\nSappso Kunavipa  \r\nSampajto Naruttamo  \r\nMahalapang Sapphasit  \r\nBhavantu Mae  \r\nPray for good luck so that you can make a rich living with money.  \r\n\r\n",
+    "thumbnail": "content/551adee0-574f-11ec-91fe-7b8d71e75fc5_webp_original.jpg",
+    "category": 1,
+    "date": "2024-12-03"
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 26,
+  "fields": {
+    "creator": 11,
+    "title": "บทสวดมนต์ขอขมาพระรัตนตรัย / Prayer for the Throne",
+    "data": "# บทสวดมนต์ขอขมาพระรัตนตรัย \r\n**(นะโม 3 จบ)**\r\n“สัพพัง อะปะราธัง ขะมะถะ เม ภันเต อุกาสะ ทวารัตตะเยนะ กะตัง  \r\nสัพพัง อะปะราธัง ขะมะถะ เม ภันเต อุกาสะ ขะมามิ ภันเต ฯ”  \r\nหากข้าพระพุทธเจ้า ได้เคยประมาทพลาดพลั้งล่วงเกินต่อพระรัตนตรัย อันมีพระพุทธเจ้าทุก ๆ พระองค์ พระปัจเจกพุทธเจ้าทุก ๆ พระองค์ พระธรรม และพระอริยสงฆ์ทั้งหลาย ในชาติก่อนก็ดี ชาตินี้ก็ดี ด้วยทางกายหรือวาจาก็ดี และด้วยเจตนาหรือไม่มีเจตนาก็ดี รู้เท่าไม่ถึงการณ์ก็ดี ขอองค์สมเด็จพระสัมมาสัมพุทธเจ้าทุก ๆ พระองค์ พระปัจเจกพุทธเจ้าทุก ๆ พระองค์ พระธรรม พระอริยสงฆ์ทั้งหลายและผู้มีพระคุณทุกท่าน ได้โปรดอดโทษให้แก่ข้าพระพุทธเจ้าตั้งแต่บัดนี้เป็นต้นไป ตราบเท่าเข้าสู่พระนิพพานด้วยเทอญ ฯ   \r\nบทสวดมนต์นี้เป็นการแสดงถึงความเคารพต่อ พระพุทธ พระธรรม และพระสงฆ์ สิ่งศักดิ์สิทธิ์ ผู้มีพระคุณ ยิ่งสวดยิ่งเป็นสิริมงคลต่อชีวิต และเพื่อเป็นการขอขมาต่อความผิดพลาดที่เคยเกิดขึ้นซึ่งเราอาจจะตั้งใจหรือไม่ตั้งใจก็ได้\r\n\r\n---\r\n# Prayer for the Throne\r\n**(Namo 3 times)**\r\n“Sab Phang Ara Pha Nang Ra Thang Kha Ma Tha Phante U Sa Ka Tha Wa Ratta Ye Na Kha Tang  \r\nSab Phang A Pha Ra Thang Kha Ma Tha Me Phante U Ka Sa Kha Ma Mi Phan Te”  \r\nIf I have ever acted carelessly or transgressed against the Triple Gem, both in this life and in past lives, whether through body or speech, intentionally or unintentionally, knowingly or unknowingly, may all of you and all my benefactors please reduce my offenses from now on until I attain Nirvana.  \r\nThis prayer is an expression of respect towards the Buddha, the Dhamma, and the Sangha, as well as the sacred beings and benefactors. The more one recites it, the more it brings auspiciousness to life, and it serves as an apology for past mistakes, whether intentional or unintentional. \r\n",
+    "thumbnail": "content/OIP.jpg",
+    "category": 1,
+    "date": "2024-12-03"
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 27,
+  "fields": {
+    "creator": 11,
+    "title": "คาถามหาเสน่ห์ใจอ่อน / The Great Charm of the Soft ",
+    "data": "# คาถามหาเสน่ห์ใจอ่อน \r\n“ปัญจะมังสิระสังชาตัง นะอตใจ นะกาโร โหติ สัมภะโวตรีวานะ นะ การัง ปัญจะสัมภะวัง”  \r\nเอาไว้ท่องก่อนที่จะพูดคุยกับเค้าคนนั้น หรือใครก็ตาม ทำให้ให้คนเค้าใจอ่อนและยอมทำตามที่เราขอร้องทุกเรื่อง  \r\n\r\n---\r\n\r\n# The Great Charm of the Soft Heart\r\n“Pan Cha Mang Sira Sang Cha Tang Na Ot Chai Na Ka Ro Ho Ti Sam Pha Wo Tri Wa Na Na Ka Rang Pan Cha Sam Pha Wang”  \r\nUse this before talking to that person or anyone else to make them soften up and do whatever you ask them to do.  \r\n",
+    "thumbnail": "",
+    "category": 1,
+    "date": "2024-12-03"
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 28,
+  "fields": {
+    "creator": 11,
+    "title": "คาถาช่วยให้ทำได้ สอบผ่านฉลุย / Pass exam spell",
+    "data": "# คาถาช่วยให้ทำได้ สอบผ่านฉลุย  \r\n(ตั้ง นะโม 3 จบ)  \r\n“พานังทา โส สัตถานัง  \r\nมิโคมัง มิโคมา”  \r\n*ท่อง 1 จบ  \r\n\r\n---\r\n\r\n# Pass exam spell  \r\n(Namo 3 times)  \r\n“Pha Nang Ta So Sat Tha Nang  \r\nMi Co Mang Mi Co Ma”  \r\n*Recite 1 times.  \r\n",
+    "thumbnail": "content/OIP_1.jpg",
+    "category": 1,
+    "date": "2024-12-03"
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 29,
+  "fields": {
+    "creator": 11,
+    "title": "คาถาช่วยขอพรการสอบ / Prayer for exams",
+    "data": "# คาถาช่วยขอพรการสอบ  \r\n(ตั้ง นะโม 3 จบ)  \r\n“โอม ศรี คเณศายะ นะมะฮา”  \r\n*ท่อง 3, 5 หรือ 7 จบ  \r\n\r\n---\r\n\r\n# Prayer for exams  \r\n(Namo 3 times)  \r\n“Om Sri Kha Ne Sa Ya Na Ma Ha”  \r\n*Recite 3, 5 or 7 times  \r\n\r\n",
+    "thumbnail": "content/OIP_2.jpg",
+    "category": 1,
+    "date": "2024-12-03"
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 30,
+  "fields": {
+    "creator": 11,
+    "title": "คาถาช่วยเดาข้อสอบ / Guess exam answers",
+    "data": "# Guess exam answers / คาถาช่วยเดาข้อสอบ\r\n---\r\n(ตั้ง นะโม 3 จบ / Chant Namo 3 times)\r\n```\r\nนะโม ตัสสะ ภะคะวะโต อะระหะโต สัมมาสัมพุท ธัสสะ\r\nNamo tạs̄ s̄a p̣ha kha wa to xa ra h̄a to s̄ạmmā s̄ạm phuth ṭhạs̄ s̄a\r\n```\r\n(จากนั้นสวดบทนี้ 1 จบ / Then chant this 1 time):\r\n```\r\nสะหัสสเนตโต เทวินโท\r\nS̄a h̄ạs̄ s̄ net to    the win tho\r\n\r\nทิพจักขุง วิโสทายิ\r\nThiph cạkk̄hu ng    wi s̄o thāyi\r\n```",
+    "thumbnail": "content/img_0nCKOB2.png",
+    "category": 1,
+    "date": "2024-12-03"
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 31,
+  "fields": {
+    "creator": 11,
+    "title": "บทสวดมนต์ขอขมากรรม / Prayer for Karma",
+    "data": "**บทสวดมนต์ขอขมากรรม:** บทสวดมนต์นี้สำหรับการถอนคำสาปแช่ง ถอนคำสาบานทุกประการ โดยมักแนะนำให้สวดมนต์บทนี้ ทุกๆวันพระ 15 ค่ำ เพื่อความเป็นสิริมงคลแก่ชีวิต ค้าขายร่ำรวย ทำอะไรคล่องตัว  \r\n\r\n“อุกาสะ อัจจะโยโนภันเต อัจจะขมา ยะถาพาเล ยะถามูลเห  \r\n\r\nยะถาอะกุศเลเยมะ ยังกะรัมหา เอวังภันเต  \r\n\r\nอัจจะโยโน ปะฏิคัณหะถะ อายะติง สังวะเรยยามะ  \r\n\r\nอิมัง สัจจะวาจัง มิจฉาทิฏฐิ อะธิฏฐานัง ปัจจุทธะรามิ  \r\n\r\nทุติยัมปิ อิมัง สัจจะวาจัง มิจฉาทิฏฐิ อะธิฏฐานัง ปัจจุทธะรามิ  \r\n\r\nตะติยัมปิ อิมัง สัจจะวาจัง มิจฉาทิฏฐิ อะธิฏฐานัง ปัจจุทธะรามิ  \r\n\r\nนะถอน โมถอน พุทถอน ธาถอน ยะถอน ต้องคำสาป ให้ม้วยมรณ์ ถอนด้วยนะโม พุทธายะ ยะธา พุทโมนะฯ  \r\n\r\nนะสูญ โมสูญ พุทสูญ ธาสูญ ยะสูญ ต้องคำสาปทั้งมูล  \r\n\r\nสูญด้วยนะโมพุทธายะ ยะธาพุทโมนะฯ”  \r\n\r\nบทย่อ  \r\n\r\n“อุกาสะ อัจจะโยโนภันเต อัจจะขมา ยะถาพาเล ยะถามูลเห \r\n \r\nยะถาอะกุศเลเยมะ ยังกะรัมหา เอวังภันเต  \r\n\r\nอัจจะโยโน ปะฏิคัณหะถะ อายะติง สังวะเรยยามะ”  \r\n\r\n---\r\n\r\n**Prayer for Karma:** This prayer is for lifting curses and breaking all vows. It is often recommended to recite this prayer on the 15th day of the lunar month for auspiciousness in life, prosperity in business, and smoothness in all endeavors.  \r\n  \r\n“U Ka Sa At Cha Yo No Phan Te At Cha Khama Ya Tha Pha Le Ya Tha Mun He   \r\n  \r\nYa Tha A Kutsa Le Yema Yang Ka Ram Maha E Wang Phan Te  \r\n  \r\nAt Cha Yo No Pa Ti Khun Na Ha Tha A Ya Ting Sang Wa Rey Ya Ma  \r\n  \r\nI Mang Satcha Wa Chang Mitcha Thit Thi A Thit Tha Nang Pat Chut Tha Ra Mi  \r\n  \r\nThu Ti Yam Pi I Mang Satcha Wa Chang Mitcha Thit Thi A Thit Tha Nang Pat Chut Tha Ra Mi  \r\n  \r\nTa Ti Yam Pi I Mang Satcha Wa Chang Mitcha Thit Thi A Thit Tha Nang Pat Chut Tha Ra Mi  \r\n  \r\nNa Thon Mo Thon Phut Thon Tha Thon Ya Thon Tong Kham Sap Hai Muai Mon Thon Duai Na Mo Phut Tha Ya Ya Tha Phut Mo Na  \r\n  \r\nNa Sun Mo Sun Phut Sun Tha Sun Ya Sun Tong Kham Sap Thang Mun Sun Duai Na Mo Phut Tha Ya Ya Tha Phut Mo Na” \r\n   \r\nSummary:  \r\n\r\n“U Ka Sa At Cha Yo No Phan Te At Cha Khama Ya Tha Pha Le Ya Tha Mun He  \r\n\r\n Ya Tha A Kutsa Le Yema Yang Ka Ram Maha E Wang Phan Te  \r\n\r\n At Cha Yo No Pa Ti Khan Na Ha Tha A Ya Ting Sang Wa Rey Ya Ma”  \r\n\r\n\r\n",
+    "thumbnail": "content/OIP_3.jpg",
+    "category": 1,
+    "date": "2024-12-03"
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 32,
+  "fields": {
+    "creator": 12,
+    "title": "บทสวดมนต์แผ่เมตตา / Prayer of Mercy",
+    "data": "# บทสวดมนต์แผ่เมตตา  \r\n\"สัพเพ สัตตา สัตว์ทั้งหลายทั้งปวง ที่เป็นเพื่อนทุกข์  \r\n\r\nเกิด แก่ เจ็บ ตาย ด้วยกันทั้งหมดทั้งสิ้น  \r\n\r\nอะเวรา โหนตุ จงเป็นสุข เป็นสุขเถิด  \r\n\r\nอย่าได้มีเวรแก่กันและกันเลย  \r\n\r\nอัพยาปัชฌา โหนตุ จงเป็นสุข เป็นสุขเถิด  \r\n\r\nอย่าได้เบียดเบียนซึ่งกันและกันเลย  \r\n\r\nอะนีฆา โหนตุ จงเป็นสุข เป็นสุขเถิด  \r\n\r\nอย่าได้มีความทุกข์กายทุกข์ใจเลย  \r\n\r\nสุขี อัตตานัง ปะริหะรันตุ จงมีความสุขกายสุขใจ  \r\n\r\nรักษาตนให้พ้นจากทุกข์ภัยสิ้นเถิด\"  \r\n\r\n---\r\n\r\n# Prayer of Mercy\r\n\"Sappe Satta All the animals that are friends of suffering.  \r\n\r\nBorn, old, sick, and dead all together.  \r\n\r\nAvera Nontu, be happy, be happy.  \r\n\r\nDon't be rude to each other.  \r\n\r\nApyapacha Nontu, be happy, be happy.  \r\n\r\nDon't be oppressive to each other.  \r\n\r\nAnija Nontu, be happy, be happy.  \r\n\r\nDon't have any physical or mental suffering.  \r\n\r\nSukki, Attanang, Pariharantu, be happy, physically and mentally.  \r\n\r\nKeep yourselves free from all afflictions.\"  \r\n",
+    "thumbnail": "content/บทแผเมตตาทวไป.jpg",
+    "category": 1,
+    "date": "2024-12-03"
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 33,
+  "fields": {
+    "creator": 12,
+    "title": "คาถาร่ำรวย / Rich spell",
+    "data": "# คาถาร่ำรวย  \r\n**เริ่มต้น ตั้งนะโม 3 จบ และกล่าว**  \r\n\"ธะนัง โภคัง ทุสะมะนิ  \r\nนะนัง โภคัง ทุสะมะนิ  \r\nอุมิอะมิ มะหิสุตัง สนะพุทธัง  \r\nอะสุนะอะ นะมะพะทะ จะภะกะสะ\"  \r\nสวดภาวนากับน้ำสะอาด และนำมาประพรมให้ทั่วบ้านและร้านค้า ทำเป็นประจำเพื่อเสริมโชคลาภ ให้ค้าขายดีและร่ำรวยเร็วยิ่งขึ้น  \r\n\r\n---\r\n\r\n# Rich spell  \r\n**Begin with chanting Namo 3 times and said**  \r\n\"Thanang Phokang Tusamani  \r\nNanang Phokang Tusamani  \r\nUmiami Mahisutang Sanaputtang  \r\nAsuna namapata ja bhakasa\"  \r\nPray with clean water and sprinkle it all over the house and shops. Do it regularly to increase your fortune, better in trading and get rich faster.  \r\n\r\n",
+    "thumbnail": "content/405-คาถารำรวย.jpg",
+    "category": 1,
+    "date": "2024-12-03"
+  }
+},
+{
+  "model": "spezspellz.spell",
+  "pk": 34,
+  "fields": {
+    "creator": 12,
+    "title": "คาถามหาลาภ (บูชาพระสีวลี) / Great fortune spell (W",
+    "data": "# คาถามหาลาภ (บูชาพระสีวลี)  \r\n**เริ่มต้น ตั้งนะโม 3 จบ และกล่าว**  \r\n\"สีวะลี จะ มหาเถโร เทวะตานะระปูชิโต โสระโห ปัจจะยาทิมหิ อะหัง วันทามิ สัพพะทา  \r\n\r\nสีวะลี จะ มหาเถโร ยักขาเทวาภิปูชิโต โสระโห ปัจจะยาทิมหิ อะหัง วันทามิ สัพพะทา  \r\n\r\nสีวะลี เถระคุณัง เอตัง โสตถิ ลาภัง ภะวันตุ เมฯ\"  \r\n\r\nมีความเชื่อว่าหากได้สวดมนต์บูชาพระสีวลีแล้ว จะทำให้เจริญรุ่งเรือง ทำมาค้าขายแล้วเงินทองไหลมา หากติดต่อธุรกิจค้าขายก็จะประสบความสำเร็จ มีผลกำไรดี  \r\n\r\n---\r\n\r\n# Great fortune spell (Worship of Buddha Sivalee)  \r\n**Begin with chanting Namo 3 times and said**  \r\n\r\n\"Siwali ja Mahathero Devatanara Puchito Soraho Pajjayatimhi Ahang Wantami Sappatta  \r\n\r\nSivali ja Mahathero Yakkha Devapipushito Soraho Pajjayatimhi Ahang Wantami Sappatta  \r\n\r\nSiwali Therakunang Etang Sotthi Lapang Bhavantu Mae\"  \r\n\r\nThere is a belief that if you pray and worship Lord Siwali, it will prosper. If you contact the trading business, you will be successful. Have good profits.  \r\n",
+    "thumbnail": "content/sanook_thumbnail_1200x720.jpg",
+    "category": 1,
+    "date": "2024-12-03"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 9,
+  "fields": {
+    "user": 11,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "",
+    "avatar": "",
+    "last_notified": "2024-12-03T03:27:21.383Z"
+  }
+},
+{
+  "model": "spezspellz.userinfo",
+  "pk": 10,
+  "fields": {
+    "user": 12,
+    "private": false,
+    "timed_notification": true,
+    "review_comment_notification": true,
+    "spell_review_notification": true,
+    "spell_comment_notification": true,
+    "comment_reply_notifications": true,
+    "user_desc": "",
+    "avatar": "",
+    "last_notified": "2024-12-03T03:27:03.176Z"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 1,
+  "fields": {
+    "name": "Offensive"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 2,
+  "fields": {
+    "name": "Projectile"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 3,
+  "fields": {
+    "name": "Elemental"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 5,
+  "fields": {
+    "name": "Ice Element"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 6,
+  "fields": {
+    "name": "Electric Element"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 7,
+  "fields": {
+    "name": "Line Attack"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 8,
+  "fields": {
+    "name": "Consumable"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 9,
+  "fields": {
+    "name": "Healing"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 10,
+  "fields": {
+    "name": "Utility"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 11,
+  "fields": {
+    "name": "Protection"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 12,
+  "fields": {
+    "name": "Lunar"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 13,
+  "fields": {
+    "name": "Herbalism"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 14,
+  "fields": {
+    "name": "Illusions"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 15,
+  "fields": {
+    "name": "Shadow"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 16,
+  "fields": {
+    "name": "Manipulation"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 17,
+  "fields": {
+    "name": "Teleportation"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 18,
+  "fields": {
+    "name": "Moon Phase"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 19,
+  "fields": {
+    "name": "Feminine Magic"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 20,
+  "fields": {
+    "name": "Empowerment"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 21,
+  "fields": {
+    "name": "Magical Item"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 22,
+  "fields": {
+    "name": "Wind"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 23,
+  "fields": {
+    "name": "Divination"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 24,
+  "fields": {
+    "name": "Spiritual"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 25,
+  "fields": {
+    "name": "Introspection"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 26,
+  "fields": {
+    "name": "Water"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 27,
+  "fields": {
+    "name": "Creativity"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 28,
+  "fields": {
+    "name": "Dreams"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 29,
+  "fields": {
+    "name": "Magical"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 30,
+  "fields": {
+    "name": "Fire"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 31,
+  "fields": {
+    "name": "Defensive"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 32,
+  "fields": {
+    "name": "Potion"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 33,
+  "fields": {
+    "name": "Moonlight"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 34,
+  "fields": {
+    "name": "Darkness"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 35,
+  "fields": {
+    "name": "Travel"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 36,
+  "fields": {
+    "name": "Nature"
+  }
+},
+{
+  "model": "spezspellz.tag",
+  "pk": 37,
+  "fields": {
+    "name": "Prosperity"
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 90,
+  "fields": {
+    "spell": 23,
+    "tag": 37
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 91,
+  "fields": {
+    "spell": 23,
+    "tag": 10
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 92,
+  "fields": {
+    "spell": 24,
+    "tag": 37
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 93,
+  "fields": {
+    "spell": 24,
+    "tag": 10
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 94,
+  "fields": {
+    "spell": 25,
+    "tag": 37
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 95,
+  "fields": {
+    "spell": 25,
+    "tag": 10
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 96,
+  "fields": {
+    "spell": 27,
+    "tag": 16
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 97,
+  "fields": {
+    "spell": 28,
+    "tag": 37
+  }
+},
+{
+  "model": "spezspellz.hastag",
+  "pk": 99,
+  "fields": {
+    "spell": 33,
+    "tag": 37
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 24,
+  "fields": {
+    "user": 11,
+    "spell": 23,
+    "time": "2024-12-03T02:24:39.118Z"
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 25,
+  "fields": {
+    "user": 11,
+    "spell": 24,
+    "time": "2024-12-03T02:28:10.351Z"
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 26,
+  "fields": {
+    "user": 11,
+    "spell": 25,
+    "time": "2024-12-03T02:30:37.168Z"
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 27,
+  "fields": {
+    "user": 11,
+    "spell": 26,
+    "time": "2024-12-03T02:35:56.585Z"
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 28,
+  "fields": {
+    "user": 11,
+    "spell": 27,
+    "time": "2024-12-03T02:38:40.560Z"
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 29,
+  "fields": {
+    "user": 11,
+    "spell": 29,
+    "time": "2024-12-03T02:43:16.414Z"
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 30,
+  "fields": {
+    "user": 11,
+    "spell": 30,
+    "time": "2024-12-03T02:44:44.704Z"
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 31,
+  "fields": {
+    "user": 11,
+    "spell": 31,
+    "time": "2024-12-03T02:53:55.170Z"
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 32,
+  "fields": {
+    "user": 12,
+    "spell": 32,
+    "time": "2024-12-03T03:05:39.258Z"
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 33,
+  "fields": {
+    "user": 12,
+    "spell": 33,
+    "time": "2024-12-03T03:10:04.180Z"
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 34,
+  "fields": {
+    "user": 12,
+    "spell": 23,
+    "time": "2024-12-03T03:25:26.437Z"
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 35,
+  "fields": {
+    "user": 12,
+    "spell": 24,
+    "time": "2024-12-03T03:25:34.782Z"
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 36,
+  "fields": {
+    "user": 12,
+    "spell": 25,
+    "time": "2024-12-03T03:25:41.135Z"
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 37,
+  "fields": {
+    "user": 12,
+    "spell": 28,
+    "time": "2024-12-03T03:25:45.438Z"
+  }
+},
+{
+  "model": "spezspellz.spellhistoryentry",
+  "pk": 38,
+  "fields": {
+    "user": 12,
+    "spell": 34,
+    "time": "2024-12-03T03:26:58.310Z"
+  }
+}
+]
