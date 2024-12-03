@@ -172,8 +172,12 @@ Filter
       <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="all-spell-img" alt="{{ spell.title }}"/>
       <div id="big-box" style="display: flex; flex-direction: column">
         <div id="info-box" style="display: flex; flex-direction: row">
-          <div id="title-box" style="width: 300px;">
-            <h3 class="all-spell-title">{{ spell.title }}</h3>
+          <div id="attribute-box" style="width: 700px;">
+            <div id="title-box" style="display: flex; flex-direction: row">
+              <h3 class="all-spell-title">{{ spell.title }}</h3>
+              <span style="font-size: 20px; margin-left: 20px;">{{ spell.calc_avg_stars }}</span>
+              <img class="star" src="/assets/star.svg"/>
+            </div>
             <p class="all-spell-category">{{ spell.category }}</p>
             <p class="all-spell-creator">{{ spell.creator }}</p>
           </div>

@@ -135,7 +135,7 @@ li:empty {
     display: flex;
     flex-direction: column;
     margin: auto;
-    width: 50%;
+    width: 75%;
     height: 100vh;
     border: 0px solid black;
 }
@@ -170,6 +170,12 @@ li:empty {
     margin: 5px 0 20px 20px;
 }
 
+.spell-main-box {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+}
+
 .spell-text-box {
     display: flex;
     flex-direction: column;
@@ -202,4 +208,16 @@ li:empty {
 .view-all {
     font-size: 25px;
     padding: 15px;
+}
+
+.title-box {
+    display: flex;
+    flex-direction: row;
+}
+
+.star {
+    width: 24px;
+    height: 24px;
+    margin-left: 5px;
+    margin-top: -2px;
 }

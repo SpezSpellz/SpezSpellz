@@ -57,8 +57,12 @@
           <li my_spell="{{ spell.pk }}">
             <a href="{% url 'spezspellz:spell' spell.pk %}" class="spell-row">
               <img class="default_img" style="height: 100px; width: 100px" src="{% url 'spezspellz:spell_thumbnail' spell.pk %}">
-              <div class="spell-text-box">
-                <span class="all-spell-title"> {{ spell.title }} </span>
+              <div class="spell-main-box">
+                <div class="title-box">
+                  <span class="all-spell-title"> {{ spell.title }} </span>
+                  <span style="font-size: 20px; margin-left: 20px;">{{ spell.calc_avg_stars }}</span>
+                  <img class="star" src="/assets/star.svg"/>
+                </div>
                 <span class="all-spell-category" style="margin-top: 20px;"> {{ spell.category }} </span>
               </div>
               <div class="spell-big-box">
@@ -106,8 +110,12 @@
           <li bookmark_spell="{{ bookmark.spell.pk }}">
             <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" class="spell-row">
               <img class="default_img" style="height: 100px; width: 100px" src="{% url 'spezspellz:spell_thumbnail' bookmark.spell.pk %}">
-              <div class="spell-text-box">
-                <span class="all-spell-title"> {{ bookmark.spell.title }} </span>
+              <div class="spell-main-box">
+                <div class="title-box">
+                  <span class="all-spell-title"> {{ bookmark.spell.title }} </span>
+                  <span style="font-size: 20px; margin-left: 20px;">{{ bookmark.spell.calc_avg_stars }}</span>
+                  <img class="star" src="/assets/star.svg"/>
+                </div>
                 <span class="all-spell-category" style="margin-top: 20px;"> {{ bookmark.spell.category }} </span>
               </div>
               <div class="spell-big-box">
@@ -143,8 +151,12 @@
           <li>
             <a href="{% url 'spezspellz:spell' historyObj.spell.pk %}" class="spell-row">
               <img class="default_img" style="height: 100px; width: 100px" src="{% url 'spezspellz:spell_thumbnail' historyObj.spell.pk %}">
-              <div class="spell-text-box">
-                <span class="all-spell-title"> {{ historyObj.spell.title }} </span>
+              <div class="spell-main-box">
+                <div class="title-box">
+                  <span class="all-spell-title"> {{ historyObj.spell.title }} </span>
+                  <span style="font-size: 20px; margin-left: 20px;">{{ historyObj.spell.calc_avg_stars }}</span>
+                  <img class="star" src="/assets/star.svg"/>
+                </div>
                 <span class="all-spell-category" style="margin-top: 20px;"> {{ historyObj.spell.category }} </span>
               </div>
               <div class="spell-big-box">

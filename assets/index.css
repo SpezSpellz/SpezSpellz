@@ -132,3 +132,10 @@ a {
     color: #dcdcdc;
     font-size: 12pt;
 }
+
+.star {
+    width: 24px;
+    height: 24px;
+    margin-left: 5px;
+    margin-top: -2px;
+}
