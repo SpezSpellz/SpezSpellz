@@ -1,4 +1,5 @@
 """Implements Spell model."""
+from datetime import datetime
 from typing import cast, Any
 from django.contrib.auth.models import User
 from django.db import models
@@ -20,6 +21,7 @@ class Spell(models.Model):
     category: models.ForeignKey[Category] = models.ForeignKey(
         Category, null=True, blank=True, on_delete=models.SET_NULL
     )
+    date: models.DateField = models.DateField(default=datetime.today)
 
     def __str__(self) -> str:
         """Return the spell title."""
@@ -48,3 +50,17 @@ class Spell(models.Model):
         start = self.data.find("is ") or 0
         end = start + (self.data[start:].find(".") or (len(self.data) - start))
         return self.data[start:end].replace("#", "")
+
+    @property
+    def tried(self) -> int:
+        """Returns the spell tried."""
+        return cast(Any, self).successrate_set.all().count()
+
+    @property
+    def success_rate(self) -> float:
+        """Calculates percentage of positive of total."""
+        avg_rating = cast(Any, self).successrate_set.filter(spell=self) \
+            .aggregate(Avg('rating'))['rating__avg']
+        if avg_rating is None:
+            return 100.0
+        return (avg_rating / 4) * 100

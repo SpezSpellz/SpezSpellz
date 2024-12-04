@@ -4,7 +4,7 @@
   "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$870000$dJWESK3J0Dnjt15jmTDnpV$X97rW9PyNJHXCxora2gmUHMKuBhWhvPxA1sZzv2KfGc=",
-    "last_login": "2024-10-27T10:02:18.597Z",
+    "last_login": "2024-11-12T13:13:53.094Z",
     "is_superuser": false,
     "username": "demo1",
     "first_name": "",
@@ -22,7 +22,7 @@
   "pk": 2,
   "fields": {
     "password": "pbkdf2_sha256$870000$P8JKDwJCo9Ual5waQy3IH5$e7/vt3S3qUA+MCiL7LPVNo33nFPDcsYMbo6D0tHMDlE=",
-    "last_login": "2024-10-27T10:07:06.300Z",
+    "last_login": "2024-11-13T01:05:15.592Z",
     "is_superuser": true,
     "username": "admin",
     "first_name": "",
@@ -157,6 +157,24 @@
     "is_staff": false,
     "is_active": true,
     "date_joined": "2024-10-27T10:06:39.342Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 10,
+  "fields": {
+    "password": "!8ccbQkOzpgJUdF41dITk0vYAh4pKzZLgXqG2Q3Gz",
+    "last_login": "2024-11-13T01:11:54.208Z",
+    "is_superuser": false,
+    "username": "Jaykayy",
+    "first_name": "Jaykayy",
+    "last_name": "",
+    "email": "jiramate2548@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2024-11-10T08:53:06.248Z",
     "groups": [],
     "user_permissions": []
   }

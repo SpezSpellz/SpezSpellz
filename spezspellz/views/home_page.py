@@ -10,7 +10,7 @@ from spezspellz.utils import safe_cast
 class HomePage(View):
     """Handle the home page."""
 
-    SPELLS_PER_STRIP = 13
+    SPELLS_PER_STRIP = 15
     SPELLS_PER_PAGE = 15
 
     def get(self, request: HttpRequest) -> HttpResponseBase:

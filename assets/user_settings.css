@@ -75,6 +75,7 @@ input:checked+.slider:before {
     font-size: 11pt;
     padding: 7px;
     cursor: pointer;
+    transition: background-color 0.1s ease;
 }
 
 .generic-button:hover {
@@ -83,6 +84,46 @@ input:checked+.slider:before {
 
 .generic-button:active {
     background-color: #6B6B6B;
+}
+
+.delete-btn {
+    color: #FFF;
+    background-color: #ff000a;
+    border-style: none;
+    border-radius: 6px;
+    font-size: 11pt;
+    padding: 7px;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+}
+
+.delete-btn:hover {
+    background-color: #ae000a;
+}
+
+.delete-btn:active {
+    background-color: #93000a;
+}
+
+.generic-button[disabled], .delete-btn[disabled]{
+    cursor: default;
+    opacity: 30%;
+}
+
+.generic-button[disabled]:hover {
+    background-color: #4B4B4B;
+}
+
+.generic-button[disabled]:active {
+    background-color: #4B4B4B;
+}
+
+.delete-btn[disabled]:hover {
+    background-color: #ff000a;
+}
+
+.delete-btn[disabled]:active {
+    background-color: #ff000a;
 }
 
 .profile-desc {
@@ -102,4 +143,23 @@ td {
 
 .switch-td {
     padding-left: 20px;
+}
+
+.tab {
+    display: inline-block;
+    margin: auto;
+}
+
+.tab-btn {
+    font-size: 18pt;
+    background-color: transparent;
+    border-style: none;
+    cursor: pointer;
+    color: #777;
+    padding: 10px;
+    padding-bottom: 0px;
+}
+
+.tab-btn:hover {
+    color: #aaa;
 }
