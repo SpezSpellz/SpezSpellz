@@ -90,7 +90,6 @@ def upload(browser):
     element.click()
     wait()
     element = find(browser, "#noti_dlg_date_time")
-    element.click()
     element.send_keys("112620240900P")
     wait()
     element = find(browser, "#ok_noti_dlg")

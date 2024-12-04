@@ -828,51 +828,6 @@
 },
 {
   "model": "spezspellz.spellhistoryentry",
-  "pk": 40,
-  "fields": {
-    "user": 13,
-    "spell": 27,
-    "time": "2024-12-03T10:06:35.965Z"
-  }
-},
-{
-  "model": "spezspellz.spellhistoryentry",
-  "pk": 41,
-  "fields": {
-    "user": 13,
-    "spell": 28,
-    "time": "2024-12-03T10:07:17.326Z"
-  }
-},
-{
-  "model": "spezspellz.spellhistoryentry",
-  "pk": 42,
-  "fields": {
-    "user": 13,
-    "spell": 32,
-    "time": "2024-12-03T10:08:29.873Z"
-  }
-},
-{
-  "model": "spezspellz.spellhistoryentry",
-  "pk": 43,
-  "fields": {
-    "user": 13,
-    "spell": 33,
-    "time": "2024-12-03T10:09:58.767Z"
-  }
-},
-{
-  "model": "spezspellz.spellhistoryentry",
-  "pk": 44,
-  "fields": {
-    "user": 13,
-    "spell": 34,
-    "time": "2024-12-03T10:10:01.180Z"
-  }
-},
-{
-  "model": "spezspellz.spellhistoryentry",
   "pk": 45,
   "fields": {
     "user": 11,
