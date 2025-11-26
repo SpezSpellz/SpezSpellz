@@ -17,6 +17,10 @@ from .spell_comment import SpellComment
 from .comment_comment import CommentComment
 from .notification import Notification
 from .file2model import VirtualFileModel
+from .tag_request import TagRequest
+from .rate_tag_request import RateTagRequest
+from .success_rate import SuccessRate
+
 
 __all__ = (
     "Category",
@@ -36,5 +40,8 @@ __all__ = (
     "SpellComment",
     "CommentComment",
     "Notification",
-    "VirtualFileModel"
+    "VirtualFileModel",
+    "TagRequest",
+    "RateTagRequest",
+    "SuccessRate"
 )

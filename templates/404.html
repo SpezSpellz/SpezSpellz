@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block Title %}Not Found - SpezSpellz{% endblock %}
+{% block BeforeBody %}
+{% endblock %}
+{% block Body %}
+<h1 style="display: block;text-align: center;font-size: 64pt;height: 64pt;" id="element"></h1>
+<p style="display: block;text-align: center;color: #FFF">Were you being naughty and tryna enumerate for files or somethin'?</p>
+<p style="display: block;text-align: center;color: #FFF">Why don't go back <a href="{% url 'spezspellz:home' %}">home</a>?</p>
+<script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+<script>
+var typed = new Typed('#element', {
+    strings: ['Unknown user profile', 'Unknown spell', 'Unknown ritual', 'Unknown respect', 'Unknown cash', 'Unknown dad', 'Unknown brain'],
+    typeSpeed: 100,
+    backSpeed: 50,
+    backDelay: 1500,
+    loop: true,
+    showCursor: true,
+    cursorChar: '_'
+});
+</script>
+{% endblock %}

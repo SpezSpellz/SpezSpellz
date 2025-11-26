@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from decouple import config
+from django.conf.global_settings import AUTHENTICATION_BACKENDS
 from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,14 +38,23 @@ CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS',
 
 # Application definition
 
+SITE_ID = 2
+
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'spezspellz.apps.SpezspellzConfig'
+    'spezspellz.apps.SpezspellzConfig',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -55,6 +65,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+    "spezspellz.middlewares.check_request.CheckRequest",
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -62,7 +74,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ BASE_DIR / "templates" ],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,6 +88,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+
+ASGI_APPLICATION = 'config.asgi.application'
+
+CHANNEL_LAYERS = {
+	"default": {
+		"BACKEND": "channels.layers.InMemoryChannelLayer"
+	}
+}
 
 
 # Database
@@ -148,4 +168,42 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',  # For google
+]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': config('GOOGLE_CLIENT_ID', cast=str),
+            'secret': config('GOOGLE_CLIENT_SECRET', cast=str),
+            'key': '',
+        },
+        'SCOPE': ['email', 'profile'],
+        'FIELD': ['name', 'email', 'picture'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+    }
+}
+
+# Pages to redirect after login/logout
+
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
+ACCOUNT_LOGOUT_REDIRECT_ULR = 'login'
+SOCIALACCOUNT_LOGIN_ON_CANCEL = 'login'
+SOCIALACCOUNT_LOGIN_ON_GET = True  # To make google authentication skip the unnecessary page
+SOCIALACCOUNT_ADAPTER = 'spezspellz.views.adapters.CustomSocialAccountAdapter'
+
+
 LOGIN_REDIRECT_URL = '/'
+
+# File upload handlers
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 4096 * 2500
+MAX_UPLOAD_SIZE = 4096 * 24414
+FILE_UPLOAD_HANDLERS = [
+    "django.core.files.uploadhandler.MemoryFileUploadHandler",
+    "django.core.files.uploadhandler.TemporaryFileUploadHandler",
+]

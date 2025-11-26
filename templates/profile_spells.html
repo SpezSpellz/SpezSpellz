@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block Title %}My Spells{% endblock %}
+{% block Body %}
+<link rel="stylesheet" href="/assets/profile_spells.css">
+<body>
+<h1 style="margin: auto; text-align: center">{% if user == focus_user %}All{% else %}{{ focus_user.username }}'s{% endif %} created spell</h1>
+<form method="GET" action="{% url 'spezspellz:filter' %}">
+  <input name="s" class="search-bar" placeholder="Search {% if user == focus_user %}my{% else %}{{ focus_user.username }}'s{% endif %} spell" type="text">
+  <input name="creator" value="{{ focus_user.pk }}" hidden/>
+  <button type="submit" hidden></button>
+</form>
+<br>
+<div class="spell-container">
+{% for spell in spells %}
+  <div spell_entry="{{ spell.pk }}" class="spell">
+    <a style="text-decoration: none" href="{% url 'spezspellz:spell' spell.pk %}">
+      <div style="display: flex; align-items: center">
+        <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="spell-img" alt="{{ spell.title }}"/>
+        <div>
+          <h3 class="spell-title">{{ spell.title }}</h3>
+          <p class="spell-category">{{ spell.category }}</p>
+          <p class="spell-creator">{{ spell.creator }}</p>
+          <p class="spell-data">{{ spell.title }} {{ spell.summary|slice:":100" }}...</p>
+        </div>
+      </div>
+    </a>
+    {% if user == focus_user %}
+    <div class="actions">
+      <button onclick="edit_spell({{ spell.pk }})" class="edit-btn btn-like action-btn"><img class="img-btn" src="/assets/edit.svg"/></button>
+      <button onclick="window.delete_spell({{ spell.pk }})" class="red action-btn"><img class="img-btn" src="/assets/delete.svg"/></button>
+    </div>
+    {% endif %}
+  </div>
+{% empty %}
+<br>
+<h2 style="margin: auto; text-align: center">{% if user == focus_user %}You don't{% else %}{{ focus_user.username }} doesn't{% endif %} have any spells.</h2>
+{% endfor %}
+</div>
+<script>
+    edit_spell = (spell_pk) => {
+        window.location.assign(`/edit/${spell_pk}/`)
+    }
+    window.delete_spell = (spell) => {
+    fetch("{% url 'spezspellz:usersettings' %}", {
+          method: "POST",
+          headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({
+              method: "delete",
+              obj_type: "spell",
+              obj_id: spell
+          })
+      }).then(res => {
+          if(!res.ok)
+              return Promise.reject();
+          return res.text()
+      }).then(text => {
+          if(text != "Object deleted")
+            return;
+          document.querySelector("[spell_entry=\"" + spell + "\"]").remove();
+      })
+  }
+</script>
+</body>
+{% endblock %}

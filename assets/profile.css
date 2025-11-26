@@ -74,21 +74,21 @@ li:empty {
     max-width: 800px;
 }
 
-.bookmark {
+.base-btn {
+    width: 36px;
+    height: 36px;
     margin-right: 8px;
-    background-color: #A00000;
+    display: grid;
 }
 
-.bookmark:hover {
-    background-color: #E00000;
-}
-
-.bookmark:active {
-    background-color: #F00;
+.base-img {
+    width: 32px;
+    height: 32px;
+    justify-self: center;
+    align-self: center;
 }
 
 .edit-btn {
-    margin-right: 8px;
     flex: 0 0 36px;
     background-color: #5B5B5B;
 }
@@ -135,14 +135,9 @@ li:empty {
     display: flex;
     flex-direction: column;
     margin: auto;
-    width: 50%;
+    width: 75%;
     height: 100vh;
     border: 0px solid black;
-}
-
-.profile-pic {
-    border-radius: 50%;
-    width: 200px;
 }
 
 .spell {
@@ -154,14 +149,10 @@ li:empty {
     border-radius: 20px;
 }
 
-.spell-pic {
-    width: 100px;
-}
-
 .spell-row {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: left;
     text-decoration: none;
     height: 100px;
     border: 0px solid black;
@@ -170,17 +161,31 @@ li:empty {
 .all-spell-title {
     color: #FFF;
     font-size: 16pt;
-    margin: 0;
+    margin-left: 20px;
 }
+
 .all-spell-category {
     color: #AAA;
     font-size: 12pt;
+    margin: 5px 0 20px 20px;
+}
+
+.spell-main-box {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
 }
 
 .spell-text-box {
     display: flex;
     flex-direction: column;
-    flex:1;
+    width: 20%;
+}
+
+.spell-big-box {
+    display: flex;
+    flex-direction: column;
+    max-width: 30%;
 }
 
 .overflow {
@@ -203,4 +208,16 @@ li:empty {
 .view-all {
     font-size: 25px;
     padding: 15px;
+}
+
+.title-box {
+    display: flex;
+    flex-direction: row;
+}
+
+.star {
+    width: 24px;
+    height: 24px;
+    margin-left: 5px;
+    margin-top: -2px;
 }

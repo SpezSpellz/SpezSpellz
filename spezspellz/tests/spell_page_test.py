@@ -9,11 +9,6 @@ from .utils import create_test_user
 class SpellPageTest(TestCase):
     """Tests for the spell page."""
 
-    def test_spell_dne_redirect(self):
-        """Test whether an invalid spell id gets redirected."""
-        res = self.client.get(reverse("spezspellz:spell", args=(80085, )))
-        self.assertEqual(res.status_code, 302)
-
     def test_view_spell_unauthenticated(self):
         """Attempt to view a spell while unauthenticated."""
         user = create_test_user("tester")

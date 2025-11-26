@@ -3,9 +3,10 @@ from enum import Enum
 from functools import partial
 from django.shortcuts import render
 from django.views import View
-from django.db.models import Count, Avg, QuerySet
+from django.db.models import Count, Avg, QuerySet, Q
+from django.contrib.auth.models import User
 from spezspellz.models import Spell, Tag, Category
-from spezspellz.utils import safe_cast
+from spezspellz.utils import safe_cast, get_or_none
 
 
 class SortOption(Enum):
@@ -91,13 +92,17 @@ class FilterPage(View):
                     hastag__tag__name=safe_cast(str, selected_tag, '')
                 )
 
-        query = request.GET.get("s")
-        if query:
-            spells = spells.filter(title__icontains=query.strip())
+        search_text: str | None = request.GET.get("s")
+        if search_text:
+            query = Q()
+            for i in search_text.split():
+                query &= Q(title__icontains=i) | Q(creator__username__icontains=i)
+            spells = spells.filter(query)
 
-        creator = safe_cast(int, request.GET.get("creator"), None)
-        if creator is not None:
-            spells = spells.filter(creator__pk=creator)
+        creator_pk = safe_cast(int, request.GET.get("creator"), None)
+        creator = get_or_none(User, pk=creator_pk)
+        if creator_pk is not None:
+            spells = spells.filter(creator__pk=creator_pk)
 
         page = safe_cast(int, request.GET.get("page"), 1)
         spell_count = spells.count()
@@ -128,6 +133,7 @@ class FilterPage(View):
                 max_page,
                 "pages":
                 range(max(1, page - 5),
-                      min(max_page, page + 5) + 1)
+                      min(max_page, page + 5) + 1),
+                "creator": creator
             }
         )

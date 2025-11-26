@@ -10,19 +10,27 @@
   <div id="aboutMe" class="profile-container">
     <div id="ProfilePic" style="margin: 0 50px 0 0;">
       {% if not other_user %}
-      <img class="profile-pic" src="{% url 'spezspellz:avatar' user.pk %}"/>
+      <img style="border-radius: 50%; width: 200px; height: 200px" class="default_img" src="{% url 'spezspellz:avatar' user.pk %}"/>
       {% else %}
-      <img class="profile-pic" src="{% url 'spezspellz:avatar' other_user.pk %}"/>
+      <img style="border-radius: 50%; width: 200px; height: 200px" class="default_img" src="{% url 'spezspellz:avatar' other_user.pk %}"/>
       {% endif %}
     </div>
 
     <div id="ProfileInfo">
       {% if not other_user %}
       <span class="name"> {{ user.username }} </span>
-      <p style="margin-top: 30px;"> {{ user.userinfo.user_desc }} </p>
+      <p style="margin: 0;"> Joined on {{ user.date_joined }} </p>
+      <p style="margin: 0;"> Success rate: {{ user.userinfo.success_rate|floatformat:2 }}% </p>
+      <p style="margin: 0;"> Post(s) used by {{ user.userinfo.spells_tried }} user(s) </p>
+      <hr>
+      <p style="margin-top: 10px;"> {{ user.userinfo.user_desc }} </p>
       {% else %}
       <span class="name"> {{ other_user.username }} </span>
-      <p style="margin-top: 30px;"> {{ other_user.userinfo.user_desc }} </p>
+      <p style="margin: 0;"> Joined on {{ other_user.date_joined }} </p>
+      <p style="margin: 0;"> Success rate: {{ other_user.userinfo.success_rate|floatformat:2 }}% </p>
+      <p style="margin: 0;"> Post(s) used by {{ other_user.userinfo.spells_tried }} user(s) </p>
+      <hr>
+      <p style="margin-top: 10px;"> {{ other_user.userinfo.user_desc }} </p>
       {% endif %}
     </div>
 
@@ -47,24 +55,32 @@
 
           {% for spell in spells %}
           <li my_spell="{{ spell.pk }}">
+            <a href="{% url 'spezspellz:spell' spell.pk %}" class="spell-row">
+              <img class="default_img" style="height: 100px; width: 100px" src="{% url 'spezspellz:spell_thumbnail' spell.pk %}">
+              <div class="spell-main-box">
+                <div class="title-box">
+                  <span class="all-spell-title"> {{ spell.title }} </span>
+                  <span style="font-size: 20px; margin-left: 20px;">{{ spell.calc_avg_stars }}</span>
+                  <img class="star" src="/assets/star.svg"/>
+                </div>
+                <span class="all-spell-category" style="margin-top: 20px;"> {{ spell.category }} </span>
+              </div>
+              <div class="spell-big-box">
+                <span class="all-spell-category"> Used by: {{ spell.tried }} people</span>
+                {% if spell.tried != 0 %}
+                <span class="all-spell-category success-rate" data-rate="{{ spell.success_rate }}">
+                      Success rate: {{ spell.success_rate|floatformat:2 }}%</span>
+                {% else %}
+                <span class="all-spell-category">Not tried</span>
+                {% endif %}
+              </div>
+              <div class="spell-text-box" style="margin-left: auto; margin-right: 20px;">
+                <span class="all-spell-category"> Creation date: {{ spell.date }}</span>
+              </div>
+            </a>
             {% if not other_user %}
-            <a href="{% url 'spezspellz:spell' spell.pk %}" class="spell-row">
-              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' spell.pk %}">
-              <div class="spell-text-box">
-                <span class="all-spell-title" style="margin-left: 20px;"> {{ spell.title }} </span>
-                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ spell.category }} </span>
-              </div>
-            </a>
-            <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn"><img width="32" src="/assets/edit.svg"/></a>
-            <a onclick="window.delete_spell({{spell.pk}})" class="btn-like edit-btn"><img width="32" src="/assets/delete.svg"/></a>
-            {% else %}
-            <a href="{% url 'spezspellz:spell' spell.pk %}" class="spell-row">
-              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' spell.pk %}">
-              <div class="spell-text-box">
-                <span class="all-spell-title" style="margin-left: 20px;"> {{ spell.title }} </span>
-                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ spell.category }} </span>
-              </div>
-            </a>
+            <a href="{% url 'spezspellz:edit' spell.pk %}" class="btn-like edit-btn base-btn"><img class="base-img" src="/assets/edit.svg"/></a>
+            <a onclick="window.delete_spell({{spell.pk}})" class="red base-btn" style="flex: 0 0 36px"><img class="base-img" src="/assets/delete.svg"/></a>
             {% endif %}
           </li>
           {% empty %}
@@ -80,9 +96,9 @@
         {% if spells|length > 5 %}
         <div style="display: flex; margin: auto;">
           {% if not other_user %}
-          <a href="{% url 'spezspellz:myspell' %}" class="view-all btn-like" style="text-decoration: none;"> View all </a>
+          <a href="{% url 'spezspellz:profile_spells' %}" class="view-all btn-like" style="text-decoration: none;"> View all </a>
           {% else %}
-          <a href="{% url 'spezspellz:other_spell' other_user.pk %}" class="view-all btn-like" style="text-decoration: none;"> View all </a>
+          <a href="{% url 'spezspellz:profile_spells' other_user.pk %}" class="view-all btn-like" style="text-decoration: none;"> View all </a>
           {% endif %}
         </div>
         {% endif %}
@@ -92,23 +108,31 @@
         <ul>
           {% for bookmark in bookmarks %}
           <li bookmark_spell="{{ bookmark.spell.pk }}">
+            <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" class="spell-row">
+              <img class="default_img" style="height: 100px; width: 100px" src="{% url 'spezspellz:spell_thumbnail' bookmark.spell.pk %}">
+              <div class="spell-main-box">
+                <div class="title-box">
+                  <span class="all-spell-title"> {{ bookmark.spell.title }} </span>
+                  <span style="font-size: 20px; margin-left: 20px;">{{ bookmark.spell.calc_avg_stars }}</span>
+                  <img class="star" src="/assets/star.svg"/>
+                </div>
+                <span class="all-spell-category" style="margin-top: 20px;"> {{ bookmark.spell.category }} </span>
+              </div>
+              <div class="spell-big-box">
+                <span class="all-spell-category"> Used by: {{ bookmark.spell.tried }} people</span>
+                {% if bookmark.spell.tried != 0 %}
+                <span class="all-spell-category success-rate" data-rate="{{ bookmark.spell.success_rate }}">
+                      Success rate: {{ bookmark.spell.success_rate }}%</span>
+                {% else %}
+                <span class="all-spell-category">Not tried</span>
+                {% endif %}
+              </div>
+              <div class="spell-text-box" style="margin-left: auto; margin-right: 20px;">
+                <span class="all-spell-category"> Creation date: {{ bookmark.spell.date }}</span>
+              </div>
+            </a>
             {% if not other_user %}
-            <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" class="spell-row">
-              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' bookmark.spell.pk %}">
-              <div class="spell-text-box">
-                <span class="all-spell-title" style="margin-left: 20px;"> {{ bookmark.spell.title }} </span>
-                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ bookmark.spell.category }} </span>
-              </div>
-            </a>
-            <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="btn-like bookmark" width="32" src="/assets/bookmark_remove.svg"/>
-            {% else %}
-            <a href="{% url 'spezspellz:spell' bookmark.spell.pk %}" class="spell-row">
-              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' bookmark.spell.pk %}">
-              <div class="spell-text-box">
-                <span class="all-spell-title" style="margin-left: 20px;"> {{ bookmark.spell.title }} </span>
-                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ bookmark.spell.category }} </span>
-              </div>
-            </a>
+            <input type="image" onclick="window.bookmark_spell(parseInt('{{ bookmark.spell.pk }}'))" class="red base-btn" src="/assets/bookmark_remove.svg"/>
             {% endif %}
           </li>
           {% empty %}
@@ -126,12 +150,25 @@
           {% for historyObj in history %}
           <li>
             <a href="{% url 'spezspellz:spell' historyObj.spell.pk %}" class="spell-row">
-              <img class="spell-pic" src="{% url 'spezspellz:spell_thumbnail' historyObj.spell.pk %}">
-              <div class="spell-text-box">
-                <span class="all-spell-title" style="margin-left: 20px;"> {{ historyObj.spell.title }} </span>
-                <span class="all-spell-category" style="margin-left: 20px; margin-top: 20px;"> {{ historyObj.spell.category }} </span>
+              <img class="default_img" style="height: 100px; width: 100px" src="{% url 'spezspellz:spell_thumbnail' historyObj.spell.pk %}">
+              <div class="spell-main-box">
+                <div class="title-box">
+                  <span class="all-spell-title"> {{ historyObj.spell.title }} </span>
+                  <span style="font-size: 20px; margin-left: 20px;">{{ historyObj.spell.calc_avg_stars }}</span>
+                  <img class="star" src="/assets/star.svg"/>
+                </div>
+                <span class="all-spell-category" style="margin-top: 20px;"> {{ historyObj.spell.category }} </span>
               </div>
-              <span style="color: #AAA"> {{ historyObj.time|date:"d/m/Y" }} <br> {{ historyObj.time|date:"H:i A" }} </span>
+              <div class="spell-big-box">
+                <span class="all-spell-category"> Used by: {{ historyObj.spell.tried }} people</span>
+                {% if historyObj.spell.tried != 0 %}
+                <span class="all-spell-category success-rate" data-rate="{{ historyObj.spell.success_rate }}">
+                      Success rate: {{ historyObj.spell.success_rate }}%</span>
+                {% else %}
+                <span class="all-spell-category">Not tried</span>
+                {% endif %}
+              </div>
+              <span style="color: #AAA; margin-left: auto; margin-right: 20px;"> {{ historyObj.time|date:"d/m/Y" }} <br> {{ historyObj.time|date:"H:i A" }} </span>
             </a>
           </li>
           {% empty %}
@@ -208,8 +245,11 @@
         window.show_tab(selectedTab);
     </script>
 
-  </div>
+    <!--Script for getting color depending on the success rate -->
+    <script src="/assets/js/successRate.js"></script>
 
+
+  </div>
 
   {% else %}
   <div class="centered-container">

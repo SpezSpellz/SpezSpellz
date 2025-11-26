@@ -48,11 +48,31 @@
   <a href="{% url 'spezspellz:spell' spell.pk %}">
     <div class="all-spell">
       <img src="{% url 'spezspellz:spell_thumbnail' spell.pk %}" class="all-spell-img" alt="{{ spell.title }}"/>
-      <div>
-        <h3 class="all-spell-title">{{ spell.title }}</h3>
-        <p class="all-spell-category">{{ spell.category }}</p>
-        <p class="all-spell-creator">{{ spell.creator }}</p>
+      <div id="big-box" style="display: flex; flex-direction: column">
+        <div id="info-box" style="display: flex; flex-direction: row">
+          <div id="attribute-box" style="width: 700px;">
+            <div id="title-box" style="display: flex; flex-direction: row">
+              <h3 class="all-spell-title">{{ spell.title }}</h3>
+              <span style="font-size: 20px; margin-left: 20px;">{{ spell.calc_avg_stars }}</span>
+              <img class="star" src="/assets/star.svg"/>
+            </div>
+            <p class="all-spell-category">{{ spell.category }}</p>
+            <p class="all-spell-creator">{{ spell.creator }}</p>
+          </div>
+          <div id="success-box" style="display: flex; flex-direction: column; margin-top: 21px;">
+            <span class="all-spell-category"> Used by: {{ spell.tried }} people</span>
+            {% if spell.tried != 0 %}
+            <span class="all-spell-category success-rate" data-rate="{{ spell.success_rate }}">
+                  Success rate: {{ spell.success_rate|floatformat:2 }}%</span>
+            {% else %}
+            <span class="all-spell-category">Not tried</span>
+            {% endif %}
+          </div>
+        </div>
         <p class="all-spell-data">{{ spell.title }} {{ spell.summary|slice:":100" }}...</p>
+      </div>
+      <div class="spell-text-box" style="margin-left: auto; margin-right: 20px;">
+        <span class="all-spell-category"> Creation date: {{ spell.date }}</span>
       </div>
     </div></a>
   {% empty %}
@@ -74,4 +94,8 @@
   </ul></div>
   {% endif %}
 </div>
+
+<!--Script for getting color depending on the success rate -->
+<script src="/assets/js/successRate.js"></script>
+
 {% endblock %}
