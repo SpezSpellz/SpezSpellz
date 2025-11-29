@@ -16,7 +16,7 @@
 ### Prerequisites
 Before installing the SpezSpellz app, make sure you have the following software installed on your system:
 
-- Python 3.11+
+- Python 3.14+
 - Git
 - pip (Python package installer)
 

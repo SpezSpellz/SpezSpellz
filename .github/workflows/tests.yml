@@ -13,12 +13,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.14'
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Run tests
         run: |
               export SECRET_KEY="django-insecure-&+b!t4pt!38n*)4fe=&o6sdwf3+zscn&sty!h4ho-vqca+snd_"
+              export GOOGLE_CLIENT_ID=fakeid
+              export GOOGLE_CLIENT_SECRET=fakesecret
               export DEBUG=True
               export ALLOWED_HOSTS=localhost
               export TIME_ZONE=Asia/Bangkok
