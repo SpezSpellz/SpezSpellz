@@ -22,6 +22,8 @@ jobs:
         run: |
               export SECRET_KEY="django-insecure-&+b!t4pt!38n*)4fe=&o6sdwf3+zscn&sty!h4ho-vqca+snd_"
               export DEBUG=True
+              export GOOGLE_CLIENT_ID=fakeid
+              export GOOGLE_CLIENT_SECRET=fakesecret
               export ALLOWED_HOSTS=localhost
               export TIME_ZONE=Asia/Bangkok
               coverage run manage.py test
